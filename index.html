@@ -57,6 +57,12 @@ button { font-family: inherit; }
 .mbtn small { display: block; font-size: 13px; letter-spacing: 2px; color: var(--text-dim); font-weight: 500; margin-top: -2px; }
 .mbtn[disabled] { color: #5a6066; cursor: not-allowed; }
 .mbtn[disabled] small { color: #4a5056; }
+.mbtn.soon { color: #7d848a; }
+.mbtn.soon small { color: var(--accent); opacity: 0.7; }
+.mbtn.soon:hover { color: #aeb4b8; border-left-color: #5a6066; background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent); }
+#toast { position: fixed; right: 4vw; bottom: 6vh; transform: translateY(12px); z-index: 60; background: var(--panel); border: 1px solid var(--line-2); border-left: 3px solid var(--accent);
+  padding: 12px 20px; font-size: 18px; letter-spacing: 1px; color: var(--text); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; max-width: 90vw; }
+#toast.on { opacity: 1; transform: translateY(0); }
 .menu-foot { margin-top: auto; font-family: var(--mono); font-size: 12px; color: var(--text-dim); letter-spacing: 1px; line-height: 1.7; }
 
 .overlay { background: rgba(4,6,8,0.72); backdrop-filter: blur(3px); align-items: center; justify-content: center; }
@@ -140,10 +146,10 @@ button { font-family: inherit; }
     <div class="logo">STEEL<br>MERIDIAN<span>URBAN WARFARE</span></div>
     <div class="menu-list">
       <button class="mbtn" data-action="range">Firing Range<small>Map: Salt Market &middot; free practice</small></button>
-      <button class="mbtn" data-action="online" disabled>Play Online<small>Phase 6</small></button>
-      <button class="mbtn" data-action="bots" disabled>Practice vs Bots<small>Phase 3</small></button>
-      <button class="mbtn" data-action="cac" disabled>Create-a-Class<small>Phase 4</small></button>
-      <button class="mbtn" data-action="barracks" disabled>Barracks<small>Phase 4</small></button>
+      <button class="mbtn soon" data-action="soon" data-soon="Online play (room browser, 3v3 with bots filling slots) arrives in Phase 6.">Play Online<small>Coming in Phase 6</small></button>
+      <button class="mbtn soon" data-action="soon" data-soon="Practice vs Bots (3v3 Team Deathmatch) arrives in Phase 3.">Practice vs Bots<small>Coming in Phase 3</small></button>
+      <button class="mbtn soon" data-action="soon" data-soon="Create-a-Class arrives in Phase 4 (after all weapons and attachments land in Phase 2).">Create-a-Class<small>Coming in Phase 4</small></button>
+      <button class="mbtn soon" data-action="soon" data-soon="Barracks (levels, unlocks and stats) arrives in Phase 4.">Barracks<small>Coming in Phase 4</small></button>
       <button class="mbtn" data-action="settings">Settings<small>Controls, graphics, audio</small></button>
     </div>
     <div class="menu-foot" id="menuFoot"></div>
@@ -195,6 +201,7 @@ button { font-family: inherit; }
   <div id="fps" class="hidden"></div>
 </div>
 <div id="clickToPlay" class="hidden">CLICK TO CONTINUE</div>
+<div id="toast"></div>
 
 <!-- Boot watchdog: if the engine modules never load (CDN blocked/offline), say so instead of hanging. -->
 <script>
@@ -246,17 +253,18 @@ clearTimeout(window.__SM_BOOT_TIMER);
    CONFIG — every tuning value lives here
    ===================================================================== */
 const CONFIG = {
-  VERSION: '0.1.0-phase1',
+  VERSION: '0.1.1-phase1',
   SAVE_KEY: 'steelmeridian.save.v1',
   SAVE_VERSION: 1,
 
   WORLD: {
-    sunElevation: 38, sunAzimuth: 218,          // degrees
+    sunElevation: 46, sunAzimuth: 218,          // degrees
     sunColor: 0xfff0dc, sunIntensity: 3.1,
     hemiSky: 0xbcd2ea, hemiGround: 0x6e6455, hemiIntensity: 0.3,
-    envIntensity: 0.2, skyIntensity: 0.5,          // sky radiance is ~1-2 linear: scale IBL so sun:sky is ~4:1
-    fogColor: 0xaab4bd, fogDensity: 0.0085,
-    exposure: 1.0,
+    envIntensity: 0.2, skyIntensity: 0.42,         // sky radiance is ~1-2 linear: scale IBL so sun:sky is ~4:1
+    skyClamp: 60,                                   // cap on sky HDR (the sun disc) so its bloom stays a glint, not a white-out
+    fogColor: 0xa3aeb8, fogDensity: 0.0065,
+    exposure: 0.92,
     bounds: { minX: -36, maxX: 36, minZ: -48, maxZ: 48, maxY: 18 },
   },
 
@@ -307,10 +315,13 @@ const CONFIG = {
   RANGE: { targetRespawn: 3.0, infiniteReserve: true },
 
   GFX_PRESETS: {
-    low:    { label: 'LOW',    resScale: 0.75, maxDpr: 1.0, shadows: true, shadowSize: 1024, shadowRadius: 1.4, ssao: false, aa: 'fxaa', bloom: true, bloomStrength: 0.38, anisotropy: 2 },
-    medium: { label: 'MEDIUM', resScale: 1.0,  maxDpr: 1.0, shadows: true, shadowSize: 2048, shadowRadius: 2.2, ssao: false, aa: 'smaa', bloom: true, bloomStrength: 0.42, anisotropy: 4 },
-    high:   { label: 'HIGH',   resScale: 1.0,  maxDpr: 1.5, shadows: true, shadowSize: 4096, shadowRadius: 2.6, ssao: true,  aa: 'smaa', bloom: true, bloomStrength: 0.45, anisotropy: 8 },
+    low:    { label: 'LOW',    resScale: 0.75, maxDpr: 1.0, shadows: true, shadowSize: 1024, shadowRadius: 1.4, ssao: false, aa: 'fxaa', bloom: true, bloomStrength: 0.3, anisotropy: 2 },
+    medium: { label: 'MEDIUM', resScale: 1.0,  maxDpr: 1.0, shadows: true, shadowSize: 2048, shadowRadius: 2.2, ssao: false, aa: 'smaa', bloom: true, bloomStrength: 0.32, anisotropy: 4 },
+    high:   { label: 'HIGH',   resScale: 1.0,  maxDpr: 1.5, shadows: true, shadowSize: 4096, shadowRadius: 2.6, ssao: true,  aa: 'smaa', bloom: true, bloomStrength: 0.34, anisotropy: 8 },
   },
+
+  // bloom works on linear HDR: sunlit walls sit near 1.0, so only flashes, sparks, tracers, lamps and the sun cross 2.4
+  POST: { bloomThreshold: 2.4, bloomRadius: 0.42 },
 
   AUDIO: { masterDefault: 0.8, reverbSend: 0.22, footstepVolume: 0.55 },
 
@@ -364,7 +375,8 @@ const WEAPONS = {
       pattern: [[0.62, 0.05], [0.66, -0.12], [0.70, 0.16], [0.72, 0.10], [0.70, -0.18], [0.68, 0.22], [0.66, 0.14], [0.64, -0.08],
                 [0.62, 0.20], [0.60, 0.16], [0.60, -0.14], [0.58, 0.18]],
       loopFrom: 6, hRand: 0.14, vRand: 0.06, hipMult: 1.25, crouchMult: 0.86,
-      kickSpeed: 26, recoverDelay: 0.09, recoverSpeed: 6.5, recoverFrac: 0.38,
+      // after the trigger stops, aim settles back toward where the burst began; mouse pull-down counts toward it
+      kickSpeed: 26, recoverDelay: 0.06, recoverSpeed: 7.5, recoverFrac: 0.9, recoverFracH: 0.65,
       vmBack: 0.024, vmUp: 0.006, vmPitch: 0.055, vmYaw: 0.018, vmRoll: 0.03, adsVmMult: 0.42, camPunch: 0.35,
     },
     sound: { bodyHz: 92, body: 0.95, crack: 0.85, blast: 0.9, blastHz: 5200, decay: 0.15, tail: 0.55, tailHz: 1300, mech: 0.32, mechHz: 2600, drive: 3.2, gain: 1.0 },
@@ -374,7 +386,7 @@ const WEAPONS = {
 };
 
 const DEFAULT_SETTINGS = {
-  sens: 3.0, adsMult: 1.0, fov: 90, preset: 'medium', volume: 0.8,
+  sens: 3.0, adsMult: 1.0, fov: 90, preset: 'medium', volume: 0.8, brightness: 1.0,
   invertY: false, adsHold: true, crouchToggle: true, sprintToggle: false,
   showFps: false, dmgNumbers: true, headBob: 1.0,
 };
@@ -880,7 +892,8 @@ function buildSkyAndEnvironment() {
   const sky = new Sky();
   sky.scale.setScalar(400);
   const u = sky.material.uniforms;
-  u.turbidity.value = 4.2; u.rayleigh.value = 1.35; u.mieCoefficient.value = 0.0042; u.mieDirectionalG.value = 0.83;
+  u.turbidity.value = 3.0; u.rayleigh.value = 1.3; u.mieCoefficient.value = 0.0025; u.mieDirectionalG.value = 0.76;
+  sky.material.fragmentShader = sky.material.fragmentShader.replace('gl_FragColor = vec4( texColor, 1.0 );', `gl_FragColor = vec4( min( texColor, vec3( ${CONFIG.WORLD.skyClamp.toFixed(1)} ) ), 1.0 );`);
   u.sunPosition.value.copy(sunDir);
   if (u.cloudCoverage) { u.cloudCoverage.value = 0.34; u.cloudDensity.value = 0.42; u.cloudElevation.value = 0.55; u.cloudScale.value = 0.00022; u.time.value = 37; }
   const skyScene = new THREE.Scene();
@@ -991,7 +1004,7 @@ const Post = {
     }
     this.vmPass = new ViewmodelPass(vmScene, vmCamera); c.addPass(this.vmPass);
     this.bloom = null;
-    if (P.bloom) { this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), P.bloomStrength, 0.55, 0.95); c.addPass(this.bloom); }
+    if (P.bloom) { this.bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), P.bloomStrength, CONFIG.POST.bloomRadius, CONFIG.POST.bloomThreshold); c.addPass(this.bloom); }
     c.addPass(new OutputPass());
     this.grade = new ShaderPass(GradeShader); c.addPass(this.grade);
     this.aa = P.aa === 'smaa' ? new SMAAPass() : new FXAAPass();
@@ -3572,12 +3585,12 @@ const Hitscan = {
 const PlayerWeapon = {
   def: null, mag: 0, reserve: 0, cooldown: 0, semiLatch: false, dryLatch: false,
   adsT: 0, adsToggle: false, sprintT: 0, raiseT: 0, reload: null, shotIndex: 0, lastShot: -10, bloom: 0, firing: false,
-  pendV: 0, pendH: 0, recoverable: 0, punch: new Spring(300, 22), punchYaw: 0,
+  pendV: 0, pendH: 0, recoverable: 0, recoverableH: 0, punch: new Spring(300, 22), punchYaw: 0,
   muzzleWorld: new THREE.Vector3(), aimDir: new THREE.Vector3(), aimOrigin: new THREE.Vector3(),
   equip(def) {
     this.def = def; this.mag = def.mag; this.reserve = def.reserve; this.reload = null; this.cooldown = 0;
     this.adsT = 0; this.sprintT = 0; this.raiseT = def.raiseTime; this.shotIndex = 0; this.bloom = 0;
-    this.pendV = this.pendH = this.recoverable = 0; this.punch.reset(); this.adsToggle = false;
+    this.pendV = this.pendH = this.recoverable = this.recoverableH = 0; this.punch.reset(); this.adsToggle = false;
     HUD.setWeapon(def); HUD.setAmmo(this.mag, this.reserve, def.mag, Game.mode === 'range' && CONFIG.RANGE.infiniteReserve);
   },
   wantsAds() {
@@ -3640,9 +3653,11 @@ const PlayerWeapon = {
     const dv = this.pendV * k, dh = this.pendH * k;
     this.pendV -= dv; this.pendH -= dh;
     pl.pitch += dv * DEG; pl.yaw -= dh * DEG;
-    if (!this.firing && Game.time - this.lastShot > R.recoverDelay && this.recoverable > 0) {
-      const rec = this.recoverable * (1 - Math.exp(-R.recoverSpeed * dt));
-      this.recoverable -= rec; pl.pitch -= rec * DEG;
+    // recovery starts once shots stop arriving (works even if the trigger is still held on an empty mag)
+    if (Game.time - this.lastShot > Math.max(R.recoverDelay, 60 / def.rpm + 0.02)) {
+      const k = 1 - Math.exp(-R.recoverSpeed * dt);
+      if (this.recoverable > 0) { const rec = this.recoverable * k; this.recoverable -= rec; pl.pitch -= rec * DEG; }
+      if (this.recoverableH !== 0) { const rec = this.recoverableH * k; this.recoverableH -= rec; pl.yaw += rec * DEG; }
     }
     this.punch.update(dt, 0);
     this.punchYaw = damp(this.punchYaw, 0, 18, dt);
@@ -3712,7 +3727,7 @@ const PlayerWeapon = {
     const ads = smoother(this.adsT);
     const mult = lerp(R.hipMult, 1, ads) * (pl.stance === 'crouch' ? R.crouchMult : 1);
     const v = (pat[0] + rand(-R.vRand, R.vRand)) * mult, hh = (pat[1] + rand(-R.hRand, R.hRand)) * mult;
-    this.pendV += v; this.pendH += hh; this.recoverable += v * R.recoverFrac;
+    this.pendV += v; this.pendH += hh; this.recoverable += v * R.recoverFrac; this.recoverableH += hh * R.recoverFracH;
     this.punch.v += R.camPunch * 0.6 * mult; this.punchYaw += (Math.random() - 0.5) * R.camPunch * 0.004;
     this.shotIndex++;
     this.bloom = Math.min(def.spread.max, this.bloom + def.spread.perShot);
@@ -3819,6 +3834,7 @@ const SETTINGS_UI = {
   VIDEO: [
     { key: 'preset', label: 'Graphics Quality', type: 'seg', options: [['low', 'LOW'], ['medium', 'MEDIUM'], ['high', 'HIGH']] },
     { key: 'fov', label: 'Field of View', type: 'range', min: 60, max: 110, step: 1 },
+    { key: 'brightness', label: 'Brightness', type: 'range', min: 0.5, max: 1.5, step: 0.01 },
     { key: 'headBob', label: 'Camera Bob', type: 'range', min: 0, max: 1, step: 0.05 },
     { key: 'showFps', label: 'Show FPS', type: 'seg', options: [[false, 'OFF'], [true, 'ON']] },
   ],
@@ -3835,7 +3851,7 @@ const UI = {
       if (!b || b.disabled) return;
       AudioSys.unlock();
       AudioSys.play('ui', { bus: 'ui', vol: 0.35, send: 0 });
-      this.action(b.dataset.action);
+      this.action(b.dataset.action, b);
     });
     $('clickToPlay').addEventListener('click', () => { AudioSys.unlock(); Input.lock(); });
     addEventListener('keydown', (e) => {
@@ -3846,8 +3862,13 @@ const UI = {
     });
     $('menuFoot').innerHTML = `v${CONFIG.VERSION} &middot; three.js r${THREE.REVISION}<br>Click a mode to start. Esc pauses.`;
   },
-  action(a) {
+  toast(text, ms = 3200) {
+    const t = $('toast'); t.textContent = text; t.classList.add('on');
+    clearTimeout(this._toastT); this._toastT = setTimeout(() => t.classList.remove('on'), ms);
+  },
+  action(a, el) {
     switch (a) {
+      case 'soon': this.toast(el.dataset.soon); break;
       case 'range': Game.startRange(); break;
       case 'resume': Game.resume(); break;
       case 'quit': Game.quitToMenu(); break;
@@ -3903,6 +3924,7 @@ const UI = {
 function applySetting(key) {
   const S = Save.settings;
   if (key === 'volume') AudioSys.setVolume(S.volume);
+  if (key === 'brightness') renderer.toneMappingExposure = CONFIG.WORLD.exposure * S.brightness;
   if (key === 'preset') applyGraphicsPreset();
   if (key === 'showFps') HUD.el.fps.classList.toggle('hidden', !S.showFps);
 }
@@ -4048,6 +4070,9 @@ const Game = {
     const yawD = dx * sens, pitchD = dy * sens * (S.invertY ? -1 : 1);
     pl.yaw -= yawD; pl.pitch = clamp(pl.pitch - pitchD, -1.53, 1.53);
     if (pitchD > 0 && w.recoverable > 0) w.recoverable = Math.max(0, w.recoverable - pitchD / DEG);
+    const yawGain = -yawD / DEG; // degrees the player turned left (+) or right (-) this frame
+    if (w.recoverableH > 0 && yawGain > 0) w.recoverableH = Math.max(0, w.recoverableH - yawGain);
+    else if (w.recoverableH < 0 && yawGain < 0) w.recoverableH = Math.min(0, w.recoverableH - yawGain);
     this.lookDX = damp(this.lookDX, dx, 30, dt); this.lookDY = damp(this.lookDY, dy, 30, dt);
     // --- movement
     const intent = w.intents();
