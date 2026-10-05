@@ -6,15 +6,15 @@ A browser FPS in the style of modern military multiplayer shooters, in **one sel
 
 **Testing:** see [TESTING.md](TESTING.md) for the manual test checklist.
 
-## Status — Phase 3 of 7
+## Status — Phase 4 of 7
 
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Map, movement, collision, graphics pipeline, one rifle with full gun feel | done |
 | 2 | All weapons + attachments, grenades, full HUD | done |
-| 3 | Bots, TDM rules, practice mode | **done** |
-| 4 | Create-a-Class, XP / levels / unlocks | next |
-| 5 | Killstreaks | |
+| 3 | Bots, TDM rules, practice mode | done |
+| 4 | Create-a-Class, XP / levels / unlocks | **done** |
+| 5 | Killstreaks | next |
 | 6 | P2P multiplayer (Trystero), lobby, room browser | |
 | 7 | Polish: performance, balance, menus | |
 
@@ -38,6 +38,14 @@ Team Deathmatch, 3v3: you and two bot teammates against three bots. First to the
 Bots come in three skill levels: **Recruit**, **Regular** and **Veteran**. Each level changes reaction time, turn speed, aim error and how fast it settles, burst control, recoil control, how far they see and hear, how often they strafe, crouch and throw grenades, and when they retreat to heal.
 
 Bots use the same movement controller, weapons table, hitboxes and damage rules as the player. Unsuppressed gunfire gives away your position, both to bots and as red dots on the minimap.
+
+## Progression and Create-a-Class
+
+- **XP** comes from Practice matches: 100 per kill (+25 for a headshot), 25 per assist, a 500 / 350 / 250 bonus for a win / draw / loss, and 40 per minute played. All of it is scaled by bot difficulty (Recruit ×0.8, Regular ×1, Veteran ×1.3). The Firing Range gives no XP.
+- **Levels 1–30.** Levels unlock weapons and attachments (REFLEX 2, WASP 3, Create-a-Class 4, SUPPRESSOR 5, BRUTE 6, EXT MAG 7, MAULER 9, GRIP 10, LONGBOW 12, 3X 14), then weapon camos (Woodland 16, Desert 19, Urban 22, Night 26, Gold 30).
+- **Create-a-Class:** 3 default classes are always available, and 5 custom slots unlock at level 4. You can rename a class and pick primary, secondary, attachments (max 2) and camo. Change class from the pause menu mid-match; it applies on your next spawn.
+- **Barracks:** level, XP, unlock roadmap, career stats and kills per weapon.
+- Settings → Gameplay → **Unlock All (testing)** lifts the level gates for testing.
 
 ## Controls
 

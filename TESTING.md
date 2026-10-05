@@ -142,14 +142,51 @@ Main menu → **Practice vs Bots**.
 
 ---
 
-## Coming next: Phase 4 tests (Create-a-Class, XP, levels, unlocks)
+## Phase 4: Create-a-Class, XP, levels, unlocks, Barracks
 
-These are what you'll be testing after the next update:
+Tip: Settings → Gameplay → **Unlock All (testing)** makes everything available straight away, so you can try camos and every class option without levelling. XP still counts. Do items 91–100 with it **off** first.
 
-91. Create-a-Class screen: 3 default classes + 5 custom slots; edit primary, secondary, attachments (max 2), lethal and tactical; rename classes.
-92. Choosing a class before spawning and switching class from the pause menu (applies on next spawn).
-93. XP for kills, assists, headshots, wins and match completion; an XP bar and "+XP" popups.
-94. Levels 1–30 with a level-up banner and an unlocks list (weapons and attachments unlock at set levels).
-95. Locked items show their unlock level and can't be equipped.
-96. Barracks screen: level, XP to next level, career stats (K/D, accuracy, wins/losses, favourite weapon, headshots).
-97. Progress survives a page reload and "Reset All Data" in Settings wipes it.
+### Q. Levelling
+91. The main menu shows **Create-a-Class** and **Barracks (Level 1)**.
+92. Kills in a Practice match pop "+100" (+125 for a headshot). That's XP: ×0.8 on Recruit, ×1.3 on Veteran. A thin XP bar with your level sits at the bottom of the screen and fills as you go.
+93. Levelling up mid-match plays a chime with a "LEVEL UP · n" banner and an "UNLOCKED: …" toast.
+94. The results screen shows the XP breakdown (kills, headshots, assists, win / draw / loss bonus, time played, difficulty multiplier, total), the bar filling, and "LEVEL UP → n · UNLOCKED: …" when you level.
+95. The Firing Range gives no XP and doesn't count toward career stats.
+
+### R. Create-a-Class
+96. At level 1: three default classes (ASSAULT, CLOSE QUARTERS, MARKSMAN) are usable. The five CUSTOM slots show "LEVEL 4" and can't be edited.
+97. Default classes are read-only: clicking a weapon shows a note telling you to use a custom slot.
+98. From level 4: click a custom class's name to rename it, then pick primary, secondary, attachments (max 2) and camo. Changes save as you make them.
+99. Locked weapons, attachments and camos are dimmed with "UNLOCKS AT LEVEL n" / "LEVEL n" and can't be picked.
+100. **Use Class** marks it ACTIVE. Practice setup shows "CLASS: name · weapons", and you spawn with it.
+101. Mid-match: Esc → **Change Class** → Use Class says "takes effect on your next spawn", and your next life uses it. During the countdown it equips immediately.
+102. Camos (Woodland 16, Desert 19, Urban 22, Night 26, Gold 30) recolour the primary weapon's body. The pistol keeps its finish.
+103. The Firing Range keeps its own free Loadout (Esc → Loadout, everything unlocked), separate from your classes.
+
+### S. Barracks
+104. **Progress** tab: level badge, XP into the level, total XP, next unlock, and the full unlock list (green = unlocked, gold = next).
+105. **Stats** tab: matches, wins, losses, W/L, kills, deaths, K/D, assists, headshots, accuracy, best streak, time played.
+106. **Weapons** tab: kills per weapon with bars, and your favourite.
+
+### T. Saving
+107. Reload the page: level, XP, classes, the active class and stats are all still there.
+108. Settings → **Reset All Data** returns you to level 1, default custom classes, zero stats and Unlock All off.
+109. **Unlock All** on/off switches the gating instantly (check Create-a-Class before and after).
+
+### U. Flashbang re-test (fixed after your report)
+110. Throw a flashbang and turn fully away before it pops: no white-out, just ringing and muffled sound.
+111. Side-on: a brief faint haze.
+112. Looking at it: a full white-out that fades over 2–4 s.
+
+---
+
+## Coming next: Phase 5 tests (killstreaks)
+
+What you'll be testing after the next update:
+
+113. The streak icons light up at 3 / 5 / 7 kills without dying, and a key calls in the reward.
+114. **UAV** (3): enemies show as red dots on your minimap for a while, refreshed by sweeps.
+115. **Precision Airstrike** (5): you mark a spot and jets fly over and carpet it.
+116. **Attack Helicopter** (7): a helicopter circles the map for a while, hunting enemies, and it can be shot down.
+117. Bots earn and use killstreaks too; enemy ones are announced and can kill you.
+118. Streaks reset on death, and kills from killstreaks don't build the next streak.

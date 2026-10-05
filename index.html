@@ -245,6 +245,86 @@ button { font-family: inherit; }
 .end-table th:first-child, .end-table td:first-child { text-align: left; font-family: var(--ui-font); font-weight: 600; font-size: 16px; }
 .end-table tr.team-a td:first-child { color: #9cc9ff; } .end-table tr.team-b td:first-child { color: #ff8b8b; } .end-table tr.me td { color: var(--accent); }
 .end-table tr.sep td { border-top: 2px solid var(--line-2); }
+/* create-a-class */
+#loadoutPanel.classes { width: 1200px; padding-top: 14px; padding-bottom: 14px; max-height: 97vh; }
+#loadoutPanel.classes .stat { margin: 3px 0; }
+#loadoutPanel.classes .lo-classhead { margin-bottom: 6px; gap: 10px; }
+#loadoutPanel.classes .lo-classhead .equip { flex-basis: auto; margin-left: auto; }
+#loadoutPanel.classes .lo-name { font-size: 26px; }
+#loadoutPanel.classes .lo-type { margin: 2px 0 8px; }
+#loadoutPanel.classes .note { margin-top: 8px; }
+#loadoutPanel.classes .lo-c { padding: 4px 10px; }
+.lo-c span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lo-c.act span { padding-right: 54px; }
+#loadoutPanel.classes h2 { margin-bottom: 12px; }
+#loadoutPanel.classes .lo-det { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; }
+#loadoutPanel.classes .lo-grid { grid-template-columns: 220px 1fr; gap: 20px; }
+#loadoutPanel.classes .lo-atts { grid-template-columns: 1fr; gap: 4px; }
+#loadoutPanel.classes .att { padding: 5px 9px; }
+#loadoutPanel.classes .att p { margin-top: 1px; font-size: 11px; }
+#loadoutPanel.classes .lo-w { padding: 6px 12px; font-size: 17px; }
+#loadoutPanel.classes .lo-h { margin: 10px 0 5px; }
+#loadoutPanel.classes .row-btns { margin-top: 12px; }
+#loadoutPanel.classes .tabs { margin-bottom: 10px; }
+.lo-top { display: flex; gap: 22px; }
+.lo-main { flex: 1; min-width: 0; }
+.lo-classes { width: 210px; flex: none; display: none; flex-direction: column; gap: 4px; }
+#loadoutPanel.classes .lo-classes { display: flex; }
+.lo-classes .lo-h:first-child { margin-top: 0; }
+.lo-c { position: relative; text-align: left; background: var(--panel-2); border: 1px solid var(--line); border-left: 3px solid transparent; color: var(--text); padding: 5px 10px; cursor: pointer; font-size: 16px; font-weight: 600; letter-spacing: 1px; }
+.lo-c small { display: block; font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+.lo-c em { position: absolute; right: 8px; top: 8px; font-style: normal; font-size: 10px; letter-spacing: 2px; color: #111; background: var(--accent); padding: 1px 5px; }
+.lo-c.on { border-left-color: var(--accent); background: rgba(216,178,74,0.12); }
+.lo-c.locked, .lo-w.locked, .att.locked, .camo.locked { opacity: 0.45; }
+.lo-classhead { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+#loClassName { background: var(--panel-2); border: 1px solid var(--line-2); color: var(--text); font-family: var(--ui-font); font-size: 22px; font-weight: 700; letter-spacing: 3px; padding: 4px 10px; width: 280px; text-transform: uppercase; }
+#loClassName:disabled { opacity: 0.8; border-color: transparent; background: transparent; padding-left: 0; }
+.lo-classhead .tag { font-size: 11px; letter-spacing: 2px; color: var(--accent); font-weight: 600; }
+.lo-classhead .equip { flex-basis: 100%; font-family: var(--mono); font-size: 12px; color: var(--text-dim); letter-spacing: 1px; }
+.lo-camos { display: flex; flex-wrap: wrap; gap: 6px; }
+.camo { display: flex; align-items: center; gap: 7px; background: var(--panel-2); border: 1px solid var(--line); color: var(--text); padding: 6px 10px; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+.camo i { width: 16px; height: 16px; border: 1px solid var(--line-2); display: inline-block; }
+.camo small { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; }
+.camo.on { border-color: var(--accent); background: rgba(216,178,74,0.13); }
+/* xp bars */
+.xpb { position: relative; height: 6px; background: rgba(255,255,255,0.1); flex: 1; overflow: hidden; }
+.xpb i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #d6d9d4; }
+.xpb i.new { background: var(--accent); transition: width 1.4s cubic-bezier(.2,.7,.2,1); }
+.xpb.big { height: 10px; }
+.xpb.big i { background: var(--accent); }
+#xpHud { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: 340px; display: none; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: #d6d9d4; text-shadow: 0 1px 2px #000; }
+#xpHud.on { display: flex; }
+#xpHud .xpb { height: 4px; }
+#xpHud .xpb i { background: var(--accent); transition: width .4s; }
+.end-xp { margin: 4px 0 16px; }
+.xp-row { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: 14px; }
+.xp-lines { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+.xp-lines b { color: var(--accent); font-weight: 600; }
+.xp-up { margin-top: 8px; font-size: 16px; font-weight: 700; letter-spacing: 3px; color: var(--good); min-height: 20px; }
+/* barracks */
+#barracksPanel { width: 900px; }
+.bk-head { display: flex; gap: 22px; align-items: center; margin-bottom: 14px; }
+.bk-badge { width: 96px; height: 96px; border: 2px solid var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(216,178,74,0.08); }
+.bk-badge small { font-size: 11px; letter-spacing: 3px; color: var(--text-dim); font-weight: 600; }
+.bk-badge b { font-size: 46px; line-height: 1; font-family: var(--mono); }
+.bk-prog { flex: 1; }
+.bk-xp { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 14px; margin-bottom: 6px; }
+.bk-xp span:last-child { color: var(--text-dim); }
+.bk-next { margin-top: 8px; font-size: 14px; letter-spacing: 2px; color: var(--accent); font-weight: 600; }
+.bk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.bk-grid div { background: var(--panel-2); border: 1px solid var(--line); padding: 10px 12px; }
+.bk-grid b { display: block; font-family: var(--mono); font-size: 24px; }
+.bk-grid span { font-size: 11px; letter-spacing: 2px; color: var(--text-dim); font-weight: 600; }
+.bk-road { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
+.bk-road div { display: flex; gap: 12px; align-items: baseline; padding: 6px 4px; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 600; letter-spacing: 1px; }
+.bk-road div em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--text-dim); width: 46px; flex: none; }
+.bk-road div.got { color: var(--good); } .bk-road div.got em { color: var(--good); }
+.bk-road div.next { color: var(--accent); }
+.bk-road div.locked { color: #7d848a; }
+.bk-weap div { display: grid; grid-template-columns: 170px 1fr 60px; gap: 12px; align-items: center; padding: 6px 2px; border-bottom: 1px solid var(--line); font-weight: 600; letter-spacing: 1px; }
+.bk-weap .xpb { height: 6px; }
+.bk-weap .xpb i { background: var(--accent); }
+.bk-weap span:last-child { font-family: var(--mono); text-align: right; }
 #clickToPlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.35); cursor: pointer; font-size: 22px; letter-spacing: 5px; font-weight: 700; }
 </style>
 </head>
@@ -267,8 +347,8 @@ button { font-family: inherit; }
       <button class="mbtn" data-action="range">Firing Range<small>Salt Market &middot; all weapons &middot; Esc &rarr; Loadout</small></button>
       <button class="mbtn soon" data-action="soon" data-soon="Online play (room browser, 3v3 with bots filling slots) arrives in Phase 6.">Play Online<small>Coming in Phase 6</small></button>
       <button class="mbtn" data-action="practice">Practice vs Bots<small>Team Deathmatch &middot; 3v3 &middot; offline</small></button>
-      <button class="mbtn soon" data-action="soon" data-soon="Create-a-Class arrives in Phase 4. Until then, every weapon and attachment is available in the Firing Range: press Esc, then Loadout.">Create-a-Class<small>Coming in Phase 4</small></button>
-      <button class="mbtn soon" data-action="soon" data-soon="Barracks (levels, unlocks and stats) arrives in Phase 4.">Barracks<small>Coming in Phase 4</small></button>
+      <button class="mbtn" data-action="cac">Create-a-Class<small>3 default + 5 custom classes</small></button>
+      <button class="mbtn" data-action="barracks">Barracks<small id="menuLevel">Level 1 &middot; stats &amp; unlocks</small></button>
       <button class="mbtn" data-action="settings">Settings<small>Controls, graphics, audio</small></button>
     </div>
     <div class="menu-foot" id="menuFoot"></div>
@@ -281,7 +361,7 @@ button { font-family: inherit; }
     <h2>PAUSED</h2>
     <div class="pause-list">
       <button class="btn primary" data-action="resume">Resume</button>
-      <button class="btn" data-action="loadout">Loadout</button>
+      <button class="btn" data-action="loadout" id="pauseLoadoutBtn">Loadout</button>
       <button class="btn" data-action="settings">Settings</button>
       <button class="btn danger" data-action="quit">Quit to Menu</button>
     </div>
@@ -294,12 +374,30 @@ button { font-family: inherit; }
     <h2>PRACTICE VS BOTS</h2>
     <div class="pr-sub">TEAM DEATHMATCH &middot; 3V3 &middot; SALT MARKET &middot; YOU + 2 BOTS VS 3 BOTS</div>
     <div id="prBody"></div>
-    <div class="pr-loadout"><span>LOADOUT</span><b id="prLoadout">-</b></div>
+    <div class="pr-loadout"><span>CLASS</span><b id="prLoadout">-</b></div>
     <div class="row-btns">
       <button class="btn primary" data-action="practice-start">Start Match</button>
-      <button class="btn" data-action="practice-loadout">Loadout</button>
+      <button class="btn" data-action="practice-loadout">Choose Class</button>
       <button class="btn" data-action="practice-back">Back</button>
     </div>
+  </div>
+</div>
+
+<!-- ============ BARRACKS ============ -->
+<div id="barracks" class="screen overlay hidden">
+  <div class="panel" id="barracksPanel">
+    <h2>BARRACKS</h2>
+    <div class="bk-head">
+      <div class="bk-badge"><small>LEVEL</small><b id="bkLevel">1</b></div>
+      <div class="bk-prog">
+        <div class="bk-xp"><span id="bkXp">0 / 400 XP</span><span id="bkTotal"></span></div>
+        <div class="xpb big"><i id="bkBar"></i></div>
+        <div class="bk-next" id="bkNext"></div>
+      </div>
+    </div>
+    <div class="tabs" id="bkTabs"></div>
+    <div id="bkBody"></div>
+    <div class="row-btns"><button class="btn primary" data-action="barracks-close">Back</button></div>
   </div>
 </div>
 
@@ -310,6 +408,11 @@ button { font-family: inherit; }
     <div class="end-score"><span class="a" id="endA">0</span><span class="dash">&ndash;</span><span class="b" id="endB">0</span></div>
     <div class="end-reason" id="endReason"></div>
     <div class="end-me" id="endMe"></div>
+    <div class="end-xp">
+      <div class="xp-row"><span id="endLvl">LV 1</span><div class="xpb"><i id="endXpOld"></i><i id="endXpNew" class="new"></i></div><span id="endLvlNext">LV 2</span></div>
+      <div class="xp-lines" id="endXpLines"></div>
+      <div class="xp-up" id="endLevelUp"></div>
+    </div>
     <table class="end-table" id="endTable"></table>
     <div class="row-btns">
       <button class="btn primary" data-action="again">Play Again</button>
@@ -321,21 +424,37 @@ button { font-family: inherit; }
 <!-- ============ LOADOUT (range gunsmith; Create-a-Class arrives in Phase 4) ============ -->
 <div id="loadout" class="screen overlay hidden">
   <div class="panel" id="loadoutPanel">
-    <h2>LOADOUT</h2>
-    <div class="tabs" id="loTabs"></div>
-    <div class="lo-grid">
-      <div class="lo-list" id="loList"></div>
-      <div>
-        <div class="lo-name" id="loName">-</div>
-        <div class="lo-type" id="loType"></div>
-        <div id="loStats"></div>
-        <div class="lo-h">ATTACHMENTS <small id="loCount"></small></div>
-        <div class="lo-atts" id="loAtts"></div>
-        <div class="note" id="loNote"></div>
+    <h2 id="loTitle">LOADOUT</h2>
+    <div class="lo-top">
+      <div class="lo-classes" id="loClasses"></div>
+      <div class="lo-main">
+        <div class="lo-classhead" id="loClassHead">
+          <input id="loClassName" maxlength="16" spellcheck="false" autocomplete="off">
+          <span class="tag" id="loClassTag"></span>
+          <div class="equip" id="loEquip"></div>
+        </div>
+        <div class="tabs" id="loTabs"></div>
+        <div class="lo-grid">
+          <div class="lo-list" id="loList"></div>
+          <div class="lo-det">
+            <div>
+              <div class="lo-name" id="loName">-</div>
+              <div class="lo-type" id="loType"></div>
+              <div id="loStats"></div>
+            </div>
+            <div>
+              <div class="lo-h">ATTACHMENTS <small id="loCount"></small></div>
+              <div class="lo-atts" id="loAtts"></div>
+              <div class="lo-h" id="loCamoH">CAMO</div>
+              <div class="lo-camos" id="loCamos"></div>
+              <div class="note" id="loNote"></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="row-btns">
-      <button class="btn primary" data-action="loadout-apply">Equip</button>
+      <button class="btn primary" data-action="loadout-apply" id="loApply">Equip</button>
       <button class="btn" data-action="loadout-close">Back</button>
     </div>
   </div>
@@ -380,6 +499,7 @@ button { font-family: inherit; }
   <div id="killfeed"></div>
   <div id="streak"></div>
   <div id="banner"></div>
+  <div id="xpHud"><span id="xpHudLvl">LV 1</span><div class="xpb"><i id="xpHudBar"></i></div></div>
   <div id="scorePop"></div>
   <div id="centerMsg"></div>
   <div id="rangeInfo">
@@ -444,7 +564,7 @@ clearTimeout(window.__SM_BOOT_TIMER);
    CONFIG — every tuning value lives here
    ===================================================================== */
 const CONFIG = {
-  VERSION: '0.3.0-phase3',
+  VERSION: '0.4.0-phase4',
   SAVE_KEY: 'steelmeridian.save.v1',
   SAVE_VERSION: 1,
 
@@ -709,6 +829,49 @@ const GRENADES = {
 };
 const MELEE = { damage: 150, range: 2.1, cone: 0.62, hitTime: 0.13, duration: 0.55 };
 const DEFAULT_LOADOUT = { primary: 'kestrel', primaryAtts: [], secondary: 'viper', secondaryAtts: [] };
+
+/*  PROGRESSION — levels 1-30. XP to go from level n to n+1 = base + step·(n-1) (≈77k XP to max).
+    XP comes from practice/online matches only (the firing range is a sandbox), scaled by bot difficulty. */
+const PROGRESSION = {
+  maxLevel: 30, base: 400, step: 160,
+  xp: { kill: 100, headshot: 25, assist: 25, win: 500, draw: 350, loss: 250, perMinute: 40 },
+  difficultyMult: { easy: 0.8, normal: 1.0, hard: 1.3 },
+};
+/** Everything that unlocks with level. Items not listed are available from level 1. */
+const UNLOCKS = [
+  { level: 2, kind: 'attachment', id: 'reddot' },
+  { level: 3, kind: 'weapon', id: 'wasp' },
+  { level: 4, kind: 'feature', id: 'cac', name: 'CREATE-A-CLASS' },
+  { level: 5, kind: 'attachment', id: 'suppressor' },
+  { level: 6, kind: 'weapon', id: 'brute' },
+  { level: 7, kind: 'attachment', id: 'extmag' },
+  { level: 9, kind: 'weapon', id: 'mauler' },
+  { level: 10, kind: 'attachment', id: 'foregrip' },
+  { level: 12, kind: 'weapon', id: 'longbow' },
+  { level: 14, kind: 'attachment', id: 'scope3x' },
+  { level: 16, kind: 'camo', id: 'woodland' },
+  { level: 19, kind: 'camo', id: 'desert' },
+  { level: 22, kind: 'camo', id: 'urban' },
+  { level: 26, kind: 'camo', id: 'night' },
+  { level: 30, kind: 'camo', id: 'gold' },
+];
+/** Weapon camos (applied to the primary weapon's receiver and furniture). */
+const CAMOS = {
+  none: { name: 'NONE' },
+  woodland: { name: 'WOODLAND', tint: 0x8d9c68 },
+  desert: { name: 'DESERT', tint: 0xd2bb8e },
+  urban: { name: 'URBAN', tint: 0xa3a8ad },
+  night: { name: 'NIGHT', tint: 0x55607a },
+  gold: { name: 'GOLD', gold: true },
+};
+/** Default classes are always available (whatever your level) and can't be edited. */
+const DEFAULT_CLASSES = [
+  { id: 'd0', name: 'ASSAULT', primary: 'kestrel', primaryAtts: ['reddot', 'foregrip'], secondary: 'viper', secondaryAtts: [], camo: 'none' },
+  { id: 'd1', name: 'CLOSE QUARTERS', primary: 'wasp', primaryAtts: ['extmag'], secondary: 'viper', secondaryAtts: [], camo: 'none' },
+  { id: 'd2', name: 'MARKSMAN', primary: 'longbow', primaryAtts: [], secondary: 'viper', secondaryAtts: ['suppressor'], camo: 'none' },
+];
+const CUSTOM_CLASS_COUNT = 5;
+const EQUIPMENT_TEXT = 'LETHAL: FRAG ×1   ·   TACTICAL: FLASHBANG ×2';
 /** Kill streak rewards (Phase 5 makes them callable; the HUD tracks progress now). */
 const KILLSTREAKS = [
   { id: 'uav', name: 'UAV', short: 'UAV', kills: 3 },
@@ -719,7 +882,7 @@ const KILLSTREAKS = [
 const DEFAULT_SETTINGS = {
   sens: 3.0, adsMult: 1.0, fov: 90, preset: 'medium', volume: 0.8, brightness: 1.0,
   invertY: false, adsHold: true, crouchToggle: true, sprintToggle: false,
-  showFps: false, dmgNumbers: true, headBob: 1.0,
+  showFps: false, dmgNumbers: true, headBob: 1.0, unlockAll: false,
 };
 
 const KEYBINDS = {
@@ -796,8 +959,9 @@ const Save = {
       version: CONFIG.SAVE_VERSION,
       settings: { ...DEFAULT_SETTINGS },
       profile: { name: '', xp: 0, level: 1 },
-      stats: { kills: 0, deaths: 0, shots: 0, hits: 0, headshots: 0, wins: 0, losses: 0, weaponKills: {} },
+      stats: { kills: 0, deaths: 0, shots: 0, hits: 0, headshots: 0, wins: 0, losses: 0, draws: 0, matches: 0, assists: 0, timePlayed: 0, bestStreak: 0, weaponKills: {} },
       classes: null,
+      selectedClass: 'd0',
       rangeLoadout: null,
       practice: { difficulty: 'normal', scoreLimit: 30, timeLimit: 600 },
     };
@@ -812,6 +976,12 @@ const Save = {
     d.profile = { ...def.profile, ...(d.profile || {}) };
     d.stats = { ...def.stats, ...(d.stats || {}) };
     d.practice = { ...def.practice, ...(d.practice || {}) };
+    if (!d.stats.weaponKills || typeof d.stats.weaponKills !== 'object') d.stats.weaponKills = {};
+    if (!Array.isArray(d.classes) || d.classes.length !== CUSTOM_CLASS_COUNT) {
+      const old = Array.isArray(d.classes) ? d.classes : [];
+      d.classes = Array.from({ length: CUSTOM_CLASS_COUNT }, (_, i) => old[i] || { id: 'c' + i, name: 'CUSTOM ' + (i + 1), primary: 'kestrel', primaryAtts: [], secondary: 'viper', secondaryAtts: [], camo: 'none' });
+    }
+    if (typeof d.selectedClass !== 'string') d.selectedClass = 'd0';
     d.version = CONFIG.SAVE_VERSION;
     this.data = d;
     return d;
@@ -822,11 +992,60 @@ const Save = {
   reset() {
     try { localStorage.removeItem(CONFIG.SAVE_KEY); } catch (e) { /* ignore */ }
     this.data = this.defaults();
-    this.save();
+    this.save(); this.load(); // load() fills in the derived sections (custom class slots)
   },
   get settings() { return this.data.settings; },
 };
 Save.load();
+
+/* =====================================================================
+   PROGRESS — XP, levels, unlocks; CLASSES — default + custom loadouts
+   ===================================================================== */
+const Progress = {
+  /** Total XP needed to reach level L. */
+  xpForLevel(L) { const P = PROGRESSION, n = clamp(L, 1, P.maxLevel) - 1; return n * P.base + P.step * (n * (n - 1)) / 2; },
+  levelFromXP(xp) { let L = 1; while (L < PROGRESSION.maxLevel && xp >= this.xpForLevel(L + 1)) L++; return L; },
+  get xp() { return Save.data.profile.xp; },
+  get level() { return this.levelFromXP(Save.data.profile.xp); },
+  /** { level, xp, into, need, frac, max } for bars. */
+  info(xp = this.xp) {
+    const level = this.levelFromXP(xp), max = level >= PROGRESSION.maxLevel;
+    const a = this.xpForLevel(level), b = this.xpForLevel(level + 1);
+    return { level, xp, into: xp - a, need: max ? 0 : b - a, frac: max ? 1 : (xp - a) / (b - a), max };
+  },
+  unlockLevel(kind, id) { const u = UNLOCKS.find((x) => x.kind === kind && x.id === id); return u ? u.level : 1; },
+  isUnlocked(kind, id, level = this.level) { return Save.settings.unlockAll || level >= this.unlockLevel(kind, id); },
+  unlocksAt(level) { return UNLOCKS.filter((u) => u.level === level); },
+  nextUnlock(level = this.level) { return UNLOCKS.find((u) => u.level > level) || null; },
+  label(u) { return u.name || (u.kind === 'weapon' ? WEAPONS[u.id].name : u.kind === 'attachment' ? ATTACHMENTS[u.id].name : u.kind === 'camo' ? CAMOS[u.id].name + ' CAMO' : u.id.toUpperCase()); },
+  /** Add XP (already multiplied); fires level-up feedback for every level crossed. Returns levels gained. */
+  addXP(amount) {
+    if (!(amount > 0)) return 0;
+    const before = this.level;
+    Save.data.profile.xp += Math.round(amount);
+    const after = this.level; Save.data.profile.level = after;
+    for (let L = before + 1; L <= after; L++) Game.onLevelUp(L, this.unlocksAt(L));
+    return after - before;
+  },
+};
+
+const Classes = {
+  all() { return [...DEFAULT_CLASSES, ...Save.data.classes]; },
+  get(id) { return this.all().find((c) => c.id === id) || DEFAULT_CLASSES[0]; },
+  isDefault(c) { return c.id[0] === 'd'; },
+  customUnlocked() { return Progress.isUnlocked('feature', 'cac'); },
+  /** The class the player will spawn with (custom slots fall back to ASSAULT while Create-a-Class is locked). */
+  selected() { const c = this.get(Save.data.selectedClass); return !this.isDefault(c) && !this.customUnlocked() ? DEFAULT_CLASSES[0] : c; },
+  /** A loadout object for PlayerWeapon. Custom classes drop anything not yet unlocked; default classes are exempt. */
+  loadout(c) {
+    const free = this.isDefault(c), ok = (k, id) => free || Progress.isUnlocked(k, id);
+    const primary = WEAPONS[c.primary] && ok('weapon', c.primary) ? c.primary : 'kestrel';
+    const secondary = WEAPONS[c.secondary] && ok('weapon', c.secondary) ? c.secondary : 'viper';
+    const atts = (w, list) => sanitizeAttachments(w, (list || []).filter((a) => ok('attachment', a)));
+    const camo = CAMOS[c.camo] && (c.camo === 'none' || Progress.isUnlocked('camo', c.camo)) ? c.camo : 'none';
+    return { primary, primaryAtts: atts(primary, c.primaryAtts), secondary, secondaryAtts: atts(secondary, c.secondaryAtts), camo, name: c.name };
+  },
+};
 
 /* =====================================================================
    AUDIO — everything synthesised with Web Audio.
@@ -1116,6 +1335,7 @@ const AudioSys = {
     for (let i = 0; i < 2; i++) add('explosion', () => SoundBank.explosion(1600 + i * 17));
     add('flashbang', () => SoundBank.flashbang(1700));
     add('ring', () => SoundBank.ring());
+    add('levelup', () => SoundBank.sequence(1.0, [[0, 660, 0, 0.35, 0.5, 'tone'], [0.11, 880, 0, 0.35, 0.5, 'tone'], [0.22, 1320, 0, 0.6, 0.55, 'tone'], [0.22, 5200, 3, 0.25, 0.15]], 61));
     for (let i = 0; i < 2; i++) add('whiz', () => SoundBank.sequence(0.3, [[0, 3400 - i * 500, 2.5, 0.05, 0.9], [0.015, 1800, 1.2, 0.12, 0.5], [0.0, 6200, 4, 0.02, 0.35]], 41 + i));
     let done = 0;
     // render a few in parallel to keep loading short
@@ -3899,6 +4119,8 @@ const Viewmodel = {
     };
     this.shells = mk(new THREE.CylinderGeometry(0.0046, 0.0046, 0.03, 8).rotateZ(Math.PI / 2), VMMats.brass, CONFIG.FX.shellPool, this.shellData);
     this.shellsRed = mk(new THREE.CylinderGeometry(0.0095, 0.0095, 0.068, 10).rotateZ(Math.PI / 2), VMMats.shellRed, 8, this.shellRedData);
+    // tiny hidden meshes so every camo material is compiled at load, not mid-game
+    for (const id of Object.keys(CAMOS)) if (id !== 'none') { const c = new THREE.Mesh(new THREE.BoxGeometry(0.001, 0.001, 0.001), this.camoMat(id)); c.visible = false; c.position.set(0, 0, -0.3); this.root.add(c); }
   },
   /** Hand orientation from a basis: local +Y = back of hand, local -Z = fingers. */
   poseFrom(p) {
@@ -3924,7 +4146,27 @@ const Viewmodel = {
     return (this.attachCache[key] = a);
   },
   /** Show the model for a resolved weapon def and wire up attachments, hands and the ADS pose. */
-  setWeapon(def) {
+  /** Swap the receiver and furniture of a model to a camo material (sights, rails details, rubber and brass keep theirs); 'none' restores the originals. */
+  applyCamo(m, camo) {
+    const C = CAMOS[camo] || CAMOS.none, targets = this.camoTargets();
+    m.root.traverse((o) => {
+      if (!o.isMesh || o === this.flash) return;
+      if (!o.userData.baseMat) o.userData.baseMat = o.material;
+      const base = o.userData.baseMat;
+      o.material = camo !== 'none' && targets.has(base) ? this.camoMat(camo) : base;
+    });
+  },
+  camoTargets() { return this._camoT || (this._camoT = new Set([VMMats.polymer, VMMats.tan, VMMats.wood, VMMats.polymerRed, VMMats.metal])); },
+  camoMat(id) {
+    this._camoMats ||= {};
+    if (this._camoMats[id]) return this._camoMats[id];
+    const C = CAMOS[id], S = Textures.sets;
+    const m = C.gold
+      ? new THREE.MeshStandardMaterial({ color: 0xd9aa3c, metalness: 1, roughness: 0.27, normalMap: S.steel.normalMap, normalScale: new THREE.Vector2(0.2, 0.2) })
+      : new THREE.MeshStandardMaterial({ map: S.camo.map, color: C.tint, roughness: 0.62, normalMap: S.polymer.normalMap, normalScale: new THREE.Vector2(0.5, 0.5) });
+    return (this._camoMats[id] = m);
+  },
+  setWeapon(def, camo = 'none') {
     if (this.cur) this.cur.root.visible = false;
     const m = this.cur = this.models[def.model]; this.def = def;
     m.root.visible = true;
@@ -3948,6 +4190,7 @@ const Viewmodel = {
     this.hipPos = m.hip || CONFIG.VIEWMODEL.hipPos; this.hipRot = m.hipRot || CONFIG.VIEWMODEL.hipRot;
     this.sprintPos = m.sprint || CONFIG.VIEWMODEL.sprintPos; this.sprintRot = m.sprintRot || CONFIG.VIEWMODEL.sprintRot;
     for (const p of Object.values(m.parts)) { p.userData.rest ||= p.position.clone(); p.position.copy(p.userData.rest); p.rotation.set(0, 0, 0); }
+    this.applyCamo(m, camo);
     this.reset();
   },
   reset() {
@@ -4557,7 +4800,7 @@ const PlayerHealth = {
 };
 
 class WeaponSlot {
-  constructor(id, atts) { this.def = buildWeaponDef(id, atts); this.mag = this.def.mag; this.reserve = this.def.reserve; }
+  constructor(id, atts, camo = 'none') { this.def = buildWeaponDef(id, atts); this.mag = this.def.mag; this.reserve = this.def.reserve; this.camo = camo; }
 }
 
 const PlayerWeapon = {
@@ -4572,7 +4815,7 @@ const PlayerWeapon = {
   get reserve() { return this.w ? this.w.reserve : 0; }, set reserve(v) { this.w.reserve = v; },
   /** Build both slots from a loadout {primary, primaryAtts, secondary, secondaryAtts}. */
   setLoadout(L) {
-    this.slots = [new WeaponSlot(L.primary, L.primaryAtts), new WeaponSlot(L.secondary, L.secondaryAtts)];
+    this.slots = [new WeaponSlot(L.primary, L.primaryAtts, L.camo || 'none'), new WeaponSlot(L.secondary, L.secondaryAtts)];
     this.grenades = { frag: GRENADES.frag.count, flash: GRENADES.flash.count };
     this.activate(0, true);
   },
@@ -4580,7 +4823,7 @@ const PlayerWeapon = {
     this.active = i; this.w = this.slots[i]; this.def = this.w.def;
     this.reload = null; this.cycle = null; this.cooldown = 0; this.shotIndex = 0; this.bloom = 0; this.adsT = 0; this.adsToggle = false;
     this.pendV = this.pendH = this.recoverable = this.recoverableH = 0; this.punch.reset(); this.meleeT = -1; this.throwS = null;
-    Viewmodel.setWeapon(this.def);
+    Viewmodel.setWeapon(this.def, this.w.camo);
     this.state = 'raising'; this.stateT = 0; this.swapT = instant ? 1 : 1;
     AudioSys.play('gear', { vol: 0.3, send: 0 });
     HUD.setWeapon(this.def); HUD.setAmmo(this.mag, this.reserve, this.def.mag, this.infinite());
@@ -5567,6 +5810,9 @@ class TDMMatch {
     this.scores = { A: 0, B: 0 }; this.timeLeft = this.timeLimit; this.state = 'pre'; this.stateT = 0; this.endReason = '';
     this.stats = { shots: 0, hits: 0, heads: 0 };
     this.playerFocus = CONFIG.BOTS.difficulty[this.difficulty].playerFocus;
+    // XP earned this match (raw, before the difficulty multiplier) and where the bar started
+    this.xp = { kills: 0, headshots: 0, assists: 0, bonus: 0, time: 0 }; this.xpMult = PROGRESSION.difficultyMult[this.difficulty] || 1;
+    this.xpStart = Progress.xp; this.levelStart = Progress.level; this.levelUps = [];
     const names = BOT_NAMES.slice().sort(() => Math.random() - 0.5);
     this.bots = [];
     for (let i = 0; i < C.teamSize - 1; i++) this.bots.push(new Bot('A', names.pop(), this.difficulty));
@@ -5629,11 +5875,25 @@ class TDMMatch {
     if (credit) {
       killer.stats.kills++; killer.stats.score += 100 + (head ? 25 : 0);
       this.scores[killer.team]++;
-      if (killer.isPlayer) { Game.streak++; Save.data.stats.kills++; HUD.scorePop(head ? '+125\nHEADSHOT' : '+100'); if (head) Save.data.stats.headshots++; const wk = Save.data.stats.weaponKills; wk[weapon] = (wk[weapon] || 0) + 1; }
+      if (killer.isPlayer) {
+        const st = Save.data.stats, X = PROGRESSION.xp;
+        Game.streak++; st.kills++; st.bestStreak = Math.max(st.bestStreak || 0, Game.streak);
+        if (head) st.headshots++; st.weaponKills[weapon] = (st.weaponKills[weapon] || 0) + 1;
+        this.xp.kills += X.kill; if (head) this.xp.headshots += X.headshot;
+        const gain = Math.round((X.kill + (head ? X.headshot : 0)) * this.xpMult);
+        HUD.scorePop(head ? `+${gain}\nHEADSHOT` : `+${gain}`);
+        Progress.addXP(gain);
+      }
     } else if (killer === victim || !killer) { /* suicide / fall */ }
     // assists: anyone else who did 25+ damage in the last 8 s
     const log = victim.dmgBy;
-    if (log) { for (const [who, e] of log) if (who !== killer && who.team !== victim.team && e.dmg >= 25 && Game.time - e.t < 8) { who.stats.assists++; who.stats.score += 25; if (who.isPlayer) HUD.killfeedAssist(); } log.clear(); }
+    if (log) {
+      for (const [who, e] of log) if (who !== killer && who.team !== victim.team && e.dmg >= 25 && Game.time - e.t < 8) {
+        who.stats.assists++; who.stats.score += 25;
+        if (who.isPlayer) { const g = Math.round(PROGRESSION.xp.assist * this.xpMult); this.xp.assists += PROGRESSION.xp.assist; Save.data.stats.assists++; HUD.scorePop(`+${g}  ASSIST`); Progress.addXP(g); }
+      }
+      log.clear();
+    }
     if (victim.isPlayer) { Save.data.stats.deaths++; }
     const rel = (who) => (!who ? 'e' : who.isPlayer ? 'me' : who.team === PlayerTarget.team ? 'f' : 'e');
     HUD.killfeed(credit || killer === victim ? (killer.isPlayer ? 'YOU' : killer.name) : (weapon === 'FALL' ? '' : 'WORLD'), weapon || '', victim.isPlayer ? 'YOU' : victim.name,
@@ -5663,8 +5923,15 @@ class TDMMatch {
     this.state = 'ended'; this.stateT = 0; this.endReason = reason;
     const A = this.scores.A, B = this.scores.B;
     this.result = A > B ? 'VICTORY' : A < B ? 'DEFEAT' : 'DRAW';
-    const st = Save.data.stats; if (this.result === 'VICTORY') st.wins++; else if (this.result === 'DEFEAT') st.losses++;
-    st.shots += this.stats.shots; st.hits += this.stats.hits;
+    const st = Save.data.stats; if (this.result === 'VICTORY') st.wins++; else if (this.result === 'DEFEAT') st.losses++; else st.draws++;
+    st.shots += this.stats.shots; st.hits += this.stats.hits; st.matches++;
+    const played = this.timeLimit - this.timeLeft; st.timePlayed += played;
+    // completion bonus + time played, then the difficulty multiplier
+    const X = PROGRESSION.xp;
+    this.xp.bonus = this.result === 'VICTORY' ? X.win : this.result === 'DRAW' ? X.draw : X.loss;
+    this.xp.time = Math.round(X.perMinute * played / 60);
+    Progress.addXP((this.xp.bonus + this.xp.time) * this.xpMult);
+    this.xpTotal = Math.round((this.xp.kills + this.xp.headshots + this.xp.assists + this.xp.bonus + this.xp.time) * this.xpMult);
     Save.save();
     Game.onMatchEnd(this);
   }
@@ -5754,8 +6021,15 @@ const HUD = {
     this.friends = null;
   },
   /** 'range' shows the range help + stats line; 'tdm' hides them. */
+  /** Level + progress bar at the bottom of the screen (matches only). */
+  setXP() {
+    const I = Progress.info(), w = (I.frac * 100).toFixed(1) + '%', t = 'LV ' + I.level;
+    if (this.cache.xpw !== w) { this.cache.xpw = w; $('xpHudBar').style.width = w; }
+    if (this.cache.xpl !== t) { this.cache.xpl = t; $('xpHudLvl').textContent = t; }
+  },
   setMode(mode) {
     const range = mode === 'range';
+    $('xpHud').classList.toggle('on', !range);
     this.el.rangeInfo.style.display = range ? '' : 'none'; this.el.rangeStats.style.display = range ? '' : 'none';
     this.cache.sbCols = null;
   },
@@ -6059,7 +6333,10 @@ const SETTINGS_UI = {
     { key: 'showFps', label: 'Show FPS', type: 'seg', options: [[false, 'OFF'], [true, 'ON']] },
   ],
   AUDIO: [{ key: 'volume', label: 'Master Volume', type: 'range', min: 0, max: 1, step: 0.01 }],
-  GAMEPLAY: [{ key: 'dmgNumbers', label: 'Damage Numbers (Range)', type: 'seg', options: [[true, 'ON'], [false, 'OFF']] }],
+  GAMEPLAY: [
+    { key: 'dmgNumbers', label: 'Damage Numbers (Range)', type: 'seg', options: [[true, 'ON'], [false, 'OFF']] },
+    { key: 'unlockAll', label: 'Unlock All (testing)', type: 'seg', options: [[false, 'OFF'], [true, 'ON']] },
+  ],
   KEYS: null,
 };
 
@@ -6079,10 +6356,20 @@ const UI = {
       if (!$('settings').classList.contains('hidden')) this.action('settings-close');
       else if (!$('loadout').classList.contains('hidden')) this.action('loadout-close');
       else if (!$('practice').classList.contains('hidden')) this.action('practice-back');
+      else if (!$('barracks').classList.contains('hidden')) this.action('barracks-close');
       else if (Game.state === 'paused') this.action('resume');
       else if (Game.state === 'playing' && !Input.locked) Game.pause();
     });
     $('menuFoot').innerHTML = `v${CONFIG.VERSION} &middot; three.js r${THREE.REVISION}<br>Click a mode to start. Esc pauses.`;
+    const nm = $('loClassName');
+    nm.addEventListener('input', () => LoadoutUI.rename(nm.value));
+    nm.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape') nm.blur(); });
+    this.refreshMenu();
+  },
+  /** Main-menu bits that depend on progress. */
+  refreshMenu() {
+    const I = Progress.info();
+    $('menuLevel').textContent = `Level ${I.level}${I.max ? ' (max)' : ''} · stats & unlocks`;
   },
   toast(text, ms = 3200) {
     const t = $('toast'); t.textContent = text; t.classList.add('on');
@@ -6094,10 +6381,13 @@ const UI = {
       case 'range': Game.startRange(); break;
       case 'resume': Game.resume(); break;
       case 'quit': Game.quitToMenu(); break;
-      case 'loadout': LoadoutUI.open('pause'); break;
+      case 'loadout': LoadoutUI.open('pause', Game.match ? 'classes' : 'range'); break;
+      case 'cac': LoadoutUI.open('menu', 'classes'); break;
+      case 'barracks': BarracksUI.open(); break;
+      case 'barracks-close': BarracksUI.close(); break;
       case 'practice': this.openPractice(); break;
       case 'practice-start': $('practice').classList.add('hidden'); Game.startPractice({ ...Save.data.practice }); break;
-      case 'practice-loadout': $('practice').classList.add('hidden'); LoadoutUI.open('practice'); break;
+      case 'practice-loadout': $('practice').classList.add('hidden'); LoadoutUI.open('practice', 'classes'); break;
       case 'practice-back': $('practice').classList.add('hidden'); $('menu').classList.remove('hidden'); break;
       case 'again': $('matchEnd').classList.add('hidden'); Game.startPractice(Game.lastPractice || { ...Save.data.practice }); break;
       case 'loadout-apply': LoadoutUI.close(true); break;
@@ -6128,8 +6418,8 @@ const UI = {
       }
       r.querySelector('.ctl').appendChild(seg); body.appendChild(r);
     }
-    const L = Game.loadout(), nm = (id, a) => WEAPONS[id].name + (a.length ? ' (' + a.map((x) => ATTACHMENTS[x].name).join(', ') + ')' : '');
-    $('prLoadout').textContent = nm(L.primary, L.primaryAtts) + '  +  ' + nm(L.secondary, L.secondaryAtts);
+    const L = Game.loadout('tdm'), nm = (id, a) => WEAPONS[id].name + (a.length ? ' (' + a.map((x) => ATTACHMENTS[x].name).join(', ') + ')' : '');
+    $('prLoadout').textContent = L.name + '  ·  ' + nm(L.primary, L.primaryAtts) + '  +  ' + nm(L.secondary, L.secondaryAtts);
   },
   openSettings() { $('pause').classList.add('hidden'); $('settings').classList.remove('hidden'); this.renderSettings(); },
   renderSettings() {
@@ -6169,6 +6459,7 @@ const UI = {
       }
       body.appendChild(r);
     }
+    if (this.tab === 'GAMEPLAY') body.insertAdjacentHTML('beforeend', '<div class="note">Unlock All makes every weapon, attachment, camo and Create-a-Class available without levelling, for testing. XP and levels still count normally.</div>');
     if (this.tab === 'VIDEO') body.insertAdjacentHTML('beforeend', `<div class="note">LOW: 75% resolution, 1K shadows, FXAA · MEDIUM: native, 2K shadows, SMAA · HIGH: up to 1.5x DPR, 4K shadows, SSAO, SMAA.<br>FOV is horizontal at 16:9.</div>`);
   },
 };
@@ -6182,47 +6473,135 @@ function applySetting(key) {
 }
 function applyAllSettings() { for (const k of Object.keys(Save.settings)) applySetting(k); }
 
-/** Firing-range gunsmith: pick primary / secondary and up to two attachments. Create-a-Class (Phase 4) reuses this. */
+const fmtNum = (n) => Math.round(n).toLocaleString('en-US');
+const fmtTime = (sec) => { const m = Math.floor(sec / 60); return m >= 60 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm' : m + 'm'; };
+/** Barracks: level, XP, unlock roadmap, career stats, weapon kills. */
+const BarracksUI = {
+  tab: 'PROGRESS',
+  open() { $('menu').classList.add('hidden'); $('barracks').classList.remove('hidden'); this.render(); },
+  close() { $('barracks').classList.add('hidden'); $('menu').classList.remove('hidden'); UI.refreshMenu(); },
+  render() {
+    const I = Progress.info(), st = Save.data.stats;
+    $('bkLevel').textContent = I.level;
+    $('bkXp').textContent = I.max ? 'MAX LEVEL' : `${fmtNum(I.into)} / ${fmtNum(I.need)} XP`;
+    $('bkTotal').textContent = fmtNum(I.xp) + ' XP TOTAL';
+    $('bkBar').style.width = (I.frac * 100).toFixed(1) + '%';
+    const nx = Progress.nextUnlock(I.level);
+    $('bkNext').textContent = (nx ? `NEXT UNLOCK: ${Progress.label(nx)} · LEVEL ${nx.level}` : 'EVERYTHING UNLOCKED') + (Save.settings.unlockAll ? '   (UNLOCK ALL IS ON)' : '');
+    const tabs = $('bkTabs'); tabs.innerHTML = '';
+    for (const t of ['PROGRESS', 'STATS', 'WEAPONS']) { const b = document.createElement('button'); b.className = 'tab' + (t === this.tab ? ' active' : ''); b.textContent = t; b.onclick = () => { this.tab = t; this.render(); }; tabs.appendChild(b); }
+    const body = $('bkBody'); body.innerHTML = '';
+    if (this.tab === 'PROGRESS') {
+      const road = document.createElement('div'); road.className = 'bk-road';
+      const next = nx ? nx.level : -1;
+      for (const u of UNLOCKS) {
+        const d = document.createElement('div'); d.className = u.level <= I.level ? 'got' : u.level === next ? 'next' : 'locked';
+        const em = document.createElement('em'); em.textContent = 'LV ' + u.level; d.append(em, document.createTextNode(Progress.label(u)));
+        road.appendChild(d);
+      }
+      body.appendChild(road);
+      body.insertAdjacentHTML('beforeend', `<div class="note">XP comes from Practice matches: ${PROGRESSION.xp.kill} per kill (+${PROGRESSION.xp.headshot} headshot), ${PROGRESSION.xp.assist} per assist, ${PROGRESSION.xp.win} / ${PROGRESSION.xp.draw} / ${PROGRESSION.xp.loss} for a win / draw / loss and ${PROGRESSION.xp.perMinute} per minute played. Recruit bots ×${PROGRESSION.difficultyMult.easy}, Regular ×${PROGRESSION.difficultyMult.normal}, Veteran ×${PROGRESSION.difficultyMult.hard}.</div>`);
+    } else if (this.tab === 'STATS') {
+      const kd = st.deaths ? (st.kills / st.deaths).toFixed(2) : st.kills.toFixed(2), wl = st.losses ? (st.wins / st.losses).toFixed(2) : st.wins.toFixed(2);
+      const acc = st.shots ? Math.round(st.hits / st.shots * 100) + '%' : '-';
+      const tiles = [['MATCHES', st.matches], ['WINS', st.wins], ['LOSSES', st.losses], ['W/L', wl], ['KILLS', st.kills], ['DEATHS', st.deaths], ['K/D', kd], ['ASSISTS', st.assists],
+        ['HEADSHOTS', st.headshots], ['ACCURACY', acc], ['BEST STREAK', st.bestStreak], ['TIME PLAYED', fmtTime(st.timePlayed)]];
+      const g = document.createElement('div'); g.className = 'bk-grid';
+      for (const [k, v] of tiles) { const d = document.createElement('div'); const b = document.createElement('b'); b.textContent = v; const sp = document.createElement('span'); sp.textContent = k; d.append(b, sp); g.appendChild(d); }
+      body.appendChild(g);
+      body.insertAdjacentHTML('beforeend', '<div class="note">Career stats count Practice (and later online) matches. The Firing Range is not counted.</div>');
+    } else {
+      const wk = st.weaponKills || {}, names = Object.values(WEAPONS).map((w) => w.name).concat(['FRAG', 'MELEE']);
+      const rows = names.map((n) => [n, wk[n] || 0]).sort((a, b) => b[1] - a[1]), top = Math.max(1, rows[0][1]);
+      const box = document.createElement('div'); box.className = 'bk-weap';
+      for (const [n, k] of rows) {
+        const d = document.createElement('div'); const a = document.createElement('span'); a.textContent = n;
+        const bar = document.createElement('div'); bar.className = 'xpb'; const i = document.createElement('i'); i.style.width = (k / top * 100).toFixed(1) + '%'; bar.appendChild(i);
+        const c = document.createElement('span'); c.textContent = k; d.append(a, bar, c); box.appendChild(d);
+      }
+      body.appendChild(box);
+      if (rows[0][1] > 0) body.insertAdjacentHTML('beforeend', `<div class="note">Favourite: ${rows[0][0]}</div>`);
+    }
+  },
+};
+
+/** Gunsmith screen, two modes:
+    'range'   — free sandbox loadout for the firing range (everything unlocked);
+    'classes' — Create-a-Class: 3 default classes (read-only) + 5 custom (editable once Create-a-Class unlocks),
+                weapons / attachments / camos gated by level. Edits to custom classes save as you make them. */
 const LoadoutUI = {
-  draft: null, slot: 'primary', note: '', from: 'pause',
-  open(from = 'pause') {
-    this.draft = JSON.parse(JSON.stringify(Game.loadout()));
-    this.slot = 'primary'; this.note = ''; this.from = from;
-    $('pause').classList.add('hidden'); $('loadout').classList.remove('hidden');
+  mode: 'range', draft: null, classId: 'd0', slot: 'primary', note: '', from: 'pause',
+  open(from = 'pause', mode = 'range') {
+    this.mode = mode; this.from = from; this.slot = 'primary'; this.note = '';
+    if (mode === 'range') this.draft = JSON.parse(JSON.stringify(Game.rangeLoadout()));
+    else this.classId = Classes.selected().id;
+    for (const id of ['pause', 'menu', 'practice']) $(id).classList.add('hidden');
+    $('loadout').classList.remove('hidden');
+    $('loadoutPanel').classList.toggle('classes', mode === 'classes');
+    $('loTitle').textContent = mode === 'classes' ? 'CREATE-A-CLASS' : 'LOADOUT';
+    $('loApply').textContent = mode === 'classes' ? 'Use Class' : 'Equip';
     this.render();
   },
+  /** The object being shown: the range draft, or a class (custom classes are edited in place). */
+  target() { return this.mode === 'range' ? this.draft : Classes.get(this.classId); },
+  /** Can the shown loadout be changed? */
+  editable() { if (this.mode === 'range') return true; const c = this.target(); return !Classes.isDefault(c) && Classes.customUnlocked(); },
+  /** Is an item usable here (range: everything; classes: by level)? */
+  allowed(kind, id) { return this.mode === 'range' || Progress.isUnlocked(kind, id); },
+  changed() { if (this.mode === 'classes') Save.save(); this.render(); },
   close(apply) {
-    $('loadout').classList.add('hidden');
-    if (apply) {
+    if (apply && this.mode === 'range') {
       Save.data.rangeLoadout = this.draft; Save.save();
-      if (Game.state === 'paused') {
-        // in a match the new loadout arrives on the next spawn (like any shooter); in the range it equips now
-        if (Game.match) UI.toast('Loadout saved. It takes effect on your next spawn.', 2600);
-        else { PlayerWeapon.setLoadout(this.draft); UI.toast('Loadout equipped: ' + WEAPONS[this.draft.primary].name + ' + ' + WEAPONS[this.draft.secondary].name, 2400); }
-      }
+      if (Game.state === 'paused' && !Game.match) { PlayerWeapon.setLoadout(this.draft); UI.toast('Loadout equipped: ' + WEAPONS[this.draft.primary].name + ' + ' + WEAPONS[this.draft.secondary].name, 2400); }
+    } else if (apply) {
+      const c = this.target();
+      if (!Classes.isDefault(c) && !Classes.customUnlocked()) { this.note = 'Custom classes unlock at level ' + Progress.unlockLevel('feature', 'cac') + '.'; this.render(); return; }
+      Save.data.selectedClass = c.id; Save.save();
+      if (Game.match && Game.match.state === 'pre' && Game.state === 'paused') { PlayerWeapon.setLoadout(Game.loadout()); UI.toast(c.name + ' equipped.', 2200); }
+      else if (Game.match) UI.toast(c.name + ' selected. It takes effect on your next spawn.', 2600);
+      else UI.toast(c.name + ' selected.', 1800);
     }
+    $('loadout').classList.add('hidden');
     if (this.from === 'practice') UI.openPractice();
+    else if (this.from === 'menu') $('menu').classList.remove('hidden');
     else if (Game.state === 'paused') $('pause').classList.remove('hidden');
   },
   render() {
-    const L = this.draft, isP = this.slot === 'primary';
+    const classes = this.mode === 'classes';
+    if (classes) this.renderClassList();
+    const L = this.target(), isP = this.slot === 'primary', edit = this.editable();
     const id = isP ? L.primary : L.secondary, atts = isP ? L.primaryAtts : L.secondaryAtts;
+    // class header: name + equipment
+    const head = $('loClassHead');
+    if (classes) {
+      const nm = $('loClassName'), def = Classes.isDefault(L);
+      if (document.activeElement !== nm) nm.value = L.name;
+      nm.disabled = !edit;
+      $('loClassTag').textContent = def ? 'DEFAULT CLASS' : Classes.customUnlocked() ? 'CUSTOM CLASS' : 'LOCKED · LEVEL ' + Progress.unlockLevel('feature', 'cac');
+      $('loEquip').textContent = EQUIPMENT_TEXT;
+    }
+    head.style.display = classes ? '' : 'none';
+    // primary / secondary tabs
     const tabs = $('loTabs'); tabs.innerHTML = '';
     for (const [k, label] of [['primary', 'PRIMARY'], ['secondary', 'SECONDARY']]) {
       const b = document.createElement('button'); b.className = 'tab' + (k === this.slot ? ' active' : ''); b.textContent = label;
       b.onclick = () => { this.slot = k; this.note = ''; this.render(); }; tabs.appendChild(b);
     }
+    // weapon list (locked ones show their level)
     const list = $('loList'); list.innerHTML = '';
     for (const wid of isP ? PRIMARIES : SECONDARIES) {
-      const W = WEAPONS[wid], b = document.createElement('button');
-      b.className = 'lo-w' + (wid === id ? ' on' : '');
-      b.innerHTML = `${W.name}<small>${W.typeLabel}</small>`;
+      const W = WEAPONS[wid], b = document.createElement('button'), ok = this.allowed('weapon', wid);
+      b.className = 'lo-w' + (wid === id ? ' on' : '') + (ok ? '' : ' locked');
+      b.innerHTML = `${W.name}<small>${ok ? W.typeLabel : 'UNLOCKS AT LEVEL ' + Progress.unlockLevel('weapon', wid)}</small>`;
       b.onclick = () => {
+        if (!edit) return this.readOnlyNote();
+        if (!ok) { this.note = W.name + ' unlocks at level ' + Progress.unlockLevel('weapon', wid) + '.'; return this.render(); }
         if (isP) { L.primary = wid; L.primaryAtts = sanitizeAttachments(wid, L.primaryAtts); } else { L.secondary = wid; L.secondaryAtts = sanitizeAttachments(wid, L.secondaryAtts); }
-        this.note = ''; this.render();
+        this.note = ''; this.changed();
       };
       list.appendChild(b);
     }
+    // stats
     const W = WEAPONS[id], base = weaponStats(buildWeaponDef(id, [])), cur = weaponStats(buildWeaponDef(id, atts));
     $('loName').textContent = W.name; $('loType').textContent = W.typeLabel + ' · ' + W.fireMode.toUpperCase() + ' · ' + W.rpm + ' RPM · ' + buildWeaponDef(id, atts).mag + ' ROUNDS';
     const st = $('loStats'); st.innerHTML = '';
@@ -6230,13 +6609,16 @@ const LoadoutUI = {
       const v = cur[k], b0 = base[k], cls = v > b0 + 0.005 ? 'up' : v < b0 - 0.005 ? 'down' : '';
       st.insertAdjacentHTML('beforeend', `<div class="stat"><span>${k}</span><div class="bar"><i class="${cls}" style="width:${(v * 100).toFixed(1)}%"></i><b style="left:${(b0 * 100).toFixed(1)}%"></b></div></div>`);
     }
+    // attachments
     $('loCount').textContent = `(${atts.length} / ${MAX_ATTACHMENTS})`;
     const box = $('loAtts'); box.innerHTML = '';
     for (const aid of W.attach) {
-      const A = ATTACHMENTS[aid], on = atts.includes(aid), b = document.createElement('button');
-      b.className = 'att' + (on ? ' on' : '');
-      b.innerHTML = `<span>${A.slot.toUpperCase()}</span><b>${A.name}</b><p>${A.desc}</p>`;
+      const A = ATTACHMENTS[aid], on = atts.includes(aid), ok = this.allowed('attachment', aid), b = document.createElement('button');
+      b.className = 'att' + (on ? ' on' : '') + (ok ? '' : ' locked');
+      b.innerHTML = `<span>${ok ? A.slot.toUpperCase() : 'LEVEL ' + Progress.unlockLevel('attachment', aid)}</span><b>${A.name}</b><p>${A.desc}</p>`;
       b.onclick = () => {
+        if (!edit) return this.readOnlyNote();
+        if (!ok) { this.note = A.name + ' unlocks at level ' + Progress.unlockLevel('attachment', aid) + '.'; return this.render(); }
         const list2 = isP ? L.primaryAtts : L.secondaryAtts;
         const i = list2.indexOf(aid);
         if (i >= 0) list2.splice(i, 1);
@@ -6246,11 +6628,54 @@ const LoadoutUI = {
           else if (list2.length >= MAX_ATTACHMENTS) { this.note = 'Two attachments maximum. Remove one first.'; this.render(); return; }
           else list2.push(aid);
         }
-        this.note = ''; this.render();
+        this.note = ''; this.changed();
       };
       box.appendChild(b);
     }
-    $('loNote').textContent = this.note || 'Everything is unlocked in the Firing Range. Unlock levels and Create-a-Class arrive in Phase 4.';
+    // camo (primary only)
+    const camoBox = $('loCamos'); camoBox.innerHTML = '';
+    $('loCamoH').style.display = isP ? '' : 'none'; camoBox.style.display = isP ? '' : 'none';
+    if (isP) for (const [cid, C] of Object.entries(CAMOS)) {
+      const ok = cid === 'none' || this.allowed('camo', cid), b = document.createElement('button');
+      b.className = 'camo' + ((L.camo || 'none') === cid ? ' on' : '') + (ok ? '' : ' locked');
+      const sw = C.gold ? 'linear-gradient(135deg,#f6d77a,#a8781f)' : C.tint ? '#' + C.tint.toString(16).padStart(6, '0') : 'transparent';
+      b.innerHTML = `<i style="background:${sw}"></i>${C.name}${ok ? '' : `<small>LVL ${Progress.unlockLevel('camo', cid)}</small>`}`;
+      b.onclick = () => {
+        if (!edit) return this.readOnlyNote();
+        if (!ok) { this.note = C.name + ' camo unlocks at level ' + Progress.unlockLevel('camo', cid) + '.'; return this.render(); }
+        L.camo = cid; this.note = ''; this.changed();
+      };
+      camoBox.appendChild(b);
+    }
+    const dflt = classes ? (Classes.isDefault(L) ? 'Default classes are fixed and always available. Pick a CUSTOM slot to build your own.' : Classes.customUnlocked() ? 'Changes save automatically. Use Class to spawn with it.' : 'Custom classes unlock at level ' + Progress.unlockLevel('feature', 'cac') + '.')
+      : 'Firing Range sandbox: everything is unlocked here. Matches use your Create-a-Class loadouts.';
+    $('loNote').textContent = this.note || dflt;
+  },
+  readOnlyNote() {
+    const c = this.target();
+    this.note = Classes.isDefault(c) ? 'Default classes can\'t be edited. Pick one of the CUSTOM slots.' : 'Custom classes unlock at level ' + Progress.unlockLevel('feature', 'cac') + '.';
+    this.render();
+  },
+  renderClassList() {
+    const box = $('loClasses'); box.innerHTML = '';
+    const sel = Classes.selected().id, unlocked = Classes.customUnlocked();
+    const h1 = document.createElement('div'); h1.className = 'lo-h'; h1.textContent = 'DEFAULT CLASSES'; box.appendChild(h1);
+    for (const c of Classes.all()) {
+      if (c.id === 'c0') { const h2 = document.createElement('div'); h2.className = 'lo-h'; h2.textContent = 'CUSTOM CLASSES'; box.appendChild(h2); }
+      const locked = !Classes.isDefault(c) && !unlocked, b = document.createElement('button');
+      b.className = 'lo-c' + (c.id === this.classId ? ' on' : '') + (locked ? ' locked' : '');
+      const title = document.createElement('span'); title.textContent = c.name;
+      const sub = document.createElement('small'); sub.textContent = locked ? 'LEVEL ' + Progress.unlockLevel('feature', 'cac') : WEAPONS[c.primary].name;
+      b.append(title, sub);
+      if (c.id === sel) { const t = document.createElement('em'); t.textContent = 'ACTIVE'; b.appendChild(t); b.classList.add('act'); }
+      b.onclick = () => { this.classId = c.id; this.note = ''; this.render(); };
+      box.appendChild(b);
+    }
+  },
+  rename(v) {
+    const c = this.target(); if (!this.editable()) return;
+    c.name = (v || '').toUpperCase().replace(/[^A-Z0-9 \-]/g, '').slice(0, 16).trim() || 'CUSTOM ' + (+c.id.slice(1) + 1);
+    Save.save(); this.renderClassList();
   },
 };
 
@@ -6327,16 +6752,28 @@ const Game = {
     }
   },
   /** Saved range loadout, validated (falls back to the default if data is stale). */
-  loadout() {
+  /** What the player spawns with: the firing range uses its own free gunsmith loadout, matches use the selected class. */
+  loadout(mode = this.mode) {
+    if (mode !== 'range') return Classes.loadout(Classes.selected());
+    return this.rangeLoadout();
+  },
+  rangeLoadout() {
     const L = Save.data.rangeLoadout;
-    if (!L || !PRIMARIES.includes(L.primary) || !SECONDARIES.includes(L.secondary)) return { ...DEFAULT_LOADOUT, primaryAtts: [], secondaryAtts: [] };
-    return { primary: L.primary, primaryAtts: sanitizeAttachments(L.primary, L.primaryAtts), secondary: L.secondary, secondaryAtts: sanitizeAttachments(L.secondary, L.secondaryAtts) };
+    if (!L || !PRIMARIES.includes(L.primary) || !SECONDARIES.includes(L.secondary)) return { ...DEFAULT_LOADOUT, primaryAtts: [], secondaryAtts: [], camo: 'none' };
+    return { primary: L.primary, primaryAtts: sanitizeAttachments(L.primary, L.primaryAtts), secondary: L.secondary, secondaryAtts: sanitizeAttachments(L.secondary, L.secondaryAtts), camo: CAMOS[L.camo] ? L.camo : 'none' };
+  },
+  /** Level-up feedback (mid-match banner + unlock toast; collected for the results screen). */
+  onLevelUp(level, unlocks) {
+    if (this.match) this.match.levelUps.push(level);
+    AudioSys.play('levelup', { bus: 'ui', vol: 0.7, send: 0 });
+    if (this.state === 'playing') HUD.banner('LEVEL UP  ·  ' + level, 2.6);
+    if (unlocks.length) UI.toast('UNLOCKED: ' + unlocks.map((u) => Progress.label(u)).join(', '), 4000);
   },
   toMenu() {
     this.state = 'menu';
     this.endMatch();
-    for (const id of ['pause', 'loadout', 'practice', 'matchEnd']) $(id).classList.add('hidden');
-    $('menu').classList.remove('hidden'); HUD.hide();
+    for (const id of ['pause', 'loadout', 'practice', 'matchEnd', 'barracks']) $(id).classList.add('hidden');
+    $('menu').classList.remove('hidden'); HUD.hide(); UI.refreshMenu();
     Viewmodel.root.visible = false;
     Range.setActive(true); Range.reset(); Grenades.clear();
     if (Post.grade) { Post.grade.uniforms.uDamage.value = 0; Post.grade.uniforms.uFlash.value = 0; }
@@ -6347,7 +6784,7 @@ const Game = {
     AudioSys.unlock();
     this.mode = mode;
     for (const id of ['menu', 'pause', 'practice', 'matchEnd', 'loadout']) $(id).classList.add('hidden');
-    PlayerHealth.reset(); HUD.reset(); HUD.setMode(mode);
+    PlayerHealth.reset(); HUD.reset(); HUD.setMode(mode); HUD.setXP();
     PlayerWeapon.setLoadout(this.loadout()); PlayerWeapon.locked = false;
     Viewmodel.root.visible = true;
     FX.clear(); Grenades.clear(); AudioSys.resetMuffle();
@@ -6404,12 +6841,29 @@ const Game = {
     const head = document.createElement('tr'); for (const [h] of HUD.TDM_COLS) { const th = document.createElement('th'); th.textContent = h; head.appendChild(th); }
     const thead = document.createElement('thead'); thead.appendChild(head); const tbody = document.createElement('tbody'); t.append(thead, tbody);
     HUD.fillTable(tbody, m.rows(), HUD.TDM_COLS);
-    setTimeout(() => { if (this.state === 'ended') $('matchEnd').classList.remove('hidden'); }, 1600);
+    // XP summary: bar from where the match started to where it ended (restarting from 0 on a level-up)
+    const I0 = Progress.info(m.xpStart), I1 = Progress.info(), up = I1.level > I0.level;
+    $('endLvl').textContent = 'LV ' + I1.level; $('endLvlNext').textContent = I1.max ? 'MAX' : 'LV ' + (I1.level + 1);
+    $('endXpOld').style.width = (up ? 0 : I0.frac * 100).toFixed(1) + '%';
+    const nb = $('endXpNew'); nb.style.transition = 'none'; nb.style.width = (up ? 0 : I0.frac * 100).toFixed(1) + '%';
+    const X = m.xp, mult = m.xpMult, lines = [['KILLS', X.kills], ['HEADSHOTS', X.headshots], ['ASSISTS', X.assists], [m.result === 'VICTORY' ? 'WIN BONUS' : m.result === 'DRAW' ? 'DRAW BONUS' : 'MATCH BONUS', X.bonus], ['TIME PLAYED', X.time]];
+    const xl = $('endXpLines'); xl.innerHTML = '';
+    for (const [k, v] of lines) if (v > 0) { const sp = document.createElement('span'); sp.textContent = k + ' '; const b = document.createElement('b'); b.textContent = '+' + fmtNum(v); sp.appendChild(b); xl.appendChild(sp); }
+    if (mult !== 1) { const sp = document.createElement('span'); sp.textContent = CONFIG.BOTS.difficulty[m.difficulty].label + ' BOTS '; const b = document.createElement('b'); b.textContent = '×' + mult; sp.appendChild(b); xl.appendChild(sp); }
+    { const sp = document.createElement('span'); sp.textContent = 'TOTAL '; const b = document.createElement('b'); b.textContent = '+' + fmtNum(m.xpTotal) + ' XP'; sp.appendChild(b); xl.appendChild(sp); }
+    const ups = []; for (let L = m.levelStart + 1; L <= I1.level; L++) ups.push(...Progress.unlocksAt(L));
+    $('endLevelUp').textContent = up ? `LEVEL UP → ${I1.level}` + (ups.length ? '  ·  UNLOCKED: ' + ups.map((u) => Progress.label(u)).join(', ') : '') : '';
+    setTimeout(() => {
+      if (this.state !== 'ended') return;
+      $('matchEnd').classList.remove('hidden');
+      requestAnimationFrame(() => { nb.style.transition = ''; nb.style.width = (I1.frac * 100).toFixed(1) + '%'; });
+    }, 1600);
     HUD.banner(m.result, 1.6);
   },
   pause() {
     if (this.state !== 'playing') return;
     this.state = 'paused';
+    $('pauseLoadoutBtn').textContent = this.match ? 'Change Class' : 'Loadout';
     $('pause').classList.remove('hidden');
     Input.down.clear(); Input.mouseDown.fill(false);
     HUD.scoreboard(false);
@@ -6421,7 +6875,6 @@ const Game = {
     if (!this.debugNoLock) Input.lock();
   },
   quitToMenu() {
-    if (this.mode === 'range') { const st = Save.data.stats, r = this.rangeStats; st.shots += r.shots; st.hits += r.hits; st.headshots += r.heads; }
     Save.save();
     $('settings').classList.add('hidden');
     AudioSys.stopAmbience();
@@ -6505,6 +6958,7 @@ const Game = {
     const r = this.rangeStats;
     if (m) {
       HUD.setScore(m.scores.A, m.scores.B, m.timeLeft, m.label);
+      if ((this.frameNo & 15) === 0) HUD.setXP();
       // enemy name under the crosshair (checked a few times a second)
       if ((this.frameNo & 3) === 0) { camera.getWorldDirection(_v4); const h = Hitscan.trace(camera.position, _v4, 80, PlayerTarget.id); this.aimedEnemy = h.actor && h.actor.owner && h.actor.owner.isBot && h.actor.owner.team !== PlayerTarget.team ? h.actor.owner : null; }
       HUD.updateTags(m.bots, this.aimedEnemy);
@@ -6652,7 +7106,7 @@ const Game = {
 
 // Debug / test hooks (used by the headless test harness).
 window.__SM = {
-  Game, Input, Save, CONFIG, Nav, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
+  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
   start() { Game.debugNoLock = true; Game.startRange(); },
   hold(action, v = true) { Input.debug[action] = v; },
   press(action) { Input.debugPressed.add(action); },
