@@ -506,7 +506,9 @@ const CONFIG = {
   RANGE: { targetRespawn: 3.0, infiniteReserve: true, grenadeRefill: 4.0 },
   HEALTH: { max: 100, regenDelay: 4.0, regenRate: 45, respawnTime: 3.0 },
   SCOPE: { holdTime: 4.5, recharge: 3.0, exhaust: 2.0 },
-  FLASH: { minBlind: 0.6, maxBlind: 3.8 },
+  // Flashbang: visual blindness only when the eyes catch it. facingMin/facingFull: view·dir dot where blinding starts / is total
+  // (≈96° and ≈40° off-axis). Looking away still rings the ears and dulls sound.
+  FLASH: { minBlind: 0.35, maxBlind: 3.8, facingMin: -0.1, facingFull: 0.77, minPeak: 0.3 },
 
   // Team Deathmatch (practice vs bots)
   TDM: { scoreLimit: 30, timeLimit: 600, respawn: 3.0, teamSize: 3, preMatch: 4 },
@@ -4534,8 +4536,8 @@ const Combat = {
 };
 
 const PlayerHealth = {
-  hp: 100, max: 100, lastHit: -100, dead: false, deathT: 0, hurtFlash: 0, blind: 0, blindMax: 1,
-  reset() { this.hp = this.max; this.dead = false; this.deathT = 0; this.hurtFlash = 0; this.blind = 0; this.lastHit = -100; PlayerTarget.alive = true; },
+  hp: 100, max: 100, lastHit: -100, dead: false, deathT: 0, hurtFlash: 0, blind: 0, blindMax: 1, blindPeak: 1,
+  reset() { this.hp = this.max; this.dead = false; this.deathT = 0; this.hurtFlash = 0; this.blind = 0; this.blindPeak = 1; this.lastHit = -100; PlayerTarget.alive = true; },
   /** fromPos: world position the damage came from (for the direction indicator). */
   damage(amount, fromPos, cause) {
     if (this.dead || amount <= 0) return;
@@ -4550,7 +4552,8 @@ const PlayerHealth = {
     this.hurtFlash = Math.max(0, this.hurtFlash - dt * 1.6);
     this.blind = Math.max(0, this.blind - dt);
   },
-  flashAmount() { return this.blind <= 0 ? 0 : Math.min(1, this.blind / Math.max(0.6, this.blindMax * 0.62)); },
+  /** White-out strength: holds at the peak, then fades over the last 60% of the blind time. */
+  flashAmount() { return this.blind <= 0 ? 0 : this.blindPeak * Math.min(1, this.blind / Math.max(0.3, this.blindMax * 0.6)); },
 };
 
 class WeaponSlot {
@@ -4980,6 +4983,8 @@ const Explosions = {
     const down = Collision.raycast(_v1.copy(p).setY(p.y + 0.3), _v2.set(0, -1, 0), 1.2, CF.NO_BULLET);
     if (down) FX.scorch(down.point, down.normal);
   },
+  /** 0 when looking away from the flash, 1 when looking at it (dot = view direction · direction to the flash). */
+  facing(dot) { return smoothstep(CONFIG.FLASH.facingMin, CONFIG.FLASH.facingFull, dot); },
   /** Blinds whoever is close, has line of sight and is facing it — the owner included, the owner's teammates not. */
   flash(p, owner) {
     FX.flashbang(p);
@@ -4991,11 +4996,14 @@ const Explosions = {
       const eye = this._t.set(pl.pos.x, pl.pos.y + pl.eye, pl.pos.z), d = eye.distanceTo(p);
       if (d < G.radius && this.exposure(p, eye)) {
         camera.getWorldDirection(_v1); _v2.subVectors(p, eye).normalize();
-        const facing = 0.3 + 0.7 * Math.max(0, _v1.dot(_v2));
-        const k = clamp((1 - d / G.radius) * 1.25, 0, 1) * facing;
-        const dur = CONFIG.FLASH.minBlind + CONFIG.FLASH.maxBlind * k;
-        if (dur > PlayerHealth.blind) { PlayerHealth.blind = dur; PlayerHealth.blindMax = dur; }
-        AudioSys.muffle(clamp(0.4 + k, 0, 1), dur); AudioSys.play('ring', { vol: clamp(0.3 + k * 0.6, 0, 0.8), send: 0 });
+        const F = CONFIG.FLASH, distK = clamp((1 - d / G.radius) * 1.25, 0, 1);
+        const k = distK * this.facing(_v1.dot(_v2));
+        if (k > 0.02) {
+          const dur = F.minBlind + F.maxBlind * k, peak = Math.min(1, F.minPeak + k * 1.2);
+          if (dur * peak > PlayerHealth.blind * PlayerHealth.blindPeak) { PlayerHealth.blind = dur; PlayerHealth.blindMax = dur; PlayerHealth.blindPeak = peak; }
+        }
+        // the bang is heard regardless of where you look
+        AudioSys.muffle(clamp(0.3 + 0.5 * distK + 0.2 * k, 0, 1), 1 + 2.5 * Math.max(k, distK * 0.4)); AudioSys.play('ring', { vol: clamp(0.2 + distK * 0.35 + k * 0.3, 0, 0.8), send: 0 });
       }
     }
     if (Game.match) for (const b of Game.match.bots) {
@@ -5003,7 +5011,8 @@ const Explosions = {
       const eye = b.eye(this._t), d = eye.distanceTo(p);
       if (d >= G.radius || !this.exposure(p, eye)) continue;
       b.aimDir(_v1); _v2.subVectors(p, eye).normalize();
-      const k = clamp((1 - d / G.radius) * 1.25, 0, 1) * (0.3 + 0.7 * Math.max(0, _v1.dot(_v2)));
+      const k = clamp((1 - d / G.radius) * 1.25, 0, 1) * this.facing(_v1.dot(_v2));
+      if (k <= 0.02) continue; // looked away
       b.flash(CONFIG.FLASH.minBlind + CONFIG.FLASH.maxBlind * k);
       if (owner && owner.isPlayer && b.team !== owner.team) HUD.hitmarker(false, false);
     }
