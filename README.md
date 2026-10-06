@@ -6,7 +6,7 @@ A browser FPS in the style of modern military multiplayer shooters, in **one sel
 
 **Testing:** see [TESTING.md](TESTING.md) for the manual test checklist.
 
-## Status — Phases 1–4 and 6 of 7
+## Status — Phases 1–6 of 7
 
 | Phase | Scope | State |
 |---|---|---|
@@ -14,9 +14,9 @@ A browser FPS in the style of modern military multiplayer shooters, in **one sel
 | 2 | All weapons + attachments, grenades, full HUD | done |
 | 3 | Bots, TDM rules, practice mode | done |
 | 4 | Create-a-Class, XP / levels / unlocks | done |
-| 6 | P2P multiplayer (Trystero), lobby, room browser | **done** (built before Phase 5, on request) |
-| 5 | Killstreaks | next |
-| 7 | Polish: performance, balance, menus | |
+| 6 | P2P multiplayer (Trystero), lobby, room browser | done (built before Phase 5, on request) |
+| 5 | Killstreaks | **done** |
+| 7 | Polish: performance, balance, menus | next |
 
 ## Arsenal
 
@@ -38,6 +38,21 @@ Team Deathmatch, 3v3: you and two bot teammates against three bots. First to the
 Bots come in three skill levels: **Recruit**, **Regular** and **Veteran**. Each level changes reaction time, turn speed, aim error and how fast it settles, burst control, recoil control, how far they see and hear, how often they strafe, crouch and throw grenades, and when they retreat to heal.
 
 Bots use the same movement controller, weapons table, hitboxes and damage rules as the player. Unsuppressed gunfire gives away your position, both to bots and as red dots on the minimap.
+
+## Killstreaks
+
+Kills in a row without dying earn rewards. You keep a reward until you use it, even after dying. Kills made *by* a killstreak don't count toward the next one.
+
+| Kills | Reward | Key | What it does |
+|---|---|---|---|
+| 3 | UAV | 3 | A drone circles the map for 30 s. Every 2 s, all enemies show on your team's minimap, and your team's bots hunt the nearest one. |
+| 5 | Precision Airstrike | 4 | A designator marks a spot and a heading. Two jets fly in and each lays a line of 4 heavy bombs. Bombs land on whatever is below (roofs protect). The caller and their team are safe. |
+| 7 | Attack Helicopter | 5 | Flies in from your side and patrols for 40 s, hunting enemies it can see with bursts from a nose gun. 900 HP, armoured against bullets (×0.35). It can be shot down; it then spins down and crashes. |
+
+- Bots earn and use them too: UAVs right away, airstrikes on the biggest group of enemies away from their own team, helicopters right away. Bots shoot at enemy helicopters when no soldier is in view.
+- Every call-in is announced: gold for friendly, red for enemy. Helicopters show on every minimap.
+- Online, the host runs killstreaks and deals all their damage. Clients ask the host to launch one, and the host checks they've earned it. Every machine plays out the same jets and bombs from one event, and helicopters ride the 20 Hz snapshot. Shots at a helicopter are validated like any other hit claim.
+- Aircraft are procedural meshes. Rotor and jet engine loops are synthesised, with doppler on the jets.
 
 ## Play Online
 
@@ -75,12 +90,13 @@ Peer to peer over WebRTC with [Trystero](https://github.com/dmotz/trystero) (loa
 | Melee | V |
 | Swap weapon | 1 / 2 / mouse wheel |
 | Frag (hold to cook) / flashbang | G / Q |
+| UAV / airstrike / helicopter | 3 / 4 / 5 (airstrike: click to call it in, right click to cancel) |
 | Scoreboard | Tab |
 | Pause, loadout, settings (online: menu, no pause) | Esc |
 
 ## Code layout
 
-`index.html` holds a single module script split into sections: **CONFIG** (every tuning value, including bot skill and match rules) · DATA (weapon table, attachments, grenades, surfaces, settings) · UTIL · SAVE · AUDIO · RENDER · TEXTURES · MATERIALS · COLLISION · MAP · FX · INPUT · PLAYER · VIEWMODEL · ACTORS · WEAPONS · GRENADES · NAV · BOTS · MATCH · NET · UI · GAME.
+`index.html` holds a single module script split into sections: **CONFIG** (every tuning value, including bot skill and match rules) · DATA (weapon table, attachments, grenades, surfaces, settings) · UTIL · SAVE · AUDIO · RENDER · TEXTURES · MATERIALS · COLLISION · MAP · FX · INPUT · PLAYER · VIEWMODEL · ACTORS · WEAPONS · GRENADES · NAV · BOTS · KILLSTREAKS · MATCH · NET · UI · GAME.
 
 - **Match:** one Team Deathmatch rule set for every mode. `TDMMatch` is authoritative: offline practice, or the online host. Everything that happens is an event (kill / spawn / hit / roster / end). `Game.applyMatchEvent` applies an event on every machine and handles the local player's side: killfeed, XP, streak, death screen and respawn. Online clients run `ClientMatch`, a mirror fed by snapshots and events. Remote soldiers are `Puppet`s, interpolated from network samples.
 - **Net:** `NetTransport` (Trystero, or the `?net=local` BroadcastChannel test transport) · `Lobby` (room announcements) · `Net` (one room: lobby state, match start, 20 Hz state and snapshots, events, hit claims with `LagComp` validation, shot and grenade replication, pings, join in progress, host migration). All rates and windows are in `CONFIG.NET`.

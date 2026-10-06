@@ -157,6 +157,23 @@ button { font-family: inherit; }
 #streak .ks.ready { color: var(--accent); }
 #streak .ks.ready .ic { border-color: var(--accent); }
 #streak .cnt { font-family: var(--mono); font-size: 12px; color: #cfd3d6; padding-bottom: 2px; text-shadow: 0 1px 2px #000; }
+#streak .ks .sub { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0; margin-top: 1px; }
+#streak .ks.ready .sub { color: #fff; }
+#streak .ks.ready .ic { animation: ksPulse 1.2s ease-in-out infinite; }
+@keyframes ksPulse { 50% { box-shadow: 0 0 12px rgba(216,178,74,0.75); } }
+#ksMsg { position: absolute; left: 50%; top: 92px; transform: translateX(-50%); font-size: 19px; letter-spacing: 4px; font-weight: 700; color: var(--accent); text-shadow: 0 1px 4px #000; opacity: 0; transition: opacity .25s; white-space: nowrap; }
+#ksMsg.bad { color: var(--enemy); }
+#designator { position: absolute; inset: 0; display: none; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 38%, rgba(10,14,8,0.55) 100%); }
+#designator.on { display: block; }
+#designator .c { position: absolute; width: 40px; height: 40px; border: 3px solid rgba(255,90,70,0.9); }
+#designator .tl { left: calc(50% - 22vh); top: calc(50% - 22vh); border-right: none; border-bottom: none; }
+#designator .tr { right: calc(50% - 22vh); top: calc(50% - 22vh); border-left: none; border-bottom: none; }
+#designator .bl { left: calc(50% - 22vh); bottom: calc(50% - 22vh); border-right: none; border-top: none; }
+#designator .br { right: calc(50% - 22vh); bottom: calc(50% - 22vh); border-left: none; border-top: none; }
+#designator .x { position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; transform: translate(-50%, -50%); background: linear-gradient(rgba(255,90,70,0.95), rgba(255,90,70,0.95)) center / 2px 100% no-repeat, linear-gradient(rgba(255,90,70,0.95), rgba(255,90,70,0.95)) center / 100% 2px no-repeat; }
+#designator .dz-t { position: absolute; left: 50%; top: calc(50% + 24vh); transform: translateX(-50%); font-size: 20px; letter-spacing: 6px; font-weight: 700; color: #ff6a55; text-shadow: 0 1px 3px #000; white-space: nowrap; }
+#designator .dz-s { position: absolute; left: 50%; top: calc(50% + 24vh + 30px); transform: translateX(-50%); font-family: var(--mono); font-size: 13px; color: #e6e8e3; text-shadow: 0 1px 3px #000; white-space: nowrap; }
+#designator.bad .c { border-color: rgba(160,160,160,0.8); } #designator.bad .dz-s { color: #b0b0b0; }
 /* damage direction */
 #dmgArrows { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
 #dmgArrows i { position: absolute; left: -48px; top: -170px; width: 96px; height: 30px; opacity: 0; transform-origin: 48px 170px;
@@ -597,6 +614,9 @@ button { font-family: inherit; }
   <div id="tags"></div>
   <div id="killfeed"></div>
   <div id="streak"></div>
+  <div id="ksMsg"></div>
+  <div id="designator"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><i class="x"></i>
+    <div class="dz-t">PRECISION AIRSTRIKE</div><div class="dz-s" id="dzSub">AIM AT OPEN GROUND &middot; CLICK TO CALL IT IN &middot; RIGHT CLICK OR 4 TO CANCEL</div></div>
   <div id="banner"></div>
   <div id="xpHud"><span id="xpHudLvl">LV 1</span><div class="xpb"><i id="xpHudBar"></i></div></div>
   <div id="scorePop"></div>
@@ -664,7 +684,7 @@ clearTimeout(window.__SM_BOOT_TIMER);
    CONFIG — every tuning value lives here
    ===================================================================== */
 const CONFIG = {
-  VERSION: '0.5.0-online',
+  VERSION: '0.6.0-phase5',
   SAVE_KEY: 'steelmeridian.save.v1',
   SAVE_VERSION: 1,
 
@@ -718,7 +738,7 @@ const CONFIG = {
   INPUT: { mouseScale: 0.00052, maxDelta: 450 },
 
   FX: {
-    maxParticlesAdd: 700, maxParticlesAlpha: 900, decalsPerType: 96, decalLife: 40, shellPool: 24,
+    maxParticlesAdd: 900, maxParticlesAlpha: 1200, decalsPerType: 96, decalLife: 40, shellPool: 24,
     tracerSpeed: 520, tracerLength: 3.2, tracerWidth: 0.022, tracerChance: 1.0,
     muzzleLight: 9, muzzleLightRange: 7, muzzleFlashTime: 0.045,
   },
@@ -732,6 +752,13 @@ const CONFIG = {
 
   // Team Deathmatch (practice vs bots)
   TDM: { scoreLimit: 30, timeLimit: 600, respawn: 3.0, teamSize: 3, preMatch: 4 },
+  /** Killstreaks (times in s, distances in m). */
+  STREAKS: {
+    uav: { duration: 30, sweep: 2.0, alt: 95, radius: 46, speed: 32 },
+    airstrike: { delay: 2.5, alt: 58, speed: 110, bombs: 4, spacing: 7, lateral: 3.5, fall: 0.45, blast: { radius: 9, innerRadius: 3, maxDamage: 220 } },
+    heli: { duration: 40, hp: 900, bulletMult: 0.35, alt: 25, speed: 9, orbit: 22, range: 75, rpm: 600, burst: [8, 12], gap: [0.9, 1.4], windup: 0.6, damage: 20, spread: 2.0, turn: 1.6, xp: 150 },
+    botUse: [1.5, 4.0], // seconds before a bot uses a reward it just earned
+  },
   /** Online play. Rates in Hz, times in ms. */
   NET: {
     appId: 'steel-meridian-v1', lobbyRoom: 'lobby-v1', proto: 1, trysteroVersion: '0.26.0',
@@ -981,11 +1008,11 @@ const DEFAULT_CLASSES = [
 ];
 const CUSTOM_CLASS_COUNT = 5;
 const EQUIPMENT_TEXT = 'LETHAL: FRAG ×1   ·   TACTICAL: FLASHBANG ×2';
-/** Kill streak rewards (Phase 5 makes them callable; the HUD tracks progress now). */
+/** Kill streak rewards: earned for kills in a row without dying, kept until used (keys 3 / 4 / 5). */
 const KILLSTREAKS = [
-  { id: 'uav', name: 'UAV', short: 'UAV', kills: 3 },
-  { id: 'airstrike', name: 'PRECISION AIRSTRIKE', short: 'AIRSTRIKE', kills: 5 },
-  { id: 'heli', name: 'ATTACK HELICOPTER', short: 'HELO', kills: 7 },
+  { id: 'uav', name: 'UAV', short: 'UAV', kills: 3, key: '3' },
+  { id: 'airstrike', name: 'PRECISION AIRSTRIKE', short: 'AIRSTRIKE', kills: 5, key: '4' },
+  { id: 'heli', name: 'ATTACK HELICOPTER', short: 'HELO', kills: 7, key: '5' },
 ];
 
 const DEFAULT_SETTINGS = {
@@ -999,12 +1026,14 @@ const KEYBINDS = {
   jump: ['Space'], sprint: ['ShiftLeft', 'ShiftRight'], crouch: ['KeyC', 'ControlLeft'],
   reload: ['KeyR'], melee: ['KeyV'], lethal: ['KeyG'], tactical: ['KeyQ'],
   slot1: ['Digit1'], slot2: ['Digit2'], scoreboard: ['Tab'], interact: ['KeyF'], swap: [],
+  ks1: ['Digit3'], ks2: ['Digit4'], ks3: ['Digit5'],
 };
 const KEY_HELP = [
   ['Move', 'W A S D'], ['Look', 'Mouse'], ['Fire', 'Left Mouse'], ['Aim down sights', 'Right Mouse'],
   ['Sprint', 'Shift'], ['Hold breath (scoped)', 'Shift'], ['Jump', 'Space'], ['Crouch / Slide', 'C / Ctrl'],
   ['Reload', 'R'], ['Melee', 'V'], ['Swap weapon', '1 / 2 / Wheel'], ['Lethal', 'G'],
-  ['Tactical', 'Q'], ['Scoreboard', 'Tab'], ['Pause / menu', 'Esc'],
+  ['Tactical', 'Q'], ['UAV (3 kills)', '3'], ['Airstrike (5 kills)', '4'], ['Attack helicopter (7 kills)', '5'],
+  ['Scoreboard', 'Tab'], ['Pause / menu', 'Esc'],
 ];
 
 /* =====================================================================
@@ -1390,6 +1419,53 @@ const SoundBank = {
       for (const [f, a] of [[3620, 0.5], [3645, 0.4], [7240, 0.08]]) { const o = oc.createOscillator(); o.frequency.value = f; const g = oc.createGain(); g.gain.setValueAtTime(0.0001, 0); g.gain.linearRampToValueAtTime(a, 0.08); g.gain.exponentialRampToValueAtTime(0.0001, 3.9); o.connect(g).connect(dst); o.start(0); o.stop(4); }
     }, 0.5);
   },
+  /** Render `seconds + fade`, then fold the tail over the start so the buffer loops without a seam. */
+  async loopBuf(seconds, build, fade = 0.15) {
+    const buf = await renderOffline(seconds + fade, 2, build, 0.9);
+    const n = Math.round(seconds * SR), f = Math.round(fade * SR);
+    const out = new AudioBuffer({ length: n, sampleRate: SR, numberOfChannels: 2 });
+    for (let c = 0; c < 2; c++) {
+      const src = buf.getChannelData(c), dst = out.getChannelData(c);
+      dst.set(src.subarray(0, n));
+      for (let i = 0; i < f; i++) { const k = i / f; dst[i] = src[i] * k + src[n + i] * (1 - k); }
+    }
+    return out;
+  },
+  /** Helicopter: blade slap at 17 Hz over a turbine whine and air rush (1 s loop). */
+  rotor() {
+    return this.loopBuf(1.0, (oc, dst) => {
+      const brown = makeNoise(oc, 1.2, 77, 2, 'brown'), white = makeNoise(oc, 1.2, 78, 2);
+      for (let i = 0; i < 20; i++) {
+        const t = i / 17;
+        { const n = noiseSrc(oc, brown); const lp = filt(oc, 'lowpass', 170, 1.2); const g = oc.createGain(); envAD(g.gain, t, 1.0, 0.004, 0.05); n.connect(lp).connect(g).connect(dst); }
+        { const n = noiseSrc(oc, white); const bp = filt(oc, 'bandpass', 620, 1.4); const g = oc.createGain(); envAD(g.gain, t + 0.003, 0.22, 0.003, 0.025); n.connect(bp).connect(g).connect(dst); }
+      }
+      { const o = oc.createOscillator(); o.frequency.value = 1700; const g = oc.createGain(); g.gain.value = 0.035; o.connect(g).connect(dst); o.start(0); }
+      { const n = noiseSrc(oc, white); const bp = filt(oc, 'bandpass', 900, 0.8); const g = oc.createGain(); g.gain.value = 0.12; n.connect(bp).connect(g).connect(dst); }
+      { const n = noiseSrc(oc, brown); const lp = filt(oc, 'lowpass', 90, 0.7); const g = oc.createGain(); g.gain.value = 0.5; n.connect(lp).connect(g).connect(dst); }
+    }, 0.12);
+  },
+  /** Jet engine roar (2 s loop); the doppler shift is applied at playback. */
+  jet() {
+    return this.loopBuf(2.0, (oc, dst) => {
+      const pink = makeNoise(oc, 2.2, 81, 2, 'pink'), white = makeNoise(oc, 2.2, 82, 2), brown = makeNoise(oc, 2.2, 83, 2, 'brown');
+      { const n = noiseSrc(oc, pink); const lp = filt(oc, 'lowpass', 1700, 0.6); const g = oc.createGain(); g.gain.value = 0.8; n.connect(lp).connect(g).connect(dst); }
+      { const n = noiseSrc(oc, white); const bp = filt(oc, 'bandpass', 5200, 2.2); const g = oc.createGain(); g.gain.value = 0.18; n.connect(bp).connect(g).connect(dst); }
+      { const n = noiseSrc(oc, brown); const lp = filt(oc, 'lowpass', 120, 0.7); const g = oc.createGain(); g.gain.value = 0.9; n.connect(lp).connect(g).connect(dst); }
+    }, 0.2);
+  },
+  /** Steady radio-style beeps: [[time, freq, length], …]. */
+  beeps(list, seed) {
+    return renderOffline(Math.max(...list.map((b) => b[0] + b[2])) + 0.1, 1, (oc, dst) => {
+      { const n = noiseSrc(oc, makeNoise(oc, 0.1, seed)); const bp = filt(oc, 'bandpass', 2400, 4); const g = oc.createGain(); envAD(g.gain, 0, 0.5, 0.001, 0.03); n.connect(bp).connect(g).connect(dst); }
+      for (const [t, f, len] of list) {
+        const o = oc.createOscillator(); o.type = 'square'; o.frequency.value = f;
+        const lp = filt(oc, 'lowpass', f * 2.5, 0.7); const g = oc.createGain();
+        g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.35, t + 0.008); g.gain.setValueAtTime(0.35, t + len - 0.02); g.gain.linearRampToValueAtTime(0, t + len);
+        o.connect(lp).connect(g).connect(dst); o.start(t); o.stop(t + len + 0.02);
+      }
+    }, 0.8);
+  },
   wind() {
     return renderOffline(8, 2, (oc, dst) => {
       const n = noiseSrc(oc, makeNoise(oc, 8, 42, 2, 'pink'));
@@ -1445,6 +1521,13 @@ const AudioSys = {
     add('hurt', () => SoundBank.sequence(0.3, [[0, 110, 0, 0.18, 1, 'tone'], [0, 500, 1, 0.06, 0.4, 'lowpass']], 38));
     for (let i = 0; i < 2; i++) add('explosion', () => SoundBank.explosion(1600 + i * 17));
     add('flashbang', () => SoundBank.flashbang(1700));
+    add('rotor', () => SoundBank.rotor());
+    add('jet', () => SoundBank.jet());
+    for (let i = 0; i < 2; i++) add('shot_heli', () => SoundBank.gunshot({ bodyHz: 68, body: 1.1, crack: 0.9, blast: 1.0, blastHz: 4200, decay: 0.13, tail: 0.65, tailHz: 1000, mech: 0.2, mechHz: 1800, drive: 4.2, gain: 1.1 }, false, 1900 + i * 13));
+    add('ks_earn', () => SoundBank.beeps([[0, 880, 0.09], [0.11, 1320, 0.16]], 71));
+    add('ks_friendly', () => SoundBank.beeps([[0.04, 740, 0.12], [0.2, 988, 0.2]], 72));
+    add('ks_enemy', () => SoundBank.beeps([[0.04, 660, 0.12], [0.2, 520, 0.12], [0.36, 660, 0.12], [0.52, 520, 0.18]], 73));
+    add('uavping', () => SoundBank.sequence(0.6, [[0, 1500, 0, 0.45, 0.4, 'tone']], 74));
     add('ring', () => SoundBank.ring());
     add('levelup', () => SoundBank.sequence(1.0, [[0, 660, 0, 0.35, 0.5, 'tone'], [0.11, 880, 0, 0.35, 0.5, 'tone'], [0.22, 1320, 0, 0.6, 0.55, 'tone'], [0.22, 5200, 3, 0.25, 0.15]], 61));
     for (let i = 0; i < 2; i++) add('whiz', () => SoundBank.sequence(0.3, [[0, 3400 - i * 500, 2.5, 0.05, 0.9], [0.015, 1800, 1.2, 0.12, 0.5], [0.0, 6200, 4, 0.02, 0.35]], 41 + i));
@@ -1530,6 +1613,31 @@ const AudioSys = {
     this.voices++;
     src.onended = () => { this.voices--; src.disconnect(); g.disconnect(); if (pan) pan.disconnect(); if (sg) sg.disconnect(); };
     return src;
+  },
+  /** A looping positional sound (rotor, jet). Returns { set(pos, vol, rate), stop(fade) }, or null while audio is off. */
+  loop(name, o = {}) {
+    const ctx = this.ctx; if (!ctx || ctx.state !== 'running') return null;
+    const list = this.buffers[name]; if (!list) return null;
+    const src = ctx.createBufferSource(); src.buffer = list[0]; src.loop = true;
+    const g = ctx.createGain(); g.gain.value = 0.0001;
+    const pan = ctx.createPanner(); pan.panningModel = 'equalpower'; pan.distanceModel = 'inverse';
+    pan.refDistance = o.ref ?? 6; pan.rolloffFactor = o.rolloff ?? 1; pan.maxDistance = 500;
+    src.connect(g).connect(pan).connect(this.sfx);
+    const sg = ctx.createGain(); sg.gain.value = o.send ?? 0.25; pan.connect(sg); sg.connect(this.reverbIn);
+    src.start();
+    const setP = (p) => { if (pan.positionX) { pan.positionX.value = p.x; pan.positionY.value = p.y; pan.positionZ.value = p.z; } else pan.setPosition(p.x, p.y, p.z); };
+    let stopped = false;
+    const h = {
+      set(pos, vol = 1, rate = 1) { if (stopped) return; setP(pos); g.gain.setTargetAtTime(vol, ctx.currentTime, 0.08); src.playbackRate.setTargetAtTime(rate, ctx.currentTime, 0.05); },
+      stop(fade = 0.4) {
+        if (stopped) return; stopped = true;
+        const t = ctx.currentTime; g.gain.cancelScheduledValues(t); g.gain.setTargetAtTime(0.0001, t, fade / 3);
+        src.onended = () => { src.disconnect(); g.disconnect(); pan.disconnect(); sg.disconnect(); };
+        src.stop(t + fade + 0.05);
+      },
+    };
+    h.set(o.pos || camera.position, o.vol ?? 1, o.rate ?? 1);
+    return h;
   },
   updateListener(cam) {
     const ctx = this.ctx; if (!ctx) return;
@@ -4885,6 +4993,7 @@ const Combat = {
       PlayerHealth.damage(dmg, info.fromPos || (atk && atk.pos), { killer: atk ? (atk.isPlayer ? 'YOURSELF' : atk.name) : 'WORLD', weapon: info.weapon || '', attacker: atk, head: part === 'head' });
       killed = PlayerHealth.dead;
     } else if (victim.isBot) killed = victim.onDamage(dmg, part, atk, info);
+    else if (victim.isVehicle) killed = isAuth() ? victim.onDamage(dmg, part, atk, info) : atk && atk.isPlayer ? Net.claim(victim, dmg, part, info) : false;
     else if (victim.isRemote || victim.isBotPuppet) {
       // online: the host applies it; a client asks the host (hit claim) and predicts the feedback
       if (Game.match && Game.match.authority) killed = victim.onDamage(dmg, part, atk, info);
@@ -5331,37 +5440,40 @@ const Grenades = {
 const Explosions = {
   _o: new THREE.Vector3(), _t: new THREE.Vector3(), _pts: [null, null, null],
   /** Fraction (0..1) of an explosion at p that reaches point t (line of sight with a little lift). */
-  exposure(p, t) { this._o.copy(p); this._o.y += 0.25; return Collision.lineOfSight(this._o, t) ? 1 : 0; },
+  exposure(p, t, lift = 0.25) { this._o.copy(p); this._o.y += lift; return Collision.lineOfSight(this._o, t) ? 1 : 0; },
   /** owner: the combatant who threw it (PlayerTarget or a bot). Teammates of the owner take no damage; the owner does. */
-  frag(p, owner) {
-    const G = GRENADES.frag;
+  frag(p, owner) { this.blast(p, owner, GRENADES.frag, 'FRAG'); },
+  /** Blast damage + effects. G: { radius, innerRadius, maxDamage }. o.ownerSafe: the owner is spared too (killstreaks); o.big: heavier effects.
+      Online, only the host deals the damage; everyone sees and hears it. */
+  blast(p, owner, G, weapon, o = {}) {
     const dmgAt = (d) => d <= G.innerRadius ? G.maxDamage : d >= G.radius ? 0 : G.maxDamage * Math.pow(1 - (d - G.innerRadius) / (G.radius - G.innerRadius), 1.3) * 0.85 + 10;
-    const mine = owner && owner.isPlayer, auth = !Game.match || Game.match.authority; // online clients only show it; the host deals the damage
+    const mine = owner && owner.isPlayer, auth = isAuth(), lift = o.big ? 1.5 : 0.25; // a bomb's blast clears low cover a grenade's doesn't
     // actors (closest of head / chest / hips); the player is handled below with its own falloff points
     if (auth) for (const a of Actors.list) {
       if (!a.alive || a.isPlayer) continue;
+      if (o.ownerSafe && owner && (a.owner === owner || a === owner)) continue;
       const pts = this._pts; pts[0] = a.hitboxes[0].a; pts[1] = a.center; pts[2] = a.hitboxes[1].a;
       let best = Infinity; for (const t of pts) best = Math.min(best, t.distanceTo(p));
       if (best >= G.radius) continue;
-      let vis = 0; for (const t of pts) { vis = Math.max(vis, this.exposure(p, t)); if (vis) break; }
+      let vis = 0; for (const t of pts) { vis = Math.max(vis, this.exposure(p, t, lift)); if (vis) break; }
       if (!vis) continue;
       const dmg = Math.round(dmgAt(best));
-      const killed = Combat.hitActor(a, dmg, 'torso', { attacker: owner, weapon: 'FRAG', explosive: true, fromPos: p });
+      const killed = Combat.hitActor(a, dmg, 'torso', { attacker: owner, weapon, explosive: true, fromPos: p });
       if (mine && !Combat.blocked) { HUD.hitmarker(killed, false); AudioSys.play(killed ? 'kill' : 'hit', { bus: 'ui', vol: 0.7, send: 0 }); if (Save.settings.dmgNumbers && Game.mode === 'range') HUD.damageNumber(a.center, dmg, false, killed); }
     }
     // the player
-    const pl = Game.player;
+    const pl = Game.player, big = !!o.big;
     if (pl && Game.inPlay() && !PlayerHealth.dead) {
       const eye = this._t.set(pl.pos.x, pl.pos.y + pl.eye, pl.pos.z), d = Math.min(eye.distanceTo(p), _v1.set(pl.pos.x, pl.pos.y + 0.9, pl.pos.z).distanceTo(p));
-      const friendly = owner && !owner.isPlayer && owner.team === PlayerTarget.team;
-      if (auth && !friendly && d < G.radius && (this.exposure(p, eye) || this.exposure(p, _v1))) Combat.hitActor(PlayerTarget, Math.round(dmgAt(d)), 'torso', { attacker: owner, weapon: 'FRAG', explosive: true, fromPos: p });
-      const dist = eye.distanceTo(p);
-      Game.shake(clamp(1.1 - dist / 22, 0, 1));
-      if (dist < 9) { AudioSys.muffle(clamp(1 - dist / 9, 0.3, 0.9), 2.5); AudioSys.play('ring', { vol: clamp(1 - dist / 9, 0.2, 0.7), send: 0 }); }
+      const friendly = owner && !owner.isPlayer && owner.team === PlayerTarget.team, spared = o.ownerSafe && owner === PlayerTarget;
+      if (auth && !friendly && !spared && d < G.radius && (this.exposure(p, eye, lift) || this.exposure(p, _v1, lift))) Combat.hitActor(PlayerTarget, Math.round(dmgAt(d)), 'torso', { attacker: owner, weapon, explosive: true, fromPos: p });
+      const dist = eye.distanceTo(p), R = big ? 14 : 9;
+      Game.shake(clamp((big ? 1.3 : 1.1) - dist / (big ? 38 : 22), 0, 1));
+      if (dist < R) { AudioSys.muffle(clamp(1 - dist / R, 0.3, 0.9), 2.5); AudioSys.play('ring', { vol: clamp(1 - dist / R, 0.2, 0.7), send: 0 }); }
     }
     FX.explosion(p);
-    FXLights.flash(_v2.copy(p).setY(p.y + 0.6), 0xffa040, 90, 22, 0.32);
-    AudioSys.play('explosion', { pos: p, vol: 1.0, ref: 8, rolloff: 0.7, send: 0.5, important: true, rateVar: 0.06 });
+    FXLights.flash(_v2.copy(p).setY(p.y + 0.6), 0xffa040, big ? 130 : 90, big ? 30 : 22, big ? 0.4 : 0.32);
+    AudioSys.play('explosion', { pos: p, vol: 1.0, ref: big ? 12 : 8, rolloff: 0.7, send: 0.5, important: true, rateVar: 0.06, rate: big ? 0.82 : 1 });
     if (Game.match) Game.match.noise(owner, p, 'explosion');
     const down = Collision.raycast(_v1.copy(p).setY(p.y + 0.3), _v2.set(0, -1, 0), 1.2, CF.NO_BULLET);
     if (down) FX.scorch(down.point, down.normal);
@@ -5570,7 +5682,7 @@ class Bot {
     this.cmd = new MoveCmd();
     this.wctx = { adsT: 0, moveMult: 1, adsMoveMult: 0.6, wantsAds: false, firing: false };
     this.stats = { kills: 0, deaths: 0, assists: 0, score: 0 };
-    this.dmgBy = new Map();
+    this.dmgBy = new Map(); this.streak = 0; this.ks = []; this.ksT = 0;
     this.hp = 100; this.lastHit = -100; this.deathT = 0;
     this.aimYaw = 0; this.aimPitch = 0; this.errYaw = 0; this.errPitch = 0; this.errT = 0; this.recoilP = 0;
     this.path = []; this.pathI = 0; this.goal = new THREE.Vector3(); this.goalNode = -1; this.repathT = 0; this.lookT = 0;
@@ -5628,7 +5740,8 @@ class Bot {
     this.actor.flinch.v += part === 'head' ? 8 : 4;
     if (attacker && attacker !== this) {
       const e = this.dmgBy.get(attacker) || { dmg: 0, t: 0 }; e.dmg += dmg; e.t = Game.time; this.dmgBy.set(attacker, e);
-      if (attacker.pos) { this.lastKnown.copy(attacker.pos); this.lastKnownT = Game.time; if (!this.visible) this.alertYaw = Math.atan2(-(attacker.pos.x - this.pos.x), -(attacker.pos.z - this.pos.z)); }
+      const src = STREAK_WEAPONS.has(info.weapon) && info.fromPos ? info.fromPos : attacker.pos; // streak fire comes from the aircraft, not its owner
+      if (src) { this.lastKnown.copy(src); this.lastKnownT = Game.time; if (!this.visible) this.alertYaw = Math.atan2(-(src.x - this.pos.x), -(src.z - this.pos.z)); }
     }
     if (this.hp <= 0) { this.die(attacker, info.weapon || '', part === 'head'); return true; }
     return false;
@@ -5648,6 +5761,7 @@ class Bot {
     this.blindT = Math.max(0, this.blindT - dt);
     this.thinkT -= dt;
     if (this.thinkT <= 0) { this.thinkT += CONFIG.BOTS.think * rand(0.85, 1.15); this.think(M); }
+    if (M.state === 'live') Streaks.botUpdate(this, dt, M);
     this.stateT += dt;
     this.updateAim(dt);
     this.updateMove(dt, M);
@@ -5672,6 +5786,11 @@ class Bot {
         const s = dist * (e === this.target ? 0.7 : 1) * (e.isPlayer ? M.playerFocus : 1);
         if (s < bestS) { bestS = s; best = e; }
       }
+    }
+    // nobody on foot in view: shoot at an enemy helicopter if there's a clear line to it
+    if (!best && this.blindT <= 0 && ((this.target && this.target.isVehicle) || Math.random() < 0.35)) for (const e of Streaks.targets(this.team)) {
+      const p = e.actor.center, dist = p.distanceTo(eye);
+      if (dist < D.view * 1.3 && Collision.lineOfSight(eye, p)) { best = e; break; }
     }
     const wasVisible = this.visible;
     this.visible = !!best;
@@ -5940,6 +6059,486 @@ class Bot {
 }
 
 /* =====================================================================
+   KILLSTREAKS — UAV (3), Precision Airstrike (5), Attack Helicopter (7).
+   Earned for kills in a row without dying (kills *by* a killstreak don't
+   count), kept until used: keys 3 / 4 / 5. The authority (offline match
+   or online host) runs them and deals all damage; every machine plays
+   them out from the same 'ks' event, and helicopters ride the snapshot.
+   ===================================================================== */
+const STREAK_WEAPONS = new Set(['AIRSTRIKE', 'HELICOPTER']);
+const _kv1 = new THREE.Vector3(), _kv2 = new THREE.Vector3(), _kv3 = new THREE.Vector3();
+const isAuth = () => !Game.match || !!Game.match.authority;
+
+/** Procedural aircraft (built once, cloned per use). Forward is −Z. */
+const StreakModels = {
+  mats: null,
+  init() {
+    if (this.mats) return;
+    const M = (c, r = 0.55, m = 0.35) => new THREE.MeshStandardMaterial({ color: c, roughness: r, metalness: m });
+    this.mats = {
+      hull: M(0x3c4146, 0.6, 0.4), dark: M(0x1c1f22, 0.7, 0.3), light: M(0x8a9196, 0.5, 0.45),
+      glass: new THREE.MeshStandardMaterial({ color: 0x0d1418, roughness: 0.08, metalness: 0.9 }),
+      A: M(0x2f5f9a, 0.5, 0.3), B: M(0x9a3a2f, 0.5, 0.3),
+      blade: M(0x15181a, 0.8, 0.2),
+      disc: new THREE.MeshBasicMaterial({ color: 0x0b0d0f, transparent: true, opacity: 0.16, depthWrite: false, side: THREE.DoubleSide }),
+      burner: new THREE.MeshBasicMaterial({ color: 0xff9a3c, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false }),
+    };
+  },
+  mesh(geo, mat, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.castShadow = true; return m; },
+  heli(team) {
+    this.init(); const T = this.mats, g = new THREE.Group(), m = this.mesh.bind(this);
+    const body = m(new THREE.CapsuleGeometry(0.95, 2.6, 6, 12), T.hull, 0, 0, 0, Math.PI / 2); body.scale.set(1, 1, 0.92); g.add(body);
+    g.add(m(new THREE.SphereGeometry(0.82, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2), T.glass, 0, 0.12, -1.55, -Math.PI / 2 - 0.35));
+    g.add(m(new THREE.CylinderGeometry(0.16, 0.36, 5.2, 8), T.hull, 0, 0.25, 4.0, Math.PI / 2));
+    g.add(m(new THREE.BoxGeometry(0.1, 1.3, 0.9), T.hull, 0, 0.85, 6.45, 0.25));
+    g.add(m(new THREE.BoxGeometry(1.6, 0.08, 0.5), T.hull, 0, 0.3, 6.2));
+    g.add(m(new THREE.BoxGeometry(2.15, 0.12, 0.06), T[team] || T.A, 0, 0.05, -0.2)); // team stripe
+    g.add(m(new THREE.BoxGeometry(0.06, 0.5, 2.6), T[team] || T.A, 0.93, 0.05, 0.3));
+    g.add(m(new THREE.BoxGeometry(0.06, 0.5, 2.6), T[team] || T.A, -0.93, 0.05, 0.3));
+    g.add(m(new THREE.BoxGeometry(3.4, 0.1, 0.7), T.dark, 0, -0.35, 0.3)); // stub wings + pods
+    for (const s of [-1, 1]) {
+      g.add(m(new THREE.CylinderGeometry(0.17, 0.17, 1.3, 10), T.dark, s * 1.55, -0.55, 0.15, Math.PI / 2));
+      g.add(m(new THREE.BoxGeometry(0.08, 0.08, 3.6), T.dark, s * 0.75, -1.35, 0.2)); // skids
+      g.add(m(new THREE.BoxGeometry(0.06, 0.5, 0.06), T.dark, s * 0.75, -1.1, -0.7)); g.add(m(new THREE.BoxGeometry(0.06, 0.5, 0.06), T.dark, s * 0.75, -1.1, 1.0));
+    }
+    g.add(m(new THREE.CylinderGeometry(0.22, 0.28, 0.5, 10), T.dark, 0, 1.05, 0.1)); // mast
+    const gun = m(new THREE.CylinderGeometry(0.06, 0.06, 0.9, 8), T.dark, 0, -0.85, -1.6, Math.PI / 2); g.add(gun);
+    const muzzle = new THREE.Object3D(); muzzle.position.set(0, -0.85, -2.1); g.add(muzzle);
+    const rotor = new THREE.Group(); rotor.position.set(0, 1.35, 0.1);
+    for (let i = 0; i < 4; i++) { const b = m(new THREE.BoxGeometry(0.32, 0.05, 6.2), T.blade, 0, 0, 0, 0, i * Math.PI / 4 * 2); b.geometry.translate(0, 0, 3.1); rotor.add(b); b.castShadow = false; }
+    const disc = new THREE.Mesh(new THREE.CircleGeometry(6.3, 40), T.disc); disc.rotation.x = -Math.PI / 2; rotor.add(disc);
+    g.add(rotor);
+    const tail = new THREE.Group(); tail.position.set(0.12, 0.85, 6.45);
+    for (let i = 0; i < 2; i++) { const b = m(new THREE.BoxGeometry(0.03, 1.5, 0.14), T.blade, 0, 0, 0, i * Math.PI / 2); tail.add(b); }
+    g.add(tail);
+    return { root: g, rotor, tail, muzzle };
+  },
+  jet() {
+    this.init(); const T = this.mats, g = new THREE.Group(), m = this.mesh.bind(this);
+    g.add(m(new THREE.CylinderGeometry(0.75, 0.6, 10, 12), T.light, 0, 0, 0.5, Math.PI / 2));
+    g.add(m(new THREE.ConeGeometry(0.75, 3.2, 12), T.light, 0, 0, -6.1, -Math.PI / 2));
+    g.add(m(new THREE.SphereGeometry(0.55, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2), T.glass, 0, 0.45, -3.4, -0.25));
+    const wing = new THREE.Shape(); wing.moveTo(0, -2.2); wing.lineTo(5.6, 2.2); wing.lineTo(5.6, 3.1); wing.lineTo(0, 3.6); wing.lineTo(-5.6, 3.1); wing.lineTo(-5.6, 2.2); wing.closePath();
+    const wg = new THREE.ExtrudeGeometry(wing, { depth: 0.12, bevelEnabled: false }); wg.rotateX(Math.PI / 2);
+    g.add(m(wg, T.light, 0, 0, 0));
+    const fin = new THREE.Shape(); fin.moveTo(0, 0); fin.lineTo(2.2, 0); fin.lineTo(2.6, 2.6); fin.lineTo(1.6, 2.6); fin.closePath();
+    const fg = new THREE.ExtrudeGeometry(fin, { depth: 0.1, bevelEnabled: false }); fg.rotateY(Math.PI / 2);
+    g.add(m(fg, T.light, -0.05, 0.4, 3.0));
+    g.add(m(new THREE.BoxGeometry(4.2, 0.08, 1.4), T.light, 0, 0, 4.6));
+    const burner = new THREE.Mesh(new THREE.ConeGeometry(0.5, 2.6, 10, 1, true), T.burner); burner.rotation.x = Math.PI / 2; burner.position.z = 6.8; g.add(burner);
+    return g;
+  },
+  uav() {
+    this.init(); const T = this.mats, g = new THREE.Group(), m = this.mesh.bind(this);
+    g.add(m(new THREE.CylinderGeometry(0.28, 0.22, 3.4, 8), T.light, 0, 0, 0, Math.PI / 2));
+    g.add(m(new THREE.BoxGeometry(9, 0.06, 0.55), T.light, 0, 0.1, -0.2));
+    g.add(m(new THREE.BoxGeometry(2.2, 0.05, 0.4), T.light, 0, 0.3, 1.6, 0, 0, 0.0));
+    return g;
+  },
+};
+
+/** UAV: an unarmed drone circling high above; while it's up, its team sees enemies on the minimap every sweep. */
+class UAVFlight {
+  constructor(ev) {
+    const S = CONFIG.STREAKS.uav;
+    this.netId = ev.eid; this.team = ev.team; this.t = 0; this.life = S.duration; this.alive = true;
+    this.mesh = StreakModels.uav(); scene.add(this.mesh); this.a0 = Math.random() * 6.28;
+  }
+  update(dt) {
+    const S = CONFIG.STREAKS.uav; this.t += dt;
+    const a = this.a0 + this.t * S.speed / S.radius;
+    this.mesh.position.set(Math.cos(a) * S.radius, S.alt, Math.sin(a) * S.radius);
+    this.mesh.rotation.set(0, -a, 0.22);
+    if (this.t > this.life) this.dispose();
+  }
+  dispose() { if (!this.alive) return; this.alive = false; scene.remove(this.mesh); }
+}
+
+/** Precision airstrike: two jets fly along the marked line and each lays a stick of bombs. */
+class Airstrike {
+  constructor(ev, owner) {
+    const S = CONFIG.STREAKS.airstrike;
+    this.netId = ev.eid; this.owner = owner; this.ownerId = ev.id; this.team = ev.team; this.t = 0; this.alive = true;
+    this.cx = ev.x; this.cz = ev.z; this.fx = -Math.sin(ev.a); this.fz = -Math.cos(ev.a); this.rx = -this.fz; this.rz = this.fx;
+    const L = (S.bombs - 1) * S.spacing;
+    this.jets = [-1, 1].map((side, j) => ({ side, lag: j * 0.35, mesh: StreakModels.jet(), snd: null }));
+    for (const j of this.jets) { j.mesh.visible = false; j.mesh.rotation.y = ev.a; scene.add(j.mesh); }
+    this.bombs = [];
+    for (const j of this.jets) for (let i = 0; i < S.bombs; i++) {
+      const s = -L / 2 + i * S.spacing, at = S.delay + j.lag + (s + L / 2) / S.speed + S.fall;
+      this.bombs.push({ t: at, x: this.cx + this.fx * s + this.rx * j.side * S.lateral, z: this.cz + this.fz * s + this.rz * j.side * S.lateral, done: false });
+    }
+    this.end = S.delay + 0.35 + (L + 700) / S.speed;
+    this.L = L;
+  }
+  /** Along-line distance of a jet at time t (0 = start of the bomb line). */
+  jetS(j, t) { return (t - CONFIG.STREAKS.airstrike.delay - j.lag) * CONFIG.STREAKS.airstrike.speed - this.L / 2; }
+  update(dt) {
+    const S = CONFIG.STREAKS.airstrike; this.t += dt;
+    for (const j of this.jets) {
+      const s = this.jetS(j, this.t), vis = s > -650 && s < 650;
+      j.mesh.visible = vis;
+      if (!vis) { if (j.snd) { j.snd.stop(0.4); j.snd = null; } continue; }
+      const x = this.cx + this.fx * s + this.rx * j.side * S.lateral, z = this.cz + this.fz * s + this.rz * j.side * S.lateral;
+      j.mesh.position.set(x, S.alt + j.side * 1.5, z);
+      j.mesh.rotation.z = Math.sin(this.t * 1.3 + j.side) * 0.05;
+      if (!j.snd && j.side < 0) j.snd = AudioSys.loop('jet', { pos: j.mesh.position, vol: 1.6, ref: 18, rolloff: 0.9 });
+      if (j.snd) { // doppler from the line-of-sight speed
+        _kv1.subVectors(j.mesh.position, camera.position); const d = _kv1.length() || 1;
+        const vr = (this.fx * _kv1.x + this.fz * _kv1.z) / d * S.speed;
+        j.snd.set(j.mesh.position, 1.6, clamp(343 / (343 + vr), 0.55, 1.8));
+      }
+    }
+    for (const b of this.bombs) if (!b.done && this.t >= b.t) { b.done = true; this.drop(b); }
+    if (this.t > this.end) this.dispose();
+  }
+  drop(b) {
+    const hit = Collision.raycast(_kv1.set(b.x, 60, b.z), _kv2.set(0, -1, 0), 90, CF.NO_BULLET);
+    const p = _kv3.set(b.x, hit ? hit.point.y + 0.15 : 0.15, b.z);
+    Explosions.blast(p, this.owner, CONFIG.STREAKS.airstrike.blast, 'AIRSTRIKE', { ownerSafe: true, big: true });
+  }
+  dispose() {
+    if (!this.alive) return; this.alive = false;
+    for (const j of this.jets) { scene.remove(j.mesh); if (j.snd) j.snd.stop(0.5); }
+  }
+}
+
+/** Attack helicopter: flies in, patrols over the map hunting enemies with its nose gun, then leaves. It can be shot down. */
+class Helicopter {
+  constructor(ev, owner) {
+    const S = CONFIG.STREAKS.heli, b = CONFIG.WORLD.bounds;
+    this.netId = ev.eid; this.owner = owner; this.ownerId = ev.id; this.team = ev.team; this.name = 'ATTACK HELICOPTER';
+    this.isVehicle = true; this.alive = true; this.down = false; this.hp = S.hp; this.t = 0; this.phase = 'in';
+    const side = ev.team === 'A' ? -1 : 1;
+    this.pos = new THREE.Vector3(rand(-10, 10), S.alt + 6, side * (b.maxZ + 70)); this.vel = new THREE.Vector3(0, 0, -side * S.speed);
+    this.yaw = side < 0 ? Math.PI : 0; this.pitch = 0; this.roll = 0; this.wp = new THREE.Vector3(0, S.alt, side * 12); this.wpT = 0;
+    this.target = null; this.thinkT = 0; this.fireT = 0; this.burst = 0; this.windup = 0; this.gun = new THREE.Vector3(); this.buf = []; this.seen = false;
+    const M = StreakModels.heli(ev.team); this.model = M; scene.add(M.root);
+    const self = this;
+    this.actor = {
+      id: _actorId++, owner: this, team: this.team, name: this.name, isVehicle: true, center: new THREE.Vector3(), tailP: new THREE.Vector3(),
+      get alive() { return self.alive && !self.down; },
+      hitboxes: null,
+      raycast(o, d, maxDist, out) {
+        if (!this.alive) return -1;
+        if (raySphere(o, d, this.center, 5) < 0) return -1;
+        let best = maxDist, t;
+        t = rayCapsule(o, d, self._nose, self._rear, 1.15); if (t >= 0 && t < best) best = t;
+        t = rayCapsule(o, d, self._rear, this.tailP, 0.45); if (t >= 0 && t < best) best = t;
+        if (best >= maxDist) return -1;
+        out.part = 'torso'; out.dist = best; return best;
+      },
+    };
+    this._nose = new THREE.Vector3(); this._rear = new THREE.Vector3();
+    this.actor.hitboxes = [{ a: this._nose }, { a: this.actor.tailP }];
+    Actors.add(this.actor);
+    this.snd = null; this.smokeT = 0; this.place();
+  }
+  get center() { return this.actor.center; }
+  get auth() { return isAuth(); }
+  /** Keep the model, hitbox points and sound in step with pos / yaw. */
+  place() {
+    const R = this.model.root, fx = -Math.sin(this.yaw), fz = -Math.cos(this.yaw);
+    R.position.copy(this.pos); R.rotation.set(this.pitch, this.yaw, this.roll, 'YXZ');
+    this.actor.center.copy(this.pos);
+    this._nose.set(this.pos.x + fx * 1.6, this.pos.y, this.pos.z + fz * 1.6);
+    this._rear.set(this.pos.x - fx * 1.6, this.pos.y + 0.1, this.pos.z - fz * 1.6);
+    this.actor.tailP.set(this.pos.x - fx * 6.4, this.pos.y + 0.6, this.pos.z - fz * 6.4);
+    this.gun.set(this.pos.x + fx * 2.1, this.pos.y - 0.85, this.pos.z + fz * 2.1);
+  }
+  update(dt, M) {
+    this.t += dt;
+    if (this.down) this.updateCrash(dt);
+    else if (this.auth) this.simulate(dt, M);
+    else this.interpolate();
+    if (!this.alive) return;
+    this.model.rotor.rotation.y += dt * 24; this.model.tail.rotation.x += dt * 40;
+    this.place();
+    // engine sound + damage smoke
+    if (!this.snd) this.snd = AudioSys.loop('rotor', { pos: this.pos, vol: 1.4, ref: 14, rolloff: 0.85 });
+    if (this.snd) this.snd.set(this.pos, 1.4, 1);
+    if (this.hp < CONFIG.STREAKS.heli.hp * 0.5 || this.down) {
+      this.smokeT -= dt;
+      if (this.smokeT <= 0) { this.smokeT = this.down ? 0.03 : 0.09; const g = this.down ? 0.08 : 0.22; FX.alpha.spawn(this._rear.x, this._rear.y + 0.6, this._rear.z, rand(-0.4, 0.4), rand(0.5, 1.2), rand(-0.4, 0.4), rand(1.6, 2.6), 0.8, 3.2, g, g, g * 0.96, 0.75, 0, -0.1, 0.4, 0, 0, 0.05); }
+    }
+  }
+  /** Authority: fly the patrol, pick targets, shoot. */
+  simulate(dt, M) {
+    const S = CONFIG.STREAKS.heli, b = CONFIG.WORLD.bounds;
+    if (this.phase === 'in' && Math.hypot(this.pos.x, this.pos.z) < b.maxZ - 6) this.phase = 'patrol';
+    if (this.phase !== 'out' && this.t > S.duration) { this.phase = 'out'; this.target = null; const side = this.team === 'A' ? -1 : 1; this.wp.set(this.pos.x, S.alt + 8, side * (b.maxZ + 90)); }
+    if (this.phase === 'out' && Math.abs(this.pos.z) > b.maxZ + 80) { this.dispose(); return; }
+    // --- targets (a few times a second)
+    this.thinkT -= dt;
+    if (this.thinkT <= 0 && this.phase !== 'out' && M && M.state === 'live') {
+      this.thinkT = 0.3;
+      let best = null, bestS = Infinity;
+      for (const e of M.combatants) {
+        if (!e.alive || e.team === this.team) continue;
+        const p = Bot.aimPoint(e, false, _kv1), d = p.distanceTo(this.gun);
+        if (d > S.range) continue;
+        if (!Collision.lineOfSight(this.gun, p) && !Collision.lineOfSight(this.gun, Bot.aimPoint(e, true, _kv1))) continue;
+        const s = d * (e === this.target ? 0.6 : 1);
+        if (s < bestS) { bestS = s; best = e; }
+      }
+      if (best !== this.target) { this.target = best; this.windup = S.windup; this.burst = 0; }
+    }
+    // --- movement: orbit the map, hold off to one side of a target
+    this.wpT -= dt;
+    if (this.phase !== 'out' && (this.wpT <= 0 || this.pos.distanceTo(this.wp) < 4)) {
+      this.wpT = rand(4, 7);
+      if (this.target) { const a = Math.atan2(this.pos.z - this.target.pos.z, this.pos.x - this.target.pos.x) + rand(-0.6, 0.6); this.wp.set(this.target.pos.x + Math.cos(a) * 16, S.alt, this.target.pos.z + Math.sin(a) * 16); }
+      else { const a = Math.random() * 6.283, r = rand(0.4, 1) * S.orbit; this.wp.set(Math.cos(a) * r, S.alt, Math.sin(a) * r * 1.4); }
+      this.wp.x = clamp(this.wp.x, b.minX + 6, b.maxX - 6); this.wp.z = clamp(this.wp.z, b.minZ + 6, b.maxZ - 6);
+    }
+    _kv2.subVectors(this.wp, this.pos); const dist = _kv2.length();
+    const sp = this.phase === 'patrol' ? S.speed * Math.min(1, dist / 10) : S.speed * 1.6;
+    _kv2.setLength(sp);
+    this.vel.x = damp(this.vel.x, _kv2.x, 1.2, dt); this.vel.z = damp(this.vel.z, _kv2.z, 1.2, dt); this.vel.y = damp(this.vel.y, _kv2.y + Math.sin(this.t * 0.9) * 0.4, 1.0, dt);
+    this.pos.addScaledVector(this.vel, dt);
+    // --- facing: at the target, otherwise along the flight path
+    let want = this.yaw;
+    if (this.target) want = Math.atan2(-(this.target.pos.x - this.pos.x), -(this.target.pos.z - this.pos.z));
+    else if (Math.hypot(this.vel.x, this.vel.z) > 1) want = Math.atan2(-this.vel.x, -this.vel.z);
+    let dy = want - this.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+    this.yaw += clamp(dy, -S.turn * dt, S.turn * dt);
+    const fx = -Math.sin(this.yaw), fz = -Math.cos(this.yaw), fwd = this.vel.x * fx + this.vel.z * fz, side = this.vel.x * -fz + this.vel.z * fx;
+    this.pitch = damp(this.pitch, -clamp(fwd / 40, -0.25, 0.25), 3, dt); this.roll = damp(this.roll, clamp(-side / 35, -0.3, 0.3), 3, dt);
+    // --- gun: bursts once lined up, after a short wind-up on each new target
+    this.fireT -= dt;
+    if (this.target && M && M.state === 'live' && Math.abs(dy) < 0.35) {
+      if (this.windup > 0) this.windup -= dt;
+      else if (this.fireT <= 0) {
+        if (this.burst <= 0) this.burst = randi(S.burst[0], S.burst[1]);
+        this.shoot(M); this.burst--;
+        this.fireT = this.burst > 0 ? 60 / S.rpm : rand(S.gap[0], S.gap[1]);
+      }
+    }
+  }
+  shoot(M) {
+    const S = CONFIG.STREAKS.heli, tgt = this.target;
+    const aim = Bot.aimPoint(tgt, Math.random() < 0.15, _kv1);
+    const dir = _kv2.subVectors(aim, this.gun).normalize();
+    _kv3.crossVectors(dir, UP).normalize();
+    const r = Math.sqrt(Math.random()) * Math.tan(S.spread * DEG), th = Math.random() * 6.283;
+    dir.addScaledVector(_kv3, Math.cos(th) * r); _kv3.cross(dir).normalize(); dir.addScaledVector(_kv3, Math.sin(th) * r).normalize();
+    const h = Hitscan.trace(this.gun, dir, 140, this.actor.id);
+    const end = [shotEnd(h)];
+    if (h.actor) Combat.hitActor(h.actor, h.part === 'head' ? S.damage * 1.5 : S.damage, h.part, { attacker: this.owner || this, weapon: 'HELICOPTER', fromPos: this.gun });
+    if (!(h.actor && h.actor.isPlayer)) M.nearMiss(this.gun, dir, h.dist);
+    this.showShot({ e: end }, null, true);
+    Net.shotFx(this, { id: 'heli', suppressed: false }, end);
+    M.noise(this, this.gun, 'shot');
+  }
+  /** Muzzle flash, tracer, impact and sound (the authority's own shots, or replicated ones). */
+  showShot(fx, M, local = false) {
+    if (!this.alive || this.down) return;
+    const mz = this.model.muzzle.getWorldPosition(_kv1);
+    _kv2.set(-Math.sin(this.yaw), 0, -Math.cos(this.yaw));
+    FX.muzzleFlashWorld(mz, _kv2);
+    AudioSys.play('shot_heli', { pos: mz, vol: 1.0, ref: 10, rolloff: 0.8, rateVar: 0.04, send: 0.4 });
+    for (const e of fx.e || []) {
+      if (!Array.isArray(e) || e.length < 8) continue;
+      const p = _kv3.set(e[0], e[1], e[2]); if (!Number.isFinite(p.x + p.y + p.z)) continue;
+      if (Math.random() < 0.6) FX.tracer(mz, p, 1);
+      if (!local) {
+        const sd = _bv1.subVectors(p, mz).normalize();
+        if (e[7] === 1) FX.impact(p, _bv2.copy(sd).negate(), SURF.FLESH, sd, 1);
+        else if (e[3] >= 0 && SURF_FX[e[3]]) FX.impact(p, _bv2.set(e[4], e[5], e[6]), e[3], sd, 0.9);
+        if (M && !PlayerHealth.dead) M.nearMiss(mz, sd, p.distanceTo(mz));
+      } else if (e[3] >= 0 && SURF_FX[e[3]]) FX.impact(p, _bv2.set(e[4], e[5], e[6]), e[3], _bv1.subVectors(p, mz).normalize(), 0.9);
+    }
+  }
+  /** Client: follow the host's snapshot samples (drawn interpDelay ms in the past). */
+  push(t, x, y, z, yaw, hp) { const B = this.buf; this.hp = hp; if (B.length && t <= B[B.length - 1].t) return; B.push({ t, x, y, z, yaw }); if (B.length > 30) B.shift(); this.seen = true; }
+  interpolate() {
+    const B = this.buf; if (!B.length) return;
+    const rt = performance.now() - CONFIG.NET.interpDelay;
+    let s0 = B[0], s1 = B[0];
+    if (rt >= B[B.length - 1].t) s0 = s1 = B[B.length - 1];
+    else for (let i = B.length - 1; i > 0; i--) if (B[i - 1].t <= rt) { s0 = B[i - 1]; s1 = B[i]; break; }
+    const k = s1.t > s0.t ? clamp((rt - s0.t) / (s1.t - s0.t), 0, 1) : 1;
+    const px = this.pos.x, pz = this.pos.z;
+    this.pos.set(lerp(s0.x, s1.x, k), lerp(s0.y, s1.y, k), lerp(s0.z, s1.z, k));
+    let dy = s1.yaw - s0.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy)); this.yaw = s0.yaw + dy * k;
+    this.vel.set((this.pos.x - px) * 60, 0, (this.pos.z - pz) * 60);
+    const fx = -Math.sin(this.yaw), fz = -Math.cos(this.yaw);
+    this.pitch = -clamp((this.vel.x * fx + this.vel.z * fz) / 40, -0.25, 0.25) * 0.5;
+  }
+  /** Authority: a hit (bullets from enemies, explosions). Returns true if it brought the helicopter down. */
+  onDamage(dmg, part, attacker, info) {
+    if (!this.alive || this.down) return false;
+    this.hp -= info.explosive ? dmg : dmg * CONFIG.STREAKS.heli.bulletMult; // armoured against bullets
+    if (this.hp <= 0) {
+      this.hp = 0;
+      if (Game.match) Game.match.emit({ k: 'ksdown', eid: this.netId, by: attacker ? attacker.netId : null, bn: attacker ? attacker.name : '', w: info.weapon || '' });
+      return true;
+    }
+    return false;
+  }
+  /** Shot down (every machine, from the 'ksdown' event): spin, trail smoke, crash. */
+  destroy() {
+    if (this.down || !this.alive) return;
+    this.down = true; this.target = null; this.downT = 0; this.spin = rand(-1, 1) < 0 ? -1 : 1;
+    const hit = Collision.raycast(_kv1.set(this.pos.x, this.pos.y - 2, this.pos.z), _kv2.set(0, -1, 0), 80, CF.NO_BULLET);
+    this.crashY = hit ? hit.point.y : 0;
+    FX.explosion(this.pos); AudioSys.play('explosion', { pos: this.pos, vol: 0.8, ref: 10, rolloff: 0.7, send: 0.5, rate: 1.2 });
+  }
+  updateCrash(dt) {
+    this.downT += dt;
+    this.vel.y -= 9.8 * 0.7 * dt; this.vel.x *= 1 - dt * 0.4; this.vel.z *= 1 - dt * 0.4;
+    this.pos.addScaledVector(this.vel, dt); this.yaw += this.spin * dt * (3 + this.downT * 2);
+    this.roll = damp(this.roll, 0.5 * this.spin, 1.5, dt); this.pitch = damp(this.pitch, 0.3, 1, dt);
+    this.model.rotor.rotation.y += dt * 12; this.place();
+    if (this.snd) this.snd.set(this.pos, 1.4 * Math.max(0, 1 - this.downT / 2), 0.8);
+    this.smokeT -= dt; if (this.smokeT <= 0) { this.smokeT = 0.03; FX.alpha.spawn(this.pos.x, this.pos.y + 0.4, this.pos.z, rand(-0.5, 0.5), rand(0.2, 1), rand(-0.5, 0.5), rand(2, 3), 1, 3.6, 0.06, 0.06, 0.06, 0.85, 0, -0.1, 0.4, 0, 0, 0.05); }
+    if (this.pos.y <= this.crashY + 0.8 || this.downT > 6) {
+      const p = _kv1.set(this.pos.x, this.crashY + 0.3, this.pos.z);
+      FX.explosion(p); FX.explosion(_kv2.copy(p).add(_kv3.set(rand(-1.5, 1.5), 0.6, rand(-1.5, 1.5))));
+      FXLights.flash(_kv2.copy(p).setY(p.y + 1), 0xffa040, 120, 30, 0.4);
+      AudioSys.play('explosion', { pos: p, vol: 1.0, ref: 12, rolloff: 0.6, send: 0.6, important: true, rate: 0.8 });
+      const dist = p.distanceTo(camera.position); Game.shake(clamp(1.2 - dist / 30, 0, 1));
+      this.dispose();
+    }
+  }
+  dispose() {
+    if (!this.alive) return; this.alive = false;
+    scene.remove(this.model.root); Actors.remove(this.actor);
+    if (this.snd) { this.snd.stop(0.6); this.snd = null; }
+  }
+}
+
+const Streaks = {
+  list: [], uav: { A: 0, B: 0 }, sweepT: { A: 0, B: 0 }, seq: 0, designating: false,
+  reset() { for (const e of this.list) e.dispose(); this.list.length = 0; this.uav.A = this.uav.B = 0; this.sweepT.A = this.sweepT.B = 0; this.stopDesignate(); },
+  byId(id) { for (const e of this.list) if (e.netId === id && e.alive) return e; return null; },
+  /** Every machine (from the kill tally): count the streak, award rewards. */
+  onKill(K, M) {
+    K.streak = (K.streak || 0) + 1; K.ks = K.ks || [];
+    for (const s of KILLSTREAKS) if (K.streak === s.kills) {
+      K.ks.push(s.id);
+      if (K.isPlayer) { HUD.ksAnnounce(s.name + ' READY  ·  PRESS ' + s.key, 'ok'); AudioSys.play('ks_earn', { bus: 'ui', vol: 0.7, send: 0 }); }
+      if (K.isBot) K.ksT = rand(CONFIG.STREAKS.botUse[0], CONFIG.STREAKS.botUse[1]);
+    }
+  },
+  has(c, type) { return !!(c && c.ks && c.ks.includes(type)); },
+  /** Authority: use a reward someone has earned. params: { x, z, a } aim point + heading for the airstrike. */
+  launch(owner, type, params, M) {
+    if (!M || !M.authority || M.state !== 'live' || !this.has(owner, type)) return false;
+    const ev = { k: 'ks', t: type, id: owner.netId, team: owner.team, eid: 'k' + (++this.seq) };
+    if (type === 'airstrike') {
+      if (!params || !Number.isFinite(params.x) || !Number.isFinite(params.z) || !Number.isFinite(params.a)) return false;
+      const b = CONFIG.WORLD.bounds;
+      ev.x = r2(clamp(params.x, b.minX, b.maxX)); ev.z = r2(clamp(params.z, b.minZ, b.maxZ)); ev.a = +params.a.toFixed(3);
+    }
+    M.emit(ev);
+    return true;
+  },
+  /** Every machine: the 'ks' event. Remove it from the owner's rewards, announce it, start it. */
+  start(ev, M) {
+    const owner = M.find(ev.id);
+    if (owner && owner.ks) { const i = owner.ks.indexOf(ev.t); if (i >= 0) owner.ks.splice(i, 1); }
+    const S = KILLSTREAKS.find((s) => s.id === ev.t); if (!S) return;
+    const friendly = ev.team === PlayerTarget.team, who = owner === PlayerTarget ? '' : '  ·  ' + (owner ? owner.name : '');
+    const txt = ev.t === 'uav' ? 'UAV ONLINE' : ev.t === 'airstrike' ? 'AIRSTRIKE INBOUND' : 'ATTACK HELICOPTER INBOUND';
+    HUD.ksAnnounce(friendly ? 'FRIENDLY ' + txt + who : 'ENEMY ' + txt, friendly ? 'ok' : 'bad');
+    AudioSys.play(friendly ? 'ks_friendly' : 'ks_enemy', { bus: 'ui', vol: 0.65, send: 0 });
+    if (ev.t === 'uav') {
+      this.uav[ev.team] = Math.max(this.uav[ev.team], CONFIG.STREAKS.uav.duration); this.sweepT[ev.team] = 0;
+      this.list.push(new UAVFlight(ev));
+    } else if (ev.t === 'airstrike') {
+      this.list.push(new Airstrike(ev, owner));
+      if (friendly) HUD.ping({ x: ev.x, z: ev.z }, '#ffb02e', CONFIG.STREAKS.airstrike.delay + 2);
+    } else this.list.push(new Helicopter(ev, owner));
+  },
+  /** Every machine: the 'ksdown' event. */
+  shotDown(ev, M) {
+    const h = this.byId(ev.eid); if (!h) return;
+    const by = M.find(ev.by), me = by === PlayerTarget;
+    h.destroy();
+    HUD.killfeed(by ? (me ? 'YOU' : by.name) : ev.bn || '', ev.w || '', 'ATTACK HELICOPTER', { mine: me, killerTeam: by ? (me ? 'me' : by.team === PlayerTarget.team ? 'f' : 'e') : 'e', victimTeam: h.team === PlayerTarget.team ? 'f' : 'e' });
+    if (h.team !== PlayerTarget.team) HUD.ksAnnounce('ENEMY HELICOPTER DESTROYED', 'ok'); else HUD.ksAnnounce('FRIENDLY HELICOPTER DOWN', 'bad');
+    if (me) { const g = Math.round(CONFIG.STREAKS.heli.xp * M.xpMult); M.xp.kills += CONFIG.STREAKS.heli.xp; HUD.scorePop(`+${g}\nHELICOPTER DOWN`); Progress.addXP(g); }
+  },
+  update(dt, M) {
+    const S = CONFIG.STREAKS.uav;
+    for (const team of ['A', 'B']) {
+      if (this.uav[team] <= 0) continue;
+      this.uav[team] -= dt; this.sweepT[team] -= dt;
+      if (this.sweepT[team] <= 0 && M) { this.sweepT[team] = S.sweep; this.sweep(team, M); }
+    }
+    for (let i = this.list.length - 1; i >= 0; i--) { const e = this.list[i]; if (e.alive) e.update(dt, M); if (!e.alive) this.list.splice(i, 1); }
+    if (this.designating) this.updateDesignate();
+  },
+  /** UAV sweep: the team sees every enemy on the minimap; its bots learn where the nearest enemy is. */
+  sweep(team, M) {
+    const enemies = M.combatants.filter((c) => c.alive && c.team !== team);
+    if (team === PlayerTarget.team) { for (const e of enemies) HUD.ping(e.pos, '#ff4d4d', CONFIG.STREAKS.uav.sweep + 0.4); AudioSys.play('uavping', { bus: 'ui', vol: 0.25, send: 0 }); }
+    if (M.authority) for (const b of M.bots) {
+      if (b.team !== team || !b.alive || b.visible) continue;
+      let best = null, bd = Infinity; for (const e of enemies) { const d = e.pos.distanceTo(b.pos); if (d < bd) { bd = d; best = e; } }
+      if (best && bd < 60) { b.lastKnown.copy(best.pos); b.lastKnownT = Game.time; }
+    }
+  },
+  /** Enemy helicopters a bot on `team` could shoot at. */
+  targets(team) { return this.list.filter((e) => e.isVehicle && e.alive && !e.down && e.team !== team); },
+  /** Host snapshot rows for helicopters: [eid, x, y, z, yaw, hp]. */
+  snapshot() { const out = []; for (const e of this.list) if (e.isVehicle && e.alive && !e.down) out.push([e.netId, r2(e.pos.x), r2(e.pos.y), r2(e.pos.z), +e.yaw.toFixed(3), Math.round(e.hp)]); return out; },
+  applySnapshot(rows, t) {
+    const live = new Set();
+    for (const r of rows) { const h = this.byId(r[0]); if (h && !h.down) { h.push(t, r[1], r[2], r[3], r[4], r[5]); live.add(h); } }
+    for (const e of this.list) if (e.isVehicle && e.seen && !e.down && !live.has(e)) e.dispose(); // flew off on the host
+  },
+  /** Authority: record helicopter positions for hit-claim checks. */
+  record(now) { for (const e of this.list) if (e.isVehicle && e.alive && !e.down) LagComp.record(e.netId, e.pos.x, e.pos.y - 1.4, e.pos.z, 2.8, now); },
+  // ---------------------------------------------------------------- bots
+  botUpdate(b, dt, M) {
+    if (!b.ks || !b.ks.length) return;
+    b.ksT = (b.ksT ?? 2) - dt; if (b.ksT > 0) return;
+    const type = b.ks[0];
+    let params = null;
+    if (type === 'airstrike') {
+      params = this.pickStrike(b, M);
+      if (!params) { b.ksT = 3; return; }
+    }
+    if (!this.launch(b, type, params, M)) b.ksT = 3; else b.ksT = rand(1, 3);
+  },
+  /** Where a bot calls its airstrike: the densest group of enemies, never near its own team. */
+  pickStrike(b, M) {
+    const enemies = M.combatants.filter((c) => c.alive && c.team !== b.team), friends = M.combatants.filter((c) => c.alive && c.team === b.team);
+    let best = null, bestN = 0;
+    for (const e of enemies) {
+      const n = enemies.filter((o) => o.pos.distanceTo(e.pos) < 10).length;
+      if (n > bestN && !friends.some((f) => Math.hypot(f.pos.x - e.pos.x, f.pos.z - e.pos.z) < 14)) { bestN = n; best = e; }
+    }
+    return best ? { x: best.pos.x + rand(-2, 2), z: best.pos.z + rand(-2, 2), a: Math.random() * 6.283 } : null;
+  },
+  // ---------------------------------------------------------------- the local player's airstrike designator
+  marker: null, mark: { ok: false, x: 0, z: 0, a: 0 },
+  startDesignate() {
+    if (!this.marker) {
+      const g = new THREE.Group(), mat = new THREE.MeshBasicMaterial({ color: 0xff3b2e, transparent: true, opacity: 0.75, depthWrite: false, depthTest: false });
+      const ring = new THREE.Mesh(new THREE.RingGeometry(5.6, 6.0, 48), mat); ring.rotation.x = -Math.PI / 2; g.add(ring);
+      const S = CONFIG.STREAKS.airstrike, len = (S.bombs - 1) * S.spacing + 8;
+      for (const s of [-1, 1]) { const l = new THREE.Mesh(new THREE.PlaneGeometry(0.25, len), mat); l.rotation.x = -Math.PI / 2; l.position.x = s * S.lateral; g.add(l); }
+      const arrow = new THREE.Mesh(new THREE.ConeGeometry(1.1, 2.4, 3), mat); arrow.rotation.x = -Math.PI / 2; arrow.position.z = -len / 2 - 1.6; arrow.scale.y = 0.2; g.add(arrow);
+      g.renderOrder = 10; g.visible = false; scene.add(g); this.marker = g;
+    }
+    this.designating = true; this.mark.ok = false;
+    HUD.designator(true);
+  },
+  stopDesignate() { this.designating = false; if (this.marker) this.marker.visible = false; if (typeof HUD !== 'undefined' && HUD.el) HUD.designator(false); },
+  updateDesignate() {
+    camera.getWorldDirection(_kv2);
+    const hit = Collision.raycast(camera.position, _kv2, 160, CF.NO_BULLET), b = CONFIG.WORLD.bounds, m = this.mark;
+    m.ok = !!hit && hit.normal.y > 0.5 && hit.point.x > b.minX - 2 && hit.point.x < b.maxX + 2 && hit.point.z > b.minZ - 2 && hit.point.z < b.maxZ + 2;
+    if (hit) { m.x = hit.point.x; m.z = hit.point.z; m.a = Game.player.yaw; this.marker.position.set(hit.point.x, hit.point.y + 0.08, hit.point.z); this.marker.rotation.y = m.a; }
+    this.marker.visible = !!hit; this.marker.children[0].material.color.setHex(m.ok ? 0xff3b2e : 0x8a8a8a);
+    HUD.designatorOk(m.ok);
+  },
+};
+
+/* =====================================================================
    MATCH — Team Deathmatch. One rule set for every mode:
      TDMMatch    — authoritative (offline practice, or the online host):
                    rosters, scores, clock, spawns, respawns, kill credit,
@@ -5966,14 +6565,14 @@ class MatchBase {
     this.others = [];      // every combatant with a body except the local player (bots, remote players, bot puppets)
     this.combatants = [PlayerTarget];
     this.playerFocus = 1;
-    PlayerTarget.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; PlayerTarget.dmgBy = new Map();
+    PlayerTarget.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; PlayerTarget.dmgBy = new Map(); PlayerTarget.streak = 0; PlayerTarget.ks = [];
   }
   get subtitle() {
     const lim = 'FIRST TO ' + this.scoreLimit;
     return this.online ? `ONLINE · ${this.roomName || 'ROOM'} · ${lim}` : `${CONFIG.BOTS.difficulty[this.difficulty].label} BOTS · ${lim}`;
   }
   get endTag() { return this.online ? 'ONLINE · ' + (this.roomName || 'ROOM') : CONFIG.BOTS.difficulty[this.difficulty].label + ' BOTS'; }
-  find(id) { if (id == null) return null; if (id === PlayerTarget.netId) return PlayerTarget; for (const c of this.others) if (c.netId === id) return c; return null; }
+  find(id) { if (id == null) return null; if (id === PlayerTarget.netId) return PlayerTarget; for (const c of this.others) if (c.netId === id) return c; return Streaks.byId(id); }
   /** Bullets that pass close to the player's head make a crack/whiz. */
   nearMiss(o, d, len) {
     const h = PlayerTarget.head;
@@ -6012,9 +6611,9 @@ class MatchBase {
     Game.onMatchEnd(this);
   }
   /** Kill bookkeeping shared by host and mirror: victim/killer/assist stats and the team score. */
-  tally(K, V, credit, head, assists) {
-    if (V) V.stats.deaths++;
-    if (credit && K) { K.stats.kills++; K.stats.score += 100 + (head ? 25 : 0); this.scores[K.team]++; }
+  tally(K, V, credit, head, assists, weapon) {
+    if (V) { V.stats.deaths++; V.streak = 0; }
+    if (credit && K) { K.stats.kills++; K.stats.score += 100 + (head ? 25 : 0); this.scores[K.team]++; if (!STREAK_WEAPONS.has(weapon)) Streaks.onKill(K, this); }
     for (const id of assists || []) { const a = this.find(id); if (a) { a.stats.assists++; a.stats.score += 25; } }
   }
   /** Everyone in the match, for the network: [{ id, name, team, bot, stats }]. */
@@ -6083,6 +6682,7 @@ class TDMMatch extends MatchBase {
     const b = new Bot(team, name || 'Bot ' + (this.botSeq + 1), this.difficulty);
     b.netId = restore ? restore.id : 'b' + (this.botSeq++);
     if (restore && restore.stats) Object.assign(b.stats, restore.stats);
+    if (restore) { b.streak = restore.streak || 0; b.ks = restore.ks ? restore.ks.slice() : []; }
     this.bots.push(b); Actors.add(b.actor);
     return b;
   }
@@ -6162,7 +6762,7 @@ class TDMMatch extends MatchBase {
       for (const [who, e] of log) if (who !== killer && who.team !== victim.team && e.dmg >= 25 && Game.time - e.t < 8 && this.combatants.includes(who)) assists.push(who.netId);
       log.clear();
     }
-    this.tally(killer, victim, credit, head, assists);
+    this.tally(killer, victim, credit, head, assists, weapon);
     this.emit({ k: 'kill', killer: killer ? killer.netId : null, victim: victim.netId, kn: killer ? killer.name : '', vn: victim.name, weapon: weapon || '', head: !!head, credit, assists });
     if (!victim.isPlayer) this.respawns.push({ who: victim, t: CONFIG.TDM.respawn });
     if (this.scores.A >= this.scoreLimit || this.scores.B >= this.scoreLimit) this.end('SCORE LIMIT REACHED');
@@ -6192,6 +6792,7 @@ class TDMMatch extends MatchBase {
       if (PlayerTarget.alive) LagComp.record(PlayerTarget.netId, PlayerTarget.pos.x, PlayerTarget.pos.y, PlayerTarget.pos.z, Game.player.height, now);
       for (const b of this.bots) if (b.alive) LagComp.record(b.netId, b.pos.x, b.pos.y, b.pos.z, b.body.height, now);
       for (const h of this.humans) if (h.alive) LagComp.record(h.netId, h.pos.x, h.pos.y, h.pos.z, h.height, now);
+      Streaks.record(now);
     }
   }
   end(reason) {
@@ -6204,21 +6805,21 @@ class TDMMatch extends MatchBase {
     const b = this.bots.map((x) => [x.netId, +x.pos.x.toFixed(2), +x.pos.y.toFixed(2), +x.pos.z.toFixed(2), +x.aimYaw.toFixed(3), +x.aimPitch.toFixed(3),
       x.body.stance === 'crouch' || x.body.stance === 'slide' ? 1 : 0, (x.body.sprinting ? 1 : 0) | (x.reloadT > 0 ? 2 : 0), x.def ? x.def.key : 'kestrel:', x.alive ? 1 : 0, Math.max(0, Math.round(x.hp))]);
     const hp = [[PlayerTarget.netId, Math.max(0, Math.round(PlayerHealth.hp))], ...this.humans.map((h) => [h.netId, Math.max(0, Math.round(h.hp))])];
-    return { t: Math.round(now), s: this.state === 'pre' ? 0 : this.state === 'live' ? 1 : 2, st: +this.stateT.toFixed(2), tl: +this.timeLeft.toFixed(1), sc: [this.scores.A, this.scores.B], b, hp };
+    return { t: Math.round(now), s: this.state === 'pre' ? 0 : this.state === 'live' ? 1 : 2, st: +this.stateT.toFixed(2), tl: +this.timeLeft.toFixed(1), sc: [this.scores.A, this.scores.B], b, hp, k: Streaks.snapshot() };
   }
   /** Scoreboard sync (sent about once a second): [id, score, kills, deaths, assists, ping]. */
   board() { return this.combatants.map((c) => [c.netId, c.stats.score, c.stats.kills, c.stats.deaths, c.stats.assists, c.isPlayer ? -2 : c.isRemote ? (c.ping || 0) : -1]); }
   /** Host migration: turn this client's mirror into the authoritative match (the old host's slot goes to a bot). */
   static fromMirror(cm, o) {
-    const keep = { stats: { ...PlayerTarget.stats } };
+    const keep = { stats: { ...PlayerTarget.stats }, streak: PlayerTarget.streak, ks: PlayerTarget.ks };
     const m = new TDMMatch({ ...o, online: true, fill: false, selfTeam: PlayerTarget.team, difficulty: o.difficulty, scoreLimit: cm.scoreLimit, timeLimit: cm.timeLimit, roomName: cm.roomName });
     m.fill = o.fill !== false;
-    Object.assign(PlayerTarget.stats, keep.stats);
+    Object.assign(PlayerTarget.stats, keep.stats); PlayerTarget.streak = keep.streak; PlayerTarget.ks = keep.ks;
     for (const k of ['xp', 'xpStart', 'levelStart', 'levelUps', 'stats', 'timeLeft', 'state', 'stateT', 'joinedAt']) m[k] = cm[k];
     m.scores = { ...cm.scores };
     for (const p of cm.puppets.values()) {
       if (p.isBotPuppet) {
-        const b = m.addBot(p.team, { id: p.netId, name: p.name, stats: p.stats });
+        const b = m.addBot(p.team, { id: p.netId, name: p.name, stats: p.stats, streak: p.streak, ks: p.ks });
         m.botSeq = Math.max(m.botSeq, (parseInt(String(p.netId).slice(1), 10) || 0) + 1);
         if (p.alive) { b.spawn({ x: p.pos.x, y: p.pos.y + 0.05, z: p.pos.z, yaw: p.aimYaw }, m); b.spawnProtect = 0; b.hp = p.hp || 100; }
         else m.respawns.push({ who: b, t: 1.5 });
@@ -6228,6 +6829,7 @@ class TDMMatch extends MatchBase {
     cm.puppets.clear(); cm.others.length = 0;
     m.rebuild();
     if (m.fill) { const before = m.bots.length; m.topUp(); m.rebuild(); for (const b of m.bots.slice(before)) if (m.state !== 'ended') b.spawn(m.spawnPoint(b.team, b), m); }
+    for (const e of Streaks.list) if (e.ownerId) e.owner = m.find(e.ownerId) || e.owner; // live killstreaks now answer to this machine
     return m;
   }
 }
@@ -6285,6 +6887,7 @@ class ClientMatch extends MatchBase {
       else if (!e[9] && p.alive) p.die(null);
       if (e[9]) { p.push(t, e[1], e[2], e[3], e[4], e[5], e[6], e[7]); p.hp = e[10] ?? 100; }
     }
+    if (s.k) Streaks.applySnapshot(s.k, t);
     for (const [id, hp] of s.hp) {
       if (id === PlayerTarget.netId) { if (!PlayerHealth.dead && hp > 0 && Math.abs(PlayerHealth.hp - hp) > 4) PlayerHealth.hp = hp; }
       else { const p = this.puppets.get(id); if (p) p.hp = hp; }
@@ -6318,7 +6921,7 @@ class Puppet {
     this.pos = new THREE.Vector3(); this.aimYaw = 0; this.aimPitch = 0; this.alive = false; this.hp = 100; this.lastHit = -100;
     this.life = 0; this.height = CONFIG.MOVE.standHeight;
     this.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; this.dmgBy = new Map(); this.ping = 0;
-    this.buf = []; this.stance = 0; this.flags = 0; this.weaponKey = ''; this.setWeapon('kestrel:');
+    this.buf = []; this.stance = 0; this.flags = 0; this.weaponKey = ''; this.setWeapon('kestrel:'); this.streak = 0; this.ks = [];
     this.deathT = 0; this.stepAcc = 0; this.prev = new THREE.Vector3(); this.speed = 0; this.moveAngle = 0; this.claims = [];
     this._mz = new THREE.Vector3(); this._d = new THREE.Vector3(); this._p = new THREE.Vector3(); this._n = new THREE.Vector3();
   }
@@ -6607,7 +7210,7 @@ const Net = {
     this.tx = {
       hi: A('hi', this.onHi), lob: A('lob', this.onLobby), rdy: A('rdy', this.onReady), go: A('go', this.onGo), no: A('no', this.onReject),
       st: A('st', this.onSt), sn: A('sn', this.onSnap), ev: A('ev', this.onEvents), sb: A('sb', this.onBoard),
-      clm: A('clm', this.onClaim), fx: A('fx', this.onFx), nd: A('nd', this.onNade),
+      clm: A('clm', this.onClaim), fx: A('fx', this.onFx), nd: A('nd', this.onNade), ksr: A('ksr', this.onStreakRequest),
     };
     r.onJoin = (id) => { this.heard.set(id, performance.now()); if (this.role === 'client' && id === this.hostId && !this.welcomed) this.sayHi(); };
     r.onLeave = (id) => this.onPeerLeave(id);
@@ -6788,7 +7391,7 @@ const Net = {
     this.tx.clm({ v: victim.netId, p: part, w: info.wid || '', d: r2(info.dist || 0), o: [r2(o.x), r2(o.y), r2(o.z)], mn: this.matchNo }, this.hostId);
     const hp = victim.hp ?? 100, killed = hp - dmg <= 0;
     victim.hp = Math.max(1, hp - dmg); // never predict a death: the kill event does that
-    if (victim.actor) victim.actor.flinch.v += part === 'head' ? 8 : 4;
+    if (victim.actor && victim.actor.flinch) victim.actor.flinch.v += part === 'head' ? 8 : 4;
     return killed;
   },
   /** Host: validate a client's hit claim against the position history, then apply it like a local hit. */
@@ -6796,7 +7399,7 @@ const Net = {
     const m = Game.match, C = CONFIG.NET;
     if (!this.isHost() || !m || !m.authority || m.state !== 'live' || !c || c.mn !== this.matchNo) return;
     const S = m.find(from); if (!S || !S.isRemote || !S.alive) return;
-    const V = m.find(c.v); if (!V || !V.alive || V === S || V.team === S.team) return;
+    const V = m.find(c.v); if (!V || !V.alive || V.down || V === S || V.team === S.team) return;
     if (!Array.isArray(c.o) || c.o.length !== 3 || !c.o.every(Number.isFinite) || !Number.isFinite(c.d)) return;
     const now = performance.now(), win = Math.min(C.lagWindowMax, (S.ping || 120) + C.interpDelay + 250);
     const o = _nv1.fromArray(c.o), part = c.p === 'head' || c.p === 'limb' ? c.p : 'torso';
@@ -6821,6 +7424,17 @@ const Net = {
     a.push(now); return true;
   },
   reject(S, why) { this.rejects = (this.rejects || 0) + 1; if (CONFIG.NET.logRejects) console.warn('[net] claim rejected', S.name, why); },
+  // ------------------------------------------------------------ killstreaks
+  /** Client: ask the host to launch one of our rewards (it checks we've earned it). */
+  requestStreak(type, p) {
+    const now = performance.now(); if (now - (this.ksReqT || 0) < 1200) return; this.ksReqT = now;
+    this.tx.ksr({ t: type, x: p ? r2(p.x) : null, z: p ? r2(p.z) : null, a: p ? +p.a.toFixed(3) : null, mn: this.matchNo }, this.hostId);
+  },
+  onStreakRequest(d, from) {
+    const m = Game.match; if (!this.isHost() || !m || !m.authority || !d || d.mn !== this.matchNo) return;
+    const S = m.find(from); if (!S || !S.isRemote || !S.alive) return;
+    Streaks.launch(S, d.t, d, m);
+  },
   // ------------------------------------------------------------ shots + grenades (cosmetic replication)
   /** Replicate a shot so others see/hear it. e: [[x, y, z, surf, nx, ny, nz, flesh], …] */
   shotFx(shooter, def, e) { const m = Game.match; if (!this.active || !m || !m.online || !this.tx) return; this.tx.fx({ i: shooter.netId, w: def.id, s: def.suppressed ? 1 : 0, e, mn: this.matchNo }); },
@@ -6966,7 +7580,7 @@ const HUD = {
   el: {}, hmT: 0, hmKill: false, msg: null, nums: [], cache: {}, kf: [], arrows: [], pings: [], ks: [], mm: null,
   init() {
     for (const id of ['hud', 'crosshair', 'hitmarker', 'wName', 'wMode', 'wMag', 'wRes', 'wPips', 'centerMsg', 'fps', 'dmgLayer', 'rangeInfo', 'rangeStats', 'clickToPlay',
-      'gFrag', 'gFlash', 'minimap', 'mmCanvas', 'scA', 'scB', 'scClock', 'scMode', 'killfeed', 'streak', 'dmgArrows', 'scope', 'scopeRet', 'breath', 'breathBar', 'breathHint',
+      'gFrag', 'gFlash', 'minimap', 'mmCanvas', 'scA', 'scB', 'scClock', 'scMode', 'killfeed', 'streak', 'ksMsg', 'designator', 'dzSub', 'dmgArrows', 'scope', 'scopeRet', 'breath', 'breathBar', 'breathHint',
       'death', 'deathName', 'deathWeapon', 'deathTimer', 'scoreboard', 'sbTitle', 'sbSub', 'sbBody', 'tags', 'banner', 'scorePop']) this.el[id] = $(id);
     this.tags = [];
     for (let i = 0; i < 6; i++) { const d = document.createElement('div'); d.className = 'tag'; d.appendChild(document.createTextNode('')); d.appendChild(document.createElement('i')); this.el.tags.appendChild(d); this.tags.push({ el: d, txt: d.firstChild, on: false, x: -1, y: -1, name: '', cls: '' }); }
@@ -6986,8 +7600,8 @@ const HUD = {
     for (let i = 0; i < 16; i++) this.pings.push({ t: 0, x: 0, z: 0, color: '#ff4d4d' });
     for (const s of KILLSTREAKS) {
       const d = document.createElement('div'); d.className = 'ks';
-      d.innerHTML = `<div class="ic"><div class="fill"></div>${SVG_ICONS[s.id]}</div>${s.short}<br>${s.kills}`;
-      this.el.streak.appendChild(d); this.ks.push({ el: d, fill: d.querySelector('.fill'), kills: s.kills });
+      d.innerHTML = `<div class="ic"><div class="fill"></div>${SVG_ICONS[s.id]}</div>${s.short}<span class="sub">${s.kills} KILLS</span>`;
+      this.el.streak.appendChild(d); this.ks.push({ el: d, fill: d.querySelector('.fill'), sub: d.querySelector('.sub'), kills: s.kills });
     }
     const cnt = document.createElement('div'); cnt.className = 'cnt'; this.el.streak.appendChild(cnt); this.el.streakCnt = cnt;
     this.mmCtx = this.el.mmCanvas.getContext('2d');
@@ -7003,6 +7617,7 @@ const HUD = {
     this.hideDeath(); this.scoreboard(false); this.scope(null);
     this.hmT = 0; this.cache = {}; this.msg = null; this.centerMsg(''); this.banner(''); this.popT = 0; this.el.scorePop.style.opacity = '0';
     for (const t of this.tags) { t.on = false; t.el.style.display = 'none'; }
+    this.ksT = 0; this.el.ksMsg.style.opacity = '0'; this.designator(false);
     this.friends = null;
   },
   /** 'range' shows the range help + stats line; 'tdm' hides them. */
@@ -7115,12 +7730,25 @@ const HUD = {
     for (const x of this.pings) { if (x.t <= 0) { p = x; break; } if (x.t < p.t) p = x; }
     p.t = life; p.life = life; p.x = pos.x; p.z = pos.z; p.color = color;
   },
-  setStreak(n) {
-    if (this.cache.streak === n) return;
-    this.cache.streak = n;
-    for (const k of this.ks) { k.fill.style.height = (clamp(n / k.kills, 0, 1) * 100).toFixed(0) + '%'; k.el.classList.toggle('ready', n >= k.kills); }
+  /** n: current streak; ks: rewards earned and not yet used (null in the range: progress only). */
+  setStreak(n, ks) {
+    const key = n + '|' + (ks ? ks.join() : '-');
+    if (this.cache.streak === key) return;
+    this.cache.streak = key;
+    KILLSTREAKS.forEach((s, i) => {
+      const k = this.ks[i], have = ks ? ks.filter((x) => x === s.id).length : 0;
+      k.fill.style.height = (have ? 100 : clamp(n / s.kills, 0, 1) * 100).toFixed(0) + '%';
+      k.el.classList.toggle('ready', have > 0);
+      k.sub.textContent = have ? (have > 1 ? `[${s.key}] ×${have}` : `PRESS ${s.key}`) : s.kills + ' KILLS';
+    });
     this.el.streakCnt.textContent = n > 0 ? 'STREAK ' + n : '';
   },
+  /** Killstreak announcement under the score panel. kind: 'ok' (gold) / 'bad' (red). */
+  ksAnnounce(text, kind = 'ok') {
+    const e = this.el.ksMsg; e.textContent = text; e.className = kind === 'bad' ? 'bad' : ''; e.style.opacity = '1'; this.ksT = 3.5;
+  },
+  designator(on) { this.el.designator.classList.toggle('on', on); if (!on) this.el.designator.classList.remove('bad'); },
+  designatorOk(ok) { if (this.cache.dz === ok) return; this.cache.dz = ok; this.el.designator.classList.toggle('bad', !ok); this.el.dzSub.innerHTML = ok ? 'CLICK TO CALL IT IN &middot; RIGHT CLICK OR 4 TO CANCEL' : 'AIM AT OPEN GROUND INSIDE THE MAP'; },
   /** Top-centre panel: team scores and the clock. */
   setScore(a, b, seconds, mode) {
     if (this.cache.scA !== a) { this.cache.scA = a; this.el.scA.textContent = a; }
@@ -7239,6 +7867,15 @@ const HUD = {
       g.fillStyle = p.color; g.beginPath(); g.arc((p.x - b.minX) * this.mm.ppm, (p.z - b.minZ) * this.mm.ppm, 3.2 / k, 0, Math.PI * 2); g.fill();
     }
     g.globalAlpha = 1;
+    for (const e of Streaks.list) { // air support: friendly blue, enemy red
+      if (!e.isVehicle || !e.alive) continue;
+      const hx = (e.pos.x - b.minX) * this.mm.ppm, hz = (e.pos.z - b.minZ) * this.mm.ppm, r = 6 / k;
+      g.save(); g.translate(hx, hz); g.rotate(-e.yaw);
+      g.fillStyle = e.team === PlayerTarget.team ? '#59a8ff' : '#ff4d4d'; g.strokeStyle = '#000'; g.lineWidth = 1.2 / k;
+      g.beginPath(); g.moveTo(0, -r); g.lineTo(r * 0.55, r * 0.2); g.lineTo(0, r); g.lineTo(-r * 0.55, r * 0.2); g.closePath(); g.fill(); g.stroke();
+      g.beginPath(); g.moveTo(-r, -r * 0.1); g.lineTo(r, -r * 0.1); g.stroke();
+      g.restore();
+    }
     if (this.friends) for (const f of this.friends) {
       if (!f.alive) continue;
       const fx = (f.pos.x - b.minX) * this.mm.ppm, fz = (f.pos.z - b.minZ) * this.mm.ppm, r = 3.4 / k;
@@ -7260,6 +7897,7 @@ const HUD = {
     g.fillStyle = '#e6e8e3'; g.fillText('N', half + nx * r, half + ny * r + 0.5);
   },
   update(dt, pl) {
+    if (this.ksT > 0) { this.ksT -= dt; if (this.ksT <= 0) this.el.ksMsg.style.opacity = '0'; }
     if (this.hmT > 0) {
       this.hmT -= dt;
       const k = Math.max(0, this.hmT) / (this.hmKill ? 0.32 : 0.2);
@@ -7988,6 +8626,13 @@ const Game = {
     AudioSys.startAmbience();
     if (!this.debugNoLock) Input.lock();
   },
+  /** Use a killstreak reward (params: the airstrike's aim point + heading). Online clients ask the host. */
+  useStreak(type, params) {
+    const m = this.match, S = KILLSTREAKS.find((x) => x.id === type);
+    if (!m || m.state !== 'live' || PlayerHealth.dead || !S) return;
+    if (!Streaks.has(PlayerTarget, type)) { HUD.ksAnnounce(S.name + ': ' + S.kills + ' KILLS IN A ROW', 'bad'); return; }
+    if (m.authority) Streaks.launch(PlayerTarget, type, params, m); else Net.requestStreak(type, params);
+  },
   /** Host migration: carry on in the rebuilt authoritative match. */
   swapMatch(m) { this.match = m; HUD.friends = m.others.filter((b) => b.team === PlayerTarget.team); },
   /** Is the world simulating with the player in it? (An online match keeps running behind the Esc menu.) */
@@ -8004,17 +8649,20 @@ const Game = {
       case 'hit': if (ev.id === PlayerTarget.netId) PlayerHealth.netHit(ev.hp, ev.f, ev.d); break;
       case 'hm': HUD.hitmarker(!!ev.kill, false); AudioSys.play(ev.kill ? 'kill' : 'hit', { bus: 'ui', vol: 0.7, send: 0 }); break;
       case 'roster': if (!m.authority) m.syncRoster(ev.r); break;
+      case 'ks': Streaks.start(ev, m); break;
+      case 'ksdown': Streaks.shotDown(ev, m); break;
       case 'end': m.finishLocal(ev.reason, ev.sc); break;
     }
   },
   /** Kill event: mirror stats (clients), bodies, the local player's death / XP / streak, and the killfeed. */
   onKillEvent(ev, m) {
     const K = m.find(ev.killer), V = m.find(ev.victim), X = PROGRESSION.xp, st = Save.data.stats, me = PlayerTarget;
-    if (!m.authority) m.tally(K, V, ev.credit, ev.head, ev.assists);
+    if (!m.authority) m.tally(K, V, ev.credit, ev.head, ev.assists, ev.weapon);
     if (V && (V.isRemote || V.isBotPuppet)) V.die(K);
     if (V === me && !PlayerHealth.dead) PlayerHealth.netDeath({ killer: K ? (K === me ? 'YOURSELF' : K.name) : ev.kn || 'WORLD', weapon: ev.weapon, attacker: K, head: ev.head });
+    if (V === me || (ev.credit && K === me)) this.streak = me.streak || 0;
     if (ev.credit && K === me) {
-      this.streak++; st.kills++; st.bestStreak = Math.max(st.bestStreak || 0, this.streak);
+      st.kills++; st.bestStreak = Math.max(st.bestStreak || 0, this.streak);
       if (ev.head) st.headshots++; st.weaponKills[ev.weapon] = (st.weaponKills[ev.weapon] || 0) + 1;
       m.xp.kills += X.kill; if (ev.head) m.xp.headshots += X.headshot;
       const gain = Math.round((X.kill + (ev.head ? X.headshot : 0)) * m.xpMult);
@@ -8031,6 +8679,7 @@ const Game = {
       { head: ev.head, mine: K === me, killerTeam: rel(K), victimTeam: rel(V), victimMine: V === me });
   },
   endMatch() {
+    Streaks.reset();
     if (!this.match) return;
     this.match.dispose(); this.match = null; HUD.friends = null;
   },
@@ -8107,7 +8756,7 @@ const Game = {
     this.deathT = 0; this.streak = 0; this.rangeStats.deaths++;
     this.deathCamY = camera.position.y; this.deathRoll = 0;
     const w = PlayerWeapon; w.reload = null; w.cycle = null; w.throwS = null; w.adsT = 0; w.state = 'ready';
-    HUD.showDeath(cause); HUD.scope(null); HUD.centerMsg('');
+    HUD.showDeath(cause); HUD.scope(null); HUD.centerMsg(''); Streaks.stopDesignate();
     if (this.match) this.match.onKill(cause.attacker || null, PlayerTarget, cause.weapon || '', !!cause.head);
     else HUD.killfeed(cause.killer === 'YOURSELF' ? 'YOU' : cause.killer || 'ENEMY', cause.weapon || '', 'YOU', { victimMine: true, killerTeam: cause.killer === 'YOURSELF' ? 'me' : 'e', mine: cause.killer === 'YOURSELF' });
     AudioSys.muffle(0.8, CONFIG.HEALTH.respawnTime);
@@ -8156,7 +8805,7 @@ const Game = {
     } else if (this.state === 'ended') {
       // results screen: the world keeps breathing behind it
       this.time += dt;
-      if (this.match) this.match.update(dt);
+      if (this.match) { this.match.update(dt); Streaks.update(dt, this.match); }
       FX.update(dt); FXLights.update(dt); Grenades.update(dt); HUD.update(dt, this.player);
     }
     Net.update();
@@ -8169,7 +8818,7 @@ const Game = {
     if (H.dead) this.updateDead(dt); else this.updateAlive(dt);
     PlayerTarget.sync(pl);
     // --- world
-    if (m) m.update(dt);
+    if (m) { m.update(dt); Streaks.update(dt, m); }
     if (!this.inPlay()) return; // the match just ended
     Grenades.update(dt); if (!m) Range.update(dt); FX.update(dt); FXLights.update(dt);
     H.update(dt);
@@ -8185,7 +8834,7 @@ const Game = {
       HUD.crosshair(gap, w.adsT < 0.4 && w.sprintT < 0.5 && !w.reload && w.state !== 'throw' && w.state !== 'lowering');
     } else HUD.crosshair(0, false);
     HUD.update(dt, pl);
-    HUD.setStreak(this.streak);
+    HUD.setStreak(this.streak, m ? PlayerTarget.ks : null);
     const r = this.rangeStats;
     if (m) {
       HUD.setScore(m.scores.A, m.scores.B, m.timeLeft, m.label);
@@ -8230,7 +8879,20 @@ const Game = {
     this.lookDX = damp(this.lookDX, dx, 30, dt); this.lookDY = damp(this.lookDY, dy, 30, dt);
     // --- movement (frozen during the pre-match countdown, behind the online Esc menu, and until the host spawns us)
     const frozen = !!(this.match && this.match.state !== 'live') || this.state !== 'playing' || !!this.awaitSpawn;
-    w.locked = frozen;
+    // --- killstreaks: 3 UAV, 4 airstrike (designator: click to call it in), 5 helicopter
+    if (this.match && !frozen) {
+      if (Input.pressed('ks1')) this.useStreak('uav');
+      if (Input.pressed('ks3')) this.useStreak('heli');
+      if (Input.pressed('ks2')) {
+        if (Streaks.designating) Streaks.stopDesignate();
+        else if (Streaks.has(PlayerTarget, 'airstrike')) { Streaks.startDesignate(); w.adsT = 0; }
+        else this.useStreak('airstrike');
+      } else if (Streaks.designating) {
+        if (Input.pressed('fire')) { if (Streaks.mark.ok) { this.useStreak('airstrike', { ...Streaks.mark }); Streaks.stopDesignate(); } }
+        else if (Input.pressed('ads')) Streaks.stopDesignate();
+      }
+    } else if (Streaks.designating && frozen) Streaks.stopDesignate();
+    w.locked = frozen || Streaks.designating;
     const intent = w.intents();
     const cmd = frozen ? this.moveCmd.clear() : this.moveCmd.fromInput();
     pl.update(dt, { adsT: w.adsT, moveMult: def.move.speed, adsMoveMult: def.move.ads, wantsAds: intent.wantsAds, firing: intent.firing }, cmd);
@@ -8256,7 +8918,7 @@ const Game = {
       lookDX: this.lookDX, lookDY: this.lookDY, strafe: clamp(pl.vel.dot(pl.right(_v1)) / CONFIG.MOVE.walkSpeed, -1, 1),
       reload: w.vmReload(), magHidden: w.isMagHidden(), vmAdsFov: d.vmAdsFov,
       cycle: w.cycle, meleeT: w.meleeT, swapT: w.swapT, throwS: w.vmThrow(),
-      slideLocked: d.anim === 'pistol' && w.mag === 0 && !w.reload, hide: w.scoped(),
+      slideLocked: d.anim === 'pistol' && w.mag === 0 && !w.reload, hide: w.scoped() || Streaks.designating,
     });
   },
   updateDead(dt) {
@@ -8338,7 +9000,7 @@ const Game = {
 
 // Debug / test hooks (used by the headless test harness).
 window.__SM = {
-  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, ClientMatch, Puppet, LagComp, Net, Lobby, NetTransport, OnlineUI, UI, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
+  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, ClientMatch, Puppet, LagComp, Net, Lobby, NetTransport, OnlineUI, UI, Streaks, Helicopter, Airstrike, KILLSTREAKS, Combat, Hitscan, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
   start() { Game.debugNoLock = true; Game.startRange(); },
   /** Render one frame on demand (tests that drive the simulation themselves). */
   renderFrame() { renderer.info.reset(); Post.render(0.016); },

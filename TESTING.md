@@ -4,6 +4,8 @@ Tick these off in a real browser (Chrome or Edge; Firefox works too) with a mous
 
 Tip: Settings → Video → **Show FPS** puts a frame counter in the top-left corner. Keep it on while testing.
 
+> **Still to test (reminder):** Phase 4 (sections Q–U, items 91–112), Online (V–Z, 113–140) and Phase 5 killstreaks (AA–EE, 141–159). Phases 2–3 were reported working, apart from the flashbang fix (U, 110–112).
+
 ---
 
 ## Phase 2: weapons, attachments, grenades, HUD (Firing Range)
@@ -228,13 +230,46 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 
 ---
 
-## Coming next: Phase 5 tests (killstreaks)
+## Phase 5: killstreaks
 
-What you'll be testing after the next update:
+Practice vs Bots on **Recruit** is the easiest place to string kills together. Settings → Gameplay → Unlock All has no effect on killstreaks: you have to earn them.
 
-141. The streak icons light up at 3 / 5 / 7 kills without dying, and a key calls in the reward.
-142. **UAV** (3): enemies show as red dots on your minimap for a while, refreshed by sweeps.
-143. **Precision Airstrike** (5): you mark a spot and jets fly over and carpet it.
-144. **Attack Helicopter** (7): a helicopter circles the map for a while, hunting enemies, and it can be shot down.
-145. Bots earn and use killstreaks too; enemy ones are announced and can kill you.
-146. Streaks reset on death, and kills from killstreaks don't build the next streak.
+### AA. Earning
+141. Get 3 kills without dying. The UAV icon (bottom left) turns gold and pulses, its label reads PRESS 3, and "UAV READY · PRESS 3" appears under the score panel with a chime.
+142. At 5 kills, AIRSTRIKE reads PRESS 4. At 7, HELO reads PRESS 5. The STREAK counter shows your current run.
+143. Dying resets the streak, but rewards you've earned stay until you use them. Earn the same one twice and its label shows ×2.
+144. Kills by your airstrike or helicopter count for score and XP, but don't add to your streak.
+145. Press 3 / 4 / 5 for a reward you haven't earned: a red note tells you how many kills it needs.
+
+### BB. UAV (3 kills)
+146. Press 3: "FRIENDLY UAV ONLINE" with a radio beep, and a drone circles high above the map. For 30 s, every 2 s, every enemy flashes as a red dot on your minimap with a soft ping.
+147. When the enemy calls one in, you get "ENEMY UAV ONLINE" in red with a warning beep, and enemy bots home in on you more directly.
+
+### CC. Precision Airstrike (5 kills)
+148. Press 4: your gun drops and a red designator frame appears. A red circle, two lines and an arrow on the ground show where the bombs will land. The arrow points the way the jets will fly, which is the way you're facing.
+149. Aim at a wall or the sky and the frame turns grey ("AIM AT OPEN GROUND INSIDE THE MAP"). Roofs and streets are fine.
+150. Click: "FRIENDLY AIRSTRIKE INBOUND", and an orange marker appears on your minimap. About 2.5 s later two jets scream overhead (the engine pitch drops as they pass) and lay two lines of 4 big explosions along the mark.
+151. Your own airstrike can't hurt you or your teammates. Enemies caught in it die ([AIRSTRIKE] in the killfeed). Anyone under a solid roof is protected.
+152. Right click, or 4 again, cancels without using it up.
+
+### DD. Attack Helicopter (7 kills)
+153. Press 5: "FRIENDLY ATTACK HELICOPTER INBOUND". A helicopter with a team-coloured stripe flies in from your side, rotor thumping, patrols over the map for 40 s and then flies off.
+154. It hunts the enemies it can see: a short wind-up, then bursts from its nose gun with tracers and impacts. Kills show as [HELICOPTER] and are credited to you.
+155. Helicopters show on everyone's minimap: blue for your team's, red for the enemy's.
+156. An enemy helicopter can be shot down. It's armoured (bullets do about a third of their damage, so roughly three rifle magazines). It smokes once it's badly damaged, then spins down trailing smoke and crashes in a big explosion. Whoever downs it gets "+150 HELICOPTER DOWN", and the killfeed shows "[weapon] ATTACK HELICOPTER".
+157. Bots shoot at enemy helicopters when there's no soldier in view.
+
+### EE. Bots and online
+158. Bots earn and use killstreaks too: UAVs are the most common, airstrikes and helicopters come when a bot gets on a run. Enemy ones are announced in red and can kill you.
+159. Online, all three work for every player. The host checks that you really earned it, and everyone sees the same jets, bombs and helicopter. Shooting an enemy helicopter online damages it and gives you hitmarkers.
+
+---
+
+## Coming next: Phase 7 tests (polish)
+
+Likely topics. The final list depends on your feedback from the tests above:
+
+160. Settings → Keys lets you rebind every action.
+161. Steadier frame rate in big fights (target: 60 FPS on Medium on a mid-range laptop).
+162. A balance pass on weapons, bots and killstreaks, based on what you report.
+163. Menu polish: transitions, hover sounds, results-screen detail.
