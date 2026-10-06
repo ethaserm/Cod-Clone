@@ -200,7 +200,8 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 **If a room doesn't show up or you can't join**, send me the status line from **both** screens (Play Online panel, top right; and the line under the buttons in the room). That tells us where it's failing:
 - **RELAYS 0/12** (or stuck on "CONNECTING TO RELAYS"): that network blocks the signalling servers.
 - **Relays connected, but 0 OTHER PLAYERS ONLINE** while the other person is also on Play Online: the two browsers can't open a direct connection to each other (strict NAT or firewall). The room should still show up, but joining will fail.
-- **N CONNECTIONS FAILED**: the same problem. Trying a different network (for example a phone hotspot) or adding a TURN server (see README) fixes it.
+- **N DIRECT CONNECTIONS FAILED**: the same problem. Since this update, the game then routes that player through the **backup relay** automatically, and the status shows "(1 VIA BACKUP)". You should be able to join and play, with a bit more delay.
+- **BACKUP 0/3**: the backup relay servers are unreachable from that network too. Only a different network or a TURN server (README) helps then.
 
 ### W. Room lobby
 118. The joiner presses **Ready** and the host sees READY. **Start Match** stays greyed out until everyone is ready. A host on their own can start straight away with bots.
