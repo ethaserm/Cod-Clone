@@ -771,13 +771,15 @@ const CONFIG = {
     // Nostr signalling relays: these first, then Trystero's own list, `relayCount` in total. Everyone must use the same list.
     relays: ['wss://nos.lol', 'wss://relay.damus.io', 'wss://relay.primal.net', 'wss://nostr.mom', 'wss://relay.nostr.band', 'wss://offchain.pub'],
     relayCount: 12,
-    // Optional TURN servers for players whose networks block direct connections, e.g.
-    // [{ urls: 'turn:turn.example.com:3478', username: 'user', credential: 'secret' }]
-    turn: [],
+    // TURN servers relay the (encrypted) WebRTC link for players whose networks block direct connections.
+    // Default: the free public Open Relay Project server (ports 80/443 work through most firewalls). Add your own here
+    // for reliability: { urls: 'turn:turn.example.com:3478', username: 'user', credential: 'secret' }.
+    turn: [{ urls: ['turn:openrelay.metered.ca:80', 'turn:openrelay.metered.ca:443', 'turn:openrelay.metered.ca:443?transport=tcp', 'turns:openrelay.metered.ca:443?transport=tcp'], username: 'openrelayproject', credential: 'openrelayproject' }],
     nostrAnnounceEvery: 5000, nostrRoomTimeout: 16000, // room listing straight over the relays (works without a peer connection)
     // Backup relay for players whose browsers can't connect to each other directly: public MQTT brokers (WebSocket).
     // Traffic to such a player goes through these instead; [] turns the backup off.
-    relayBrokers: ['wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081'],
+    // Port 443 first: strict networks often block the others.
+    relayBrokers: ['wss://mqtt.eclipseprojects.io/mqtt', 'wss://public:public@public.cloud.shiftr.io', 'wss://broker.emqx.io:8084/mqtt', 'wss://broker.hivemq.com:8884/mqtt', 'wss://test.mosquitto.org:8081'],
     sendHz: 20, snapHz: 20, interpDelay: 100, extrapolate: 120,
     announceEvery: 2000, roomTimeout: 6000, maxPlayers: 6, pingEvery: 2000,
     joinTimeout: 20000, hostTimeout: 8000,
@@ -7144,12 +7146,22 @@ const Mqtt = {
   },
 };
 class MqttLink {
-  constructor(url) { this.url = url; this.ws = null; this.ready = false; this.subs = new Map(); this.pid = 0; this.retry = 1500; this.closed = false; this.buf = new Uint8Array(0); this.connect(); }
+  /** url may carry a login: wss://user:pass@host/path */
+  constructor(url, index) {
+    this.index = index; this.ws = null; this.ready = false; this.subs = new Map(); this.pid = 0; this.retry = 1500; this.closed = false; this.buf = new Uint8Array(0);
+    try { const u = new URL(url); this.user = decodeURIComponent(u.username); this.pass = decodeURIComponent(u.password); u.username = ''; u.password = ''; this.url = u.toString(); }
+    catch (e) { this.url = url; this.user = this.pass = ''; }
+    this.connect();
+  }
   connect() {
     if (this.closed) return;
     let ws; try { ws = new WebSocket(this.url, 'mqtt'); } catch (e) { this.schedule(); return; }
     ws.binaryType = 'arraybuffer'; this.ws = ws; this.buf = new Uint8Array(0);
-    ws.onopen = () => ws.send(Mqtt.packet(1, 0, Mqtt.str('MQTT'), new Uint8Array([4, 0x02, 0, 30]), Mqtt.str('sm' + Math.random().toString(36).slice(2, 14))));
+    ws.onopen = () => {
+      const flags = 0x02 | (this.user ? 0x80 : 0) | (this.pass ? 0x40 : 0), parts = [Mqtt.str('sm' + Math.random().toString(36).slice(2, 14))];
+      if (this.user) parts.push(Mqtt.str(this.user)); if (this.pass) parts.push(Mqtt.str(this.pass));
+      ws.send(Mqtt.packet(1, 0, Mqtt.str('MQTT'), new Uint8Array([4, flags, 0, 30]), ...parts));
+    };
     ws.onmessage = (e) => { if (e.data instanceof ArrayBuffer) this.onData(new Uint8Array(e.data)); };
     ws.onclose = () => { if (this.ws !== ws) return; this.ws = null; this.ready = false; clearInterval(this.pingT); this.schedule(); };
     ws.onerror = () => { try { ws.close(); } catch (e) { /* ignore */ } };
@@ -7177,7 +7189,7 @@ class MqttLink {
       const tl = (p[0] << 8) | p[1], topic = Mqtt.dec.decode(p.subarray(2, 2 + tl)), off = 2 + tl + ((flags >> 1) & 3 ? 2 : 0);
       const fns = this.subs.get(topic); if (!fns) return;
       const msg = Mqtt.dec.decode(p.subarray(off));
-      for (const fn of fns) fn(msg);
+      for (const fn of fns) fn(msg, this.index);
     }
   }
   nextId() { this.pid = (this.pid % 65535) + 1; return new Uint8Array([this.pid >> 8, this.pid & 255]); }
@@ -7197,23 +7209,36 @@ const RelayBus = {
   links: null,
   urls() { const q = new URLSearchParams(location.search).get('mqtt'); return q ? q.split(',') : CONFIG.NET.relayBrokers; },
   enabled() { return this.urls().length > 0; },
-  start() { if (!this.links) this.links = this.urls().map((u) => new MqttLink(u)); },
+  start() { if (!this.links) this.links = this.urls().map((u, i) => new MqttLink(u, i)); },
   connected() { return this.links ? this.links.filter((l) => l.ready).length : 0; },
   topic(roomId) { return CONFIG.NET.appId + '/' + roomId; },
-  /** Publish on the first two connected brokers (everyone subscribes on all of them). */
-  publish(topic, s) { let n = 0; for (const l of this.links) { if (n >= 2) break; if (l.publish(topic, s)) n++; } return n; },
-  /** A room's port: presence + broadcasts on the room topic, messages for one or two players on their own topics. */
+  /** Publish on the given brokers (indexes), or on every connected one. */
+  publish(topic, s, which) { let n = 0; for (const l of this.links) if ((!which || which.includes(l.index)) && l.publish(topic, s)) n++; return n; },
+  /** A room's port: presence + broadcasts on the room topic, messages for one or two players on their own topics.
+      Presence goes out on every broker, so each side learns which brokers reach the other; addressed messages then
+      use only those (up to two). */
   port(roomId, selfId) {
     this.start();
-    const topic = this.topic(roomId), mine = topic + '/' + selfId; let fn = null;
-    const h = (s) => { if (!fn || s.length > 200000) return; let m; try { m = JSON.parse(s); } catch (e) { return; } fn(m); };
+    const topic = this.topic(roomId), mine = topic + '/' + selfId, via = new Map(); let fn = null; // peer -> Map(broker -> last heard)
+    const h = (s, li) => {
+      if (!fn || s.length > 200000) return; let m; try { m = JSON.parse(s); } catch (e) { return; }
+      if (m && typeof m.from === 'string') { let v = via.get(m.from); if (!v) via.set(m.from, (v = new Map())); v.set(li, performance.now()); }
+      fn(m);
+    };
     for (const l of this.links) { l.subscribe(topic, h); l.subscribe(mine, h); }
+    const brokersFor = (ids) => {
+      const now = performance.now(), score = new Map();
+      for (const id of ids) { const v = via.get(id); if (v) for (const [li, t] of v) if (now - t < 10000) score.set(li, Math.max(score.get(li) || 0, t)); }
+      if (!score.size) return null; // not heard yet: try them all
+      return [...score.entries()].sort((a, b) => b[1] - a[1]).slice(0, 2).map((e) => e[0]);
+    };
     return {
       post: (m) => {
         const s = JSON.stringify(m);
-        if (Array.isArray(m.to) && m.to.length <= 2) for (const id of m.to) this.publish(topic + '/' + id, s);
-        else if (typeof m.to === 'string') this.publish(topic + '/' + m.to, s);
-        else this.publish(topic, s);
+        if (m.k === 'hello' || m.k === 'hb' || m.k === 'bye') { this.publish(m.to ? topic + '/' + m.to : topic, s); return; }
+        const to = typeof m.to === 'string' ? [m.to] : m.to;
+        if (Array.isArray(to) && to.length <= 2) for (const id of to) this.publish(topic + '/' + id, s, brokersFor([id]));
+        else this.publish(topic, s, to ? brokersFor(to) : null);
       },
       listen: (f) => { fn = f; },
       close: () => { fn = null; for (const l of this.links) { l.unsubscribe(topic, h); l.unsubscribe(mine, h); } },
