@@ -41,7 +41,7 @@ Bots use the same movement controller, weapons table, hitboxes and damage rules 
 
 ## Killstreaks
 
-Kills in a row without dying earn rewards. You keep a reward until you use it, even after dying. Kills made *by* a killstreak don't count toward the next one.
+Kills in a row without dying earn rewards. You keep a reward until you use it, even after dying. Kills made *by* a killstreak don't count toward the next one. In the **Firing Range** all three are free to try on the targets, and with Settings → Gameplay → Unlock All every Practice match starts with all three.
 
 | Kills | Reward | Key | What it does |
 |---|---|---|---|

@@ -238,7 +238,7 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 
 ## Phase 5: killstreaks
 
-Practice vs Bots on **Recruit** is the easiest place to string kills together. Settings → Gameplay → Unlock All has no effect on killstreaks: you have to earn them.
+**Quickest way to try them:** in the **Firing Range**, 3 / 4 / 5 call in any killstreak for free (the helicopter and airstrike work on the targets). In **Practice**, you earn them with 3 / 5 / 7 kills in a row without dying (Recruit is easiest). Or turn on Settings → Gameplay → **Unlock All**, and every Practice match starts with all three. The keys are the 3 / 4 / 5 above the letters, or on the number pad.
 
 ### AA. Earning
 141. Get 3 kills without dying. The UAV icon (bottom left) turns gold and pulses, its label reads PRESS 3, and "UAV READY · PRESS 3" appears under the score panel with a chime.

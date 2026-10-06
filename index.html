@@ -629,7 +629,7 @@ button { font-family: inherit; }
   <div id="centerMsg"></div>
   <div id="rangeInfo">
     <h3>FIRING RANGE</h3>
-    <p>WASD move &middot; SHIFT sprint &middot; SPACE jump<br>C crouch (slide while sprinting)<br>LMB fire &middot; RMB aim &middot; R reload &middot; V melee<br>1 / 2 / wheel swap weapon<br>G frag (hold to cook) &middot; Q flashbang<br>SHIFT while scoped: hold breath<br>TAB scoreboard &middot; ESC pause &rarr; LOADOUT</p>
+    <p>WASD move &middot; SHIFT sprint &middot; SPACE jump<br>C crouch (slide while sprinting)<br>LMB fire &middot; RMB aim &middot; R reload &middot; V melee<br>1 / 2 / wheel swap weapon<br>G frag (hold to cook) &middot; Q flashbang<br>SHIFT while scoped: hold breath<br>TAB scoreboard &middot; ESC pause &rarr; LOADOUT<br>3 / 4 / 5 killstreaks: free to try here</p>
   </div>
   <div id="rangeStats"></div>
   <div id="death"><div class="t">KILLED BY</div><div class="n" id="deathName">-</div><div class="w" id="deathWeapon"></div><div class="r" id="deathTimer">RESPAWNING IN 3</div></div>
@@ -1044,7 +1044,7 @@ const KEYBINDS = {
   jump: ['Space'], sprint: ['ShiftLeft', 'ShiftRight'], crouch: ['KeyC', 'ControlLeft'],
   reload: ['KeyR'], melee: ['KeyV'], lethal: ['KeyG'], tactical: ['KeyQ'],
   slot1: ['Digit1'], slot2: ['Digit2'], scoreboard: ['Tab'], interact: ['KeyF'], swap: [],
-  ks1: ['Digit3'], ks2: ['Digit4'], ks3: ['Digit5'],
+  ks1: ['Digit3', 'Numpad3'], ks2: ['Digit4', 'Numpad4'], ks3: ['Digit5', 'Numpad5'],
 };
 const KEY_HELP = [
   ['Move', 'W A S D'], ['Look', 'Mouse'], ['Fire', 'Left Mouse'], ['Aim down sights', 'Right Mouse'],
@@ -6084,6 +6084,7 @@ class Bot {
    them out from the same 'ks' event, and helicopters ride the snapshot.
    ===================================================================== */
 const STREAK_WEAPONS = new Set(['AIRSTRIKE', 'HELICOPTER']);
+const RANGE_STREAKS = ['uav', 'airstrike', 'heli']; // the firing range offers all of them, free
 const _kv1 = new THREE.Vector3(), _kv2 = new THREE.Vector3(), _kv3 = new THREE.Vector3();
 const isAuth = () => !Game.match || !!Game.match.authority;
 
@@ -6426,6 +6427,17 @@ class Helicopter {
   }
 }
 
+/** The Firing Range as a stand-in match, so every killstreak can be tried (for free) on the targets. */
+const RangeContext = {
+  authority: true, state: 'live', online: false, bots: [], xpMult: 0, xp: { kills: 0 },
+  get combatants() {
+    return [PlayerTarget, ...Range.targets.map((T) => T.proxy || (T.proxy = { team: 'B', name: 'TARGET', actor: T.a, get alive() { return T.a.alive && T.state === 'up'; }, get pos() { return T.a.root.position; } }))];
+  },
+  find(id) { return id === PlayerTarget.netId ? PlayerTarget : Streaks.byId(id); },
+  emit(ev) { if (ev.k === 'ks') Streaks.start(ev, this); else if (ev.k === 'ksdown') Streaks.shotDown(ev, this); },
+  noise() {}, nearMiss() {},
+};
+
 const Streaks = {
   list: [], uav: { A: 0, B: 0 }, sweepT: { A: 0, B: 0 }, seq: 0, designating: false,
   reset() { for (const e of this.list) e.dispose(); this.list.length = 0; this.uav.A = this.uav.B = 0; this.sweepT.A = this.sweepT.B = 0; this.stopDesignate(); },
@@ -6441,8 +6453,8 @@ const Streaks = {
   },
   has(c, type) { return !!(c && c.ks && c.ks.includes(type)); },
   /** Authority: use a reward someone has earned. params: { x, z, a } aim point + heading for the airstrike. */
-  launch(owner, type, params, M) {
-    if (!M || !M.authority || M.state !== 'live' || !this.has(owner, type)) return false;
+  launch(owner, type, params, M, free = false) {
+    if (!M || !M.authority || M.state !== 'live' || (!free && !this.has(owner, type))) return false;
     const ev = { k: 'ks', t: type, id: owner.netId, team: owner.team, eid: 'k' + (++this.seq) };
     if (type === 'airstrike') {
       if (!params || !Number.isFinite(params.x) || !Number.isFinite(params.z) || !Number.isFinite(params.a)) return false;
@@ -8355,7 +8367,7 @@ const UI = {
       }
       body.appendChild(r);
     }
-    if (this.tab === 'GAMEPLAY') body.insertAdjacentHTML('beforeend', '<div class="note">Unlock All makes every weapon, attachment, camo and Create-a-Class available without levelling, for testing. XP and levels still count normally.</div>');
+    if (this.tab === 'GAMEPLAY') body.insertAdjacentHTML('beforeend', '<div class="note">Unlock All makes every weapon, attachment, camo and Create-a-Class available without levelling, and starts each Practice match with all three killstreaks, for testing. XP and levels still count normally. The Firing Range always lets you try killstreaks (keys 3 / 4 / 5).</div>');
     if (this.tab === 'VIDEO') body.insertAdjacentHTML('beforeend', `<div class="note">LOW: 75% resolution, 1K shadows, FXAA · MEDIUM: native, 2K shadows, SMAA · HIGH: up to 1.5x DPR, 4K shadows, SSAO, SMAA.<br>FOV is horizontal at 16:9.</div>`);
   },
 };
@@ -8864,6 +8876,7 @@ const Game = {
     this.beginSession('tdm');
     const m = this.match = new TDMMatch(o);
     m.start();
+    if (Save.settings.unlockAll) PlayerTarget.ks = ['uav', 'airstrike', 'heli']; // testing aid
     const sp = m.spawnPoint('A', PlayerTarget);
     this.player.spawn(sp.x, 0.2, sp.z, sp.yaw); PlayerTarget.sync(this.player);
     HUD.friends = m.others.filter((b) => b.team === PlayerTarget.team);
@@ -8891,10 +8904,19 @@ const Game = {
     if (!this.debugNoLock) Input.lock();
   },
   /** Use a killstreak reward (params: the airstrike's aim point + heading). Online clients ask the host. */
+  /** Can the local player call this killstreak in right now? (The firing range lets you try them all.) */
+  streakReady(type) { return this.mode === 'range' || Streaks.has(PlayerTarget, type); },
   useStreak(type, params) {
     const m = this.match, S = KILLSTREAKS.find((x) => x.id === type);
-    if (!m || m.state !== 'live' || PlayerHealth.dead || !S) return;
-    if (!Streaks.has(PlayerTarget, type)) { HUD.ksAnnounce(S.name + ': ' + S.kills + ' KILLS IN A ROW', 'bad'); return; }
+    if (PlayerHealth.dead || !S) return;
+    if (!m) { if (this.mode === 'range') Streaks.launch(PlayerTarget, type, params, RangeContext, true); return; }
+    if (m.state !== 'live') return;
+    if (!Streaks.has(PlayerTarget, type)) {
+      const have = PlayerTarget.streak || 0;
+      HUD.ksAnnounce(`${S.name} NOT READY · ${S.kills} KILLS IN A ROW NEEDED (YOU HAVE ${have})`, 'bad');
+      AudioSys.play('dryfire', { vol: 0.6, send: 0 });
+      return;
+    }
     if (m.authority) Streaks.launch(PlayerTarget, type, params, m); else Net.requestStreak(type, params);
   },
   /** Host migration: carry on in the rebuilt authoritative match. */
@@ -9082,7 +9104,7 @@ const Game = {
     if (H.dead) this.updateDead(dt); else this.updateAlive(dt);
     PlayerTarget.sync(pl);
     // --- world
-    if (m) { m.update(dt); Streaks.update(dt, m); }
+    if (m) { m.update(dt); Streaks.update(dt, m); } else if (this.mode === 'range') Streaks.update(dt, RangeContext);
     if (!this.inPlay()) return; // the match just ended
     Grenades.update(dt); if (!m) Range.update(dt); FX.update(dt); FXLights.update(dt);
     H.update(dt);
@@ -9098,7 +9120,7 @@ const Game = {
       HUD.crosshair(gap, w.adsT < 0.4 && w.sprintT < 0.5 && !w.reload && w.state !== 'throw' && w.state !== 'lowering');
     } else HUD.crosshair(0, false);
     HUD.update(dt, pl);
-    HUD.setStreak(this.streak, m ? PlayerTarget.ks : null);
+    HUD.setStreak(this.streak, m ? PlayerTarget.ks : this.mode === 'range' ? RANGE_STREAKS : null);
     const r = this.rangeStats;
     if (m) {
       HUD.setScore(m.scores.A, m.scores.B, m.timeLeft, m.label);
@@ -9144,12 +9166,12 @@ const Game = {
     // --- movement (frozen during the pre-match countdown, behind the online Esc menu, and until the host spawns us)
     const frozen = !!(this.match && this.match.state !== 'live') || this.state !== 'playing' || !!this.awaitSpawn;
     // --- killstreaks: 3 UAV, 4 airstrike (designator: click to call it in), 5 helicopter
-    if (this.match && !frozen) {
+    if ((this.match || this.mode === 'range') && !frozen) {
       if (Input.pressed('ks1')) this.useStreak('uav');
       if (Input.pressed('ks3')) this.useStreak('heli');
       if (Input.pressed('ks2')) {
         if (Streaks.designating) Streaks.stopDesignate();
-        else if (Streaks.has(PlayerTarget, 'airstrike')) { Streaks.startDesignate(); w.adsT = 0; }
+        else if (this.streakReady('airstrike')) { Streaks.startDesignate(); w.adsT = 0; }
         else this.useStreak('airstrike');
       } else if (Streaks.designating) {
         if (Input.pressed('fire')) { if (Streaks.mark.ok) { this.useStreak('airstrike', { ...Streaks.mark }); Streaks.stopDesignate(); } }
