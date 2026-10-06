@@ -180,13 +180,61 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 
 ---
 
+## Online play (built before killstreaks)
+
+**How to test it.** You need two copies of the game running:
+
+- **Two computers** (best): open the GitHub Pages link on both.
+- **One computer**: two **separate browser windows** side by side. Don't use two tabs in one window, because a hidden tab stops drawing. Both windows share your saved data, so add `?name=TWO` to the end of the second window's address to give it a different callsign.
+- **No internet / quick check**: add `?net=local` to both windows' addresses (for example `…/index.html?net=local&name=TWO`). They then talk through a test network inside the browser with about 40 ms of simulated lag, without WebRTC or any relays.
+
+### V. Room browser
+113. Main menu → **Play Online**. After a moment the status reads "SEARCHING FOR ROOMS". If the networking library can't load, you get an error message instead.
+114. Type a callsign. It's remembered next time.
+115. **Create Room**: set a name (optional), score limit, time limit, bot fill on/off and bot difficulty. **Create** puts you in the room lobby as HOST on Team A.
+116. In the other window, Play Online lists the room within a few seconds: name, host, players 1 / 6, "TDM · 30 · SALT MARKET", IN LOBBY. Close the host window and the room drops off the list within about 6 s.
+117. **Join**: you land on Team B (auto-balance) as NOT READY, and the host gets a "… joined the room" toast.
+
+### W. Room lobby
+118. The joiner presses **Ready** and the host sees READY. **Start Match** stays greyed out until everyone is ready. A host on their own can start straight away with bots.
+119. The host can change the settings in the lobby, and the joiner sees them update (read-only for them).
+120. **Switch Team** works if teams stay even (at most one apart, at most 3 per team). Otherwise you get "Teams would be uneven."
+121. Empty slots show BOT (bot fill on) or OPEN SLOT (off).
+122. **Choose Class** opens Create-a-Class and brings you back to the lobby. The CLASS line updates.
+123. After a couple of seconds, each other player's ping shows next to their name.
+124. **Leave Room** goes back to the room browser.
+
+### X. Match
+125. Start: both windows load into the match: "MATCH BEGINS IN 4…", then FIGHT. The joiner may need to click once ("CLICK TO CONTINUE"), because browsers only lock the mouse after a click.
+126. The other player is a soldier in their team's colour. They move smoothly (drawn about 0.1 s in the past) and crouch, sprint, aim up and down, reload and switch weapons. Their footsteps and gunshots come from where they are.
+127. A teammate has a blue name tag and a blue minimap dot. An enemy gets a red name tag only while under your crosshair, and their unsuppressed shots flash red on your minimap.
+128. Shoot the other player: you get the hitmarker straight away. They get damage arrows and the red screen edge. Kills show in both killfeeds with the right names, and the right team's score goes up.
+129. The host runs the bots. They're in the same places and get the same kills in both windows.
+130. Frags and flashbangs thrown by either player appear for both. Frag damage counts (you get a hitmarker when yours hits), and a flashbang blinds whoever is looking at it.
+131. When you die you get the death screen, then respawn at your base after about 3 s. The host decides the spawn.
+132. **Tab** scoreboard: both players are listed by callsign, the host's row reads HOST, bots read BOT, and everyone else shows their ping in ms.
+133. **Esc** opens a MENU, not PAUSED: the match keeps running and you can be shot while it's open. Change Class and Settings work. **Leave Match** leaves.
+134. XP: kills, assists and the match bonus count online too, with no difficulty multiplier. Career stats in the Barracks include online matches.
+
+### Y. Joining in progress, leaving, the host leaving
+135. With a match running, open a third window (or leave and rejoin from the second). The browser shows the room as IN MATCH. **Join** drops you straight into the live match, replacing a bot on the team with fewer people.
+136. A player who leaves mid-match is replaced by a bot, with a "… left the room" toast.
+137. **Host migration**: the host leaves mid-match (Leave Match or closes the window). Everyone else gets a toast ("… left. X is taking over as host" or "You are now the host"). The match carries on with the same score and clock, and the old host's slot becomes a bot. If it can't carry on, the match ends with "HOST LEFT".
+138. End of match: the results line reads "… · ONLINE · room name". **Back to Lobby** returns you to the room, where you can ready up and start again.
+
+### Z. Real-world network check
+139. If you can, play a few minutes with someone on a different internet connection. Note the ping on the scoreboard, whether movement looks smooth or jumpy, and whether hits register when they should.
+140. If Play Online never finds rooms, or Join says "Could not reach the host", note which browsers and networks were involved. Some work or school networks block peer-to-peer connections.
+
+---
+
 ## Coming next: Phase 5 tests (killstreaks)
 
 What you'll be testing after the next update:
 
-113. The streak icons light up at 3 / 5 / 7 kills without dying, and a key calls in the reward.
-114. **UAV** (3): enemies show as red dots on your minimap for a while, refreshed by sweeps.
-115. **Precision Airstrike** (5): you mark a spot and jets fly over and carpet it.
-116. **Attack Helicopter** (7): a helicopter circles the map for a while, hunting enemies, and it can be shot down.
-117. Bots earn and use killstreaks too; enemy ones are announced and can kill you.
-118. Streaks reset on death, and kills from killstreaks don't build the next streak.
+141. The streak icons light up at 3 / 5 / 7 kills without dying, and a key calls in the reward.
+142. **UAV** (3): enemies show as red dots on your minimap for a while, refreshed by sweeps.
+143. **Precision Airstrike** (5): you mark a spot and jets fly over and carpet it.
+144. **Attack Helicopter** (7): a helicopter circles the map for a while, hunting enemies, and it can be shot down.
+145. Bots earn and use killstreaks too; enemy ones are announced and can kill you.
+146. Streaks reset on death, and kills from killstreaks don't build the next streak.

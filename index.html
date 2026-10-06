@@ -325,6 +325,45 @@ button { font-family: inherit; }
 .bk-weap .xpb { height: 6px; }
 .bk-weap .xpb i { background: var(--accent); }
 .bk-weap span:last-child { font-family: var(--mono); text-align: right; }
+/* online */
+#onlinePanel { width: 900px; }
+.on-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.on-top label { font-size: 14px; letter-spacing: 3px; color: var(--text-dim); font-weight: 600; }
+#onName, .txt { background: var(--panel-2); border: 1px solid var(--line-2); color: var(--text); font: 600 18px var(--ui-font); letter-spacing: 2px; padding: 6px 10px; width: 220px; text-transform: uppercase; user-select: text; -webkit-user-select: text; }
+.txt { width: 100%; }
+#onName:focus, .txt:focus { outline: none; border-color: var(--accent); }
+.on-status { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 1px; }
+.on-list { min-height: 220px; max-height: 46vh; overflow: auto; border: 1px solid var(--line); background: rgba(0,0,0,0.2); }
+.on-table { width: 100%; border-collapse: collapse; }
+.on-table th { text-align: left; font-size: 11px; letter-spacing: 2px; color: var(--text-dim); padding: 8px 10px; font-weight: 600; position: sticky; top: 0; background: var(--panel); }
+.on-table td { padding: 7px 10px; border-top: 1px solid var(--line); font-size: 16px; font-weight: 600; letter-spacing: 1px; }
+.on-table td:nth-child(3), .on-table td:nth-child(5) { font-family: var(--mono); font-size: 13px; }
+.on-table td:last-child { text-align: right; }
+.on-empty { padding: 40px 20px; text-align: center; color: var(--text-dim); font-size: 16px; letter-spacing: 1px; }
+.on-msg { margin-top: 10px; color: #ff9b8b; font-family: var(--mono); font-size: 13px; }
+.btn.small { padding: 4px 14px; font-size: 14px; }
+.btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+#createPanel { width: 720px; }
+#roomPanel { width: 900px; }
+#roomPanel .btn { padding: 9px 16px; font-size: 16px; }
+#rmSettings { display: grid; grid-template-columns: 1fr 1fr; gap: 0 22px; }
+#rmSettings .set-row { grid-template-columns: 150px 1fr 0; padding: 6px 2px; }
+#rmSettings .set-row label { font-size: 15px; }
+#rmSettings .seg button { font-size: 13px; padding: 5px 4px; letter-spacing: 1px; }
+.rm-sub { font-size: 14px; letter-spacing: 2px; color: var(--text-dim); font-weight: 600; margin: -8px 0 14px; }
+.rm-teams { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+.rm-team { border: 1px solid var(--line); background: rgba(0,0,0,0.2); padding: 10px 12px; }
+.rm-team h3 { margin: 0 0 8px; font-size: 16px; letter-spacing: 4px; color: #ff8b8b; }
+.rm-team.mine h3 { color: #9cc9ff; }
+.rm-p { display: grid; grid-template-columns: 1fr 48px 90px 56px; gap: 8px; align-items: baseline; padding: 6px 4px; border-top: 1px solid var(--line); font-size: 16px; }
+.rm-p.me b { color: var(--accent); }
+.rm-p em { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+.rm-p span { font-size: 12px; letter-spacing: 2px; font-weight: 700; }
+.rm-p span.ok { color: var(--good); } .rm-p span.wait { color: var(--text-dim); } .rm-p span.host { color: var(--accent); }
+.rm-p i { font-style: normal; font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-align: right; }
+.rm-p.empty { display: block; color: #5d646a; letter-spacing: 3px; font-size: 13px; font-weight: 600; }
+.rm-status { margin-top: 12px; font-size: 16px; letter-spacing: 3px; font-weight: 700; color: var(--accent); }
+.set-row .ro { font-family: var(--mono); font-size: 14px; color: var(--text); }
 #clickToPlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.35); cursor: pointer; font-size: 22px; letter-spacing: 5px; font-weight: 700; }
 </style>
 </head>
@@ -345,7 +384,7 @@ button { font-family: inherit; }
     <div class="logo">STEEL<br>MERIDIAN<span>URBAN WARFARE</span></div>
     <div class="menu-list">
       <button class="mbtn" data-action="range">Firing Range<small>Salt Market &middot; all weapons &middot; Esc &rarr; Loadout</small></button>
-      <button class="mbtn soon" data-action="soon" data-soon="Online play (room browser, 3v3 with bots filling slots) arrives in Phase 6.">Play Online<small>Coming in Phase 6</small></button>
+      <button class="mbtn" data-action="online">Play Online<small>Room browser &middot; 3v3 Team Deathmatch &middot; peer to peer</small></button>
       <button class="mbtn" data-action="practice">Practice vs Bots<small>Team Deathmatch &middot; 3v3 &middot; offline</small></button>
       <button class="mbtn" data-action="cac">Create-a-Class<small>3 default + 5 custom classes</small></button>
       <button class="mbtn" data-action="barracks">Barracks<small id="menuLevel">Level 1 &middot; stats &amp; unlocks</small></button>
@@ -358,13 +397,14 @@ button { font-family: inherit; }
 <!-- ============ PAUSE ============ -->
 <div id="pause" class="screen overlay hidden">
   <div class="panel">
-    <h2>PAUSED</h2>
+    <h2 id="pauseTitle">PAUSED</h2>
     <div class="pause-list">
       <button class="btn primary" data-action="resume">Resume</button>
       <button class="btn" data-action="loadout" id="pauseLoadoutBtn">Loadout</button>
       <button class="btn" data-action="settings">Settings</button>
-      <button class="btn danger" data-action="quit">Quit to Menu</button>
+      <button class="btn danger" data-action="quit" id="pauseQuitBtn">Quit to Menu</button>
     </div>
+    <div class="note" id="pauseNote"></div>
   </div>
 </div>
 
@@ -380,6 +420,64 @@ button { font-family: inherit; }
       <button class="btn" data-action="practice-loadout">Choose Class</button>
       <button class="btn" data-action="practice-back">Back</button>
     </div>
+  </div>
+</div>
+
+<!-- ============ ONLINE: ROOM BROWSER ============ -->
+<div id="online" class="screen overlay hidden">
+  <div class="panel" id="onlinePanel">
+    <h2>PLAY ONLINE</h2>
+    <div class="on-top">
+      <label for="onName">CALLSIGN</label><input id="onName" maxlength="16" spellcheck="false" autocomplete="off">
+      <span class="on-status" id="onStatus"></span>
+    </div>
+    <div class="on-list">
+      <table class="on-table"><thead><tr><th>ROOM</th><th>HOST</th><th>PLAYERS</th><th>MODE</th><th>STATUS</th><th></th></tr></thead><tbody id="onRooms"></tbody></table>
+      <div class="on-empty" id="onEmpty">No rooms found yet. Rooms show up a few seconds after their host creates them, or create your own.</div>
+    </div>
+    <div class="on-msg hidden" id="onMsg"></div>
+    <div class="note">Peer to peer: the player who creates a room hosts the match (bots, rules, hit checks). Signalling goes through public Nostr relays; game traffic goes straight between players over WebRTC. Strict firewalls or symmetric NATs can block connections.</div>
+    <div class="row-btns">
+      <button class="btn primary" data-action="online-create">Create Room</button>
+      <button class="btn" data-action="online-back">Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ONLINE: CREATE ROOM ============ -->
+<div id="createRoom" class="screen overlay hidden">
+  <div class="panel" id="createPanel">
+    <h2>CREATE ROOM</h2>
+    <div class="set-row"><label for="crName">Room Name</label><div class="ctl"><input id="crName" class="txt" maxlength="20" spellcheck="false" autocomplete="off"></div><div></div></div>
+    <div id="crBody"></div>
+    <div class="note">Team Deathmatch on SALT MARKET, up to 3 v 3. With bots on, empty slots are filled by bots and a leaving player is replaced by one.</div>
+    <div class="row-btns">
+      <button class="btn primary" data-action="online-host">Create</button>
+      <button class="btn" data-action="online-create-back">Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ONLINE: ROOM LOBBY ============ -->
+<div id="room" class="screen overlay hidden">
+  <div class="panel" id="roomPanel">
+    <h2 id="rmTitle">ROOM</h2>
+    <div class="rm-sub" id="rmSub"></div>
+    <div class="rm-teams">
+      <div class="rm-team"><h3>TEAM A</h3><div id="rmA"></div></div>
+      <div class="rm-team"><h3>TEAM B</h3><div id="rmB"></div></div>
+    </div>
+    <div id="rmSettings"></div>
+    <div class="pr-loadout"><span>CLASS</span><b id="rmClass">-</b></div>
+    <div class="rm-status" id="rmStatus"></div>
+    <div class="row-btns">
+      <button class="btn primary" data-action="room-ready" id="rmReady">Ready</button>
+      <button class="btn primary" data-action="room-start" id="rmStart">Start Match</button>
+      <button class="btn" data-action="room-team" id="rmTeam">Switch Team</button>
+      <button class="btn" data-action="room-class">Choose Class</button>
+      <button class="btn danger" data-action="room-leave">Leave Room</button>
+    </div>
+    <div class="note" id="rmCode"></div>
   </div>
 </div>
 
@@ -415,7 +513,8 @@ button { font-family: inherit; }
     </div>
     <table class="end-table" id="endTable"></table>
     <div class="row-btns">
-      <button class="btn primary" data-action="again">Play Again</button>
+      <button class="btn primary" data-action="again" id="endAgainBtn">Play Again</button>
+      <button class="btn primary" data-action="lobby-back" id="endLobbyBtn">Back to Lobby</button>
       <button class="btn" data-action="quit">Main Menu</button>
     </div>
   </div>
@@ -528,7 +627,8 @@ button { font-family: inherit; }
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/",
+    "trystero": "https://cdn.jsdelivr.net/npm/trystero@0.26.0/+esm"
   }
 }
 </script>
@@ -564,7 +664,7 @@ clearTimeout(window.__SM_BOOT_TIMER);
    CONFIG — every tuning value lives here
    ===================================================================== */
 const CONFIG = {
-  VERSION: '0.4.0-phase4',
+  VERSION: '0.5.0-online',
   SAVE_KEY: 'steelmeridian.save.v1',
   SAVE_VERSION: 1,
 
@@ -632,6 +732,15 @@ const CONFIG = {
 
   // Team Deathmatch (practice vs bots)
   TDM: { scoreLimit: 30, timeLimit: 600, respawn: 3.0, teamSize: 3, preMatch: 4 },
+  /** Online play. Rates in Hz, times in ms. */
+  NET: {
+    appId: 'steel-meridian-v1', lobbyRoom: 'lobby-v1', proto: 1, trysteroVersion: '0.26.0',
+    sendHz: 20, snapHz: 20, interpDelay: 100, extrapolate: 120,
+    announceEvery: 2000, roomTimeout: 6000, maxPlayers: 6, pingEvery: 2000,
+    joinTimeout: 20000, hostTimeout: 8000,
+    lagWindowMax: 600, originTol: 3.5, logRejects: false,
+    local: { lag: 35, jitter: 20 }, // simulated one-way latency for ?net=local
+  },
   // Bot skill. reaction: s before the first shot on a new contact · turn: deg/s · error/errorMin: aim error (deg) on
   // contact and after settling · settle: s to settle · burst/gap: rounds per burst and pause (s) · view/fov/hear: m, deg, m ·
   // strafe/crouch/nade: chances · headAim: chance to go for the head · recoilComp: 0..1 · retreatHp · playerFocus: <1 prefers the player
@@ -964,6 +1073,7 @@ const Save = {
       selectedClass: 'd0',
       rangeLoadout: null,
       practice: { difficulty: 'normal', scoreLimit: 30, timeLimit: 600 },
+      online: { roomName: '', scoreLimit: 30, timeLimit: 600, fill: true, diff: 'normal' },
     };
   },
   load() {
@@ -976,6 +1086,7 @@ const Save = {
     d.profile = { ...def.profile, ...(d.profile || {}) };
     d.stats = { ...def.stats, ...(d.stats || {}) };
     d.practice = { ...def.practice, ...(d.practice || {}) };
+    d.online = { ...def.online, ...(d.online || {}) };
     if (!d.stats.weaponKills || typeof d.stats.weaponKills !== 'object') d.stats.weaponKills = {};
     if (!Array.isArray(d.classes) || d.classes.length !== CUSTOM_CLASS_COUNT) {
       const old = Array.isArray(d.classes) ? d.classes : [];
@@ -4629,7 +4740,7 @@ class SoldierActor {
 
 const Actors = {
   list: [],
-  add(a) { this.list.push(a); },
+  add(a) { if (!this.list.includes(a)) this.list.push(a); },
   remove(a) { const i = this.list.indexOf(a); if (i >= 0) this.list.splice(i, 1); },
   _hit: { part: null, dist: 0 },
   /** Closest actor hit along the ray (excluding `ignoreId`). */
@@ -4709,6 +4820,13 @@ const Range = {
    with recovery, ADS, sprint-to-fire, swap, melee, reloads (magazine,
    pistol, shell-by-shell), scope sway + hold breath, cooking grenades.
    ===================================================================== */
+/** A bullet's end point for replication: [x, y, z, surface (-1 = none), nx, ny, nz, 0 world / 1 flesh / 2 world + decal]. */
+function shotEnd(h) {
+  const p = h.point;
+  if (h.actor) return [r2(p.x), r2(p.y), r2(p.z), -1, 0, 0, 0, 1];
+  if (h.world) return [r2(p.x), r2(p.y), r2(p.z), h.surf, r2(h.normal.x), r2(h.normal.y), r2(h.normal.z), h.flags & CF.DECAL ? 2 : 0];
+  return [r2(p.x), r2(p.y), r2(p.z), -1, 0, 0, 0, 0];
+}
 function damageAt(def, dist) { let d = def.damage[0][1]; for (const [r, v] of def.damage) if (dist >= r) d = v; return d; }
 
 const Hitscan = {
@@ -4729,7 +4847,7 @@ const Hitscan = {
 /** The local player as a combatant: team, stats and a stance-aware hitbox (head sphere, torso and leg capsules)
     so bots (and later remote players) can shoot it through the same Hitscan/Actors path as everything else. */
 const PlayerTarget = {
-  id: 0, team: 'A', name: 'YOU', isPlayer: true, alive: true, weapon: '', stats: null,
+  id: 0, netId: 'me', team: 'A', name: 'YOU', isPlayer: true, alive: true, weapon: '', stats: null,
   center: new THREE.Vector3(), head: new THREE.Vector3(), chestA: new THREE.Vector3(), chestB: new THREE.Vector3(), legA: new THREE.Vector3(), legB: new THREE.Vector3(),
   pos: null,
   init(pl) { this.id = _actorId++; this.pos = pl.pos; this.owner = this; this.hitboxes = [{ a: this.head }, { a: this.center }]; },
@@ -4767,7 +4885,12 @@ const Combat = {
       PlayerHealth.damage(dmg, info.fromPos || (atk && atk.pos), { killer: atk ? (atk.isPlayer ? 'YOURSELF' : atk.name) : 'WORLD', weapon: info.weapon || '', attacker: atk, head: part === 'head' });
       killed = PlayerHealth.dead;
     } else if (victim.isBot) killed = victim.onDamage(dmg, part, atk, info);
-    else killed = Range.onHit(actor, dmg, part);
+    else if (victim.isRemote || victim.isBotPuppet) {
+      // online: the host applies it; a client asks the host (hit claim) and predicts the feedback
+      if (Game.match && Game.match.authority) killed = victim.onDamage(dmg, part, atk, info);
+      else killed = atk && atk.isPlayer ? Net.claim(victim, dmg, part, info) : false;
+    } else killed = Range.onHit(actor, dmg, part);
+    if (atk && atk.isRemote && atk !== victim && info.explosive) Net.hitConfirm(atk, killed);
     if (atk && atk.isPlayer) {
       if (Game.mode === 'range') {
         Game.rangeStats.hits++; if (part === 'head') Game.rangeStats.heads++;
@@ -4784,12 +4907,24 @@ const PlayerHealth = {
   /** fromPos: world position the damage came from (for the direction indicator). */
   damage(amount, fromPos, cause) {
     if (this.dead || amount <= 0) return;
-    this.hp -= amount; this.lastHit = Game.time; this.hurtFlash = Math.min(1, this.hurtFlash + amount / 60);
+    this.hp -= amount; this.feedback(amount, fromPos);
+    if (this.hp <= 0) this.kill(cause);
+  },
+  feedback(amount, fromPos) {
+    this.lastHit = Game.time; this.hurtFlash = Math.min(1, this.hurtFlash + amount / 60);
     if (fromPos) HUD.damageArrow(fromPos);
     AudioSys.play('hurt', { vol: 0.5, send: 0, rateVar: 0.1 });
     Viewmodel.kickRot[2].v += (Math.random() - 0.5) * 3; Game.shake(Math.min(0.5, amount / 100));
-    if (this.hp <= 0) { this.hp = 0; this.dead = true; this.deathT = 0; PlayerTarget.alive = false; Game.onPlayerDeath(cause); }
   },
+  kill(cause) { this.hp = 0; this.dead = true; this.deathT = 0; PlayerTarget.alive = false; Game.onPlayerDeath(cause); },
+  _from: new THREE.Vector3(),
+  /** Online client: the host says we were hit and how much health is left (death arrives as a kill event). */
+  netHit(hp, from, amount) {
+    if (this.dead) return;
+    this.feedback(amount || Math.max(1, this.hp - hp), from ? this._from.fromArray(from) : null);
+    this.hp = Math.max(0, hp);
+  },
+  netDeath(cause) { if (!this.dead) this.kill(cause); },
   update(dt) {
     if (!this.dead && Game.time - this.lastHit > CONFIG.HEALTH.regenDelay) this.hp = Math.min(this.max, this.hp + CONFIG.HEALTH.regenRate * dt);
     this.hurtFlash = Math.max(0, this.hurtFlash - dt * 1.6);
@@ -5027,15 +5162,17 @@ const PlayerWeapon = {
     _v3.crossVectors(_v2, dir).normalize();
     const muzzle = this.computeMuzzleWorld(this.muzzleWorld);
     const hits = this._hits; hits.clear();
+    const fxe = Net.active && Game.match && Game.match.online ? [] : null;
     let anyHit = false, anyKill = false, anyHead = false, impactSounds = 0;
     for (let p = 0; p < d.pellets; p++) {
       const rr = (d.pellets > 1 ? Math.sqrt(Math.random()) * 0.85 + 0.15 * Math.random() : Math.sqrt(Math.random())) * Math.tan(spread), th = Math.random() * Math.PI * 2;
       _v4.copy(dir).addScaledVector(_v2, Math.cos(th) * rr).addScaledVector(_v3, Math.sin(th) * rr).normalize();
       const h = Hitscan.trace(o, _v4, d.range, PlayerTarget.id);
+      if (fxe) fxe.push(shotEnd(h));
       if (h.actor) {
         const dmg = Math.round(damageAt(d, h.dist) * (d.mult[h.part] ?? 1));
         const wasAlive = h.actor.alive;
-        const killed = Combat.hitActor(h.actor, dmg, h.part, { attacker: PlayerTarget, weapon: d.name, fromPos: o });
+        const killed = Combat.hitActor(h.actor, dmg, h.part, { attacker: PlayerTarget, weapon: d.name, wid: d.id, dist: h.dist, fromPos: o });
         if (wasAlive && !Combat.blocked) {
           anyHit = true; anyKill = anyKill || killed; anyHead = anyHead || h.part === 'head';
           const e = hits.get(h.actor) || { dmg: 0, head: false, kill: false, point: h.point.clone() };
@@ -5051,6 +5188,7 @@ const PlayerWeapon = {
       }
       if (p < 3 && Math.random() < CONFIG.FX.tracerChance) FX.tracer(muzzle, h.point, d.suppressed ? 0.45 : 0.85);
     }
+    if (fxe) Net.shotFx(PlayerTarget, d, fxe);
     if (anyHit) {
       HUD.hitmarker(anyKill, anyHead);
       AudioSys.play(anyKill ? 'kill' : anyHead ? 'hithead' : 'hit', { bus: 'ui', vol: anyKill ? 0.8 : 0.6, rateVar: 0.01, send: 0 });
@@ -5085,7 +5223,7 @@ const PlayerWeapon = {
       best = a; bestD = dist;
     }
     if (best) {
-      const killed = Combat.hitActor(best, MELEE.damage, 'torso', { attacker: PlayerTarget, weapon: 'MELEE', fromPos: o });
+      const killed = Combat.hitActor(best, MELEE.damage, 'torso', { attacker: PlayerTarget, weapon: 'MELEE', wid: 'melee', dist: bestD, fromPos: o });
       if (Combat.blocked) return;
       HUD.hitmarker(killed, false); AudioSys.play('meleehit', { vol: 0.8, send: 0.05 }); AudioSys.play(killed ? 'kill' : 'hit', { bus: 'ui', vol: 0.7, send: 0 });
       FX.impact(best.center, _v3.copy(dir).negate(), SURF.FLESH, dir, 1.2); Game.shake(0.15);
@@ -5103,7 +5241,7 @@ const PlayerWeapon = {
       if (G.cookable) T.cook += dt;
       if (G.cookable && T.cook >= G.fuse) { // cooked too long: it goes off in your hand
         this.grenades[T.type]--; this.refillT = 0;
-        Grenades.detonate({ type: T.type, pos: _v1.set(pl.pos.x, pl.pos.y + pl.eye - 0.3, pl.pos.z), owner: PlayerTarget });
+        Grenades.spawn(T.type, _v1.set(pl.pos.x, pl.pos.y + pl.eye - 0.3, pl.pos.z), _v2.set(0, 0, 0), 0, PlayerTarget);
         this.throwS = null; this.state = 'raising'; this.stateT = 0; return;
       }
       if (!Input.is(T.key) && T.t >= 0.22) { T.phase = 'throw'; T.t = 0; AudioSys.play('throw', { vol: 0.55, send: 0 }); }
@@ -5142,7 +5280,9 @@ const Grenades = {
       const m = new THREE.Mesh(geo, mat); m.castShadow = true; m.visible = false; scene.add(m); this.pool[type].push(m);
     }
   },
-  spawn(type, pos, vel, fuse, owner) {
+  /** remote: replicated from another machine (don't send it back out). */
+  spawn(type, pos, vel, fuse, owner, remote = false) {
+    if (!remote) Net.sendNade(type, pos, vel, fuse, owner);
     const mesh = this.pool[type].find((m) => !m.visible); if (!mesh) return;
     mesh.visible = true; mesh.position.copy(pos);
     this.list.push({ type, mesh, pos: mesh.position, vel: vel.clone(), fuse, owner, spin: new THREE.Vector3(rand(-12, 12), rand(-12, 12), rand(-12, 12)), rest: false });
@@ -5196,9 +5336,9 @@ const Explosions = {
   frag(p, owner) {
     const G = GRENADES.frag;
     const dmgAt = (d) => d <= G.innerRadius ? G.maxDamage : d >= G.radius ? 0 : G.maxDamage * Math.pow(1 - (d - G.innerRadius) / (G.radius - G.innerRadius), 1.3) * 0.85 + 10;
-    const mine = owner && owner.isPlayer;
+    const mine = owner && owner.isPlayer, auth = !Game.match || Game.match.authority; // online clients only show it; the host deals the damage
     // actors (closest of head / chest / hips); the player is handled below with its own falloff points
-    for (const a of Actors.list) {
+    if (auth) for (const a of Actors.list) {
       if (!a.alive || a.isPlayer) continue;
       const pts = this._pts; pts[0] = a.hitboxes[0].a; pts[1] = a.center; pts[2] = a.hitboxes[1].a;
       let best = Infinity; for (const t of pts) best = Math.min(best, t.distanceTo(p));
@@ -5211,10 +5351,10 @@ const Explosions = {
     }
     // the player
     const pl = Game.player;
-    if (pl && Game.state === 'playing' && !PlayerHealth.dead) {
+    if (pl && Game.inPlay() && !PlayerHealth.dead) {
       const eye = this._t.set(pl.pos.x, pl.pos.y + pl.eye, pl.pos.z), d = Math.min(eye.distanceTo(p), _v1.set(pl.pos.x, pl.pos.y + 0.9, pl.pos.z).distanceTo(p));
       const friendly = owner && !owner.isPlayer && owner.team === PlayerTarget.team;
-      if (!friendly && d < G.radius && (this.exposure(p, eye) || this.exposure(p, _v1))) Combat.hitActor(PlayerTarget, Math.round(dmgAt(d)), 'torso', { attacker: owner, weapon: 'FRAG', explosive: true, fromPos: p });
+      if (auth && !friendly && d < G.radius && (this.exposure(p, eye) || this.exposure(p, _v1))) Combat.hitActor(PlayerTarget, Math.round(dmgAt(d)), 'torso', { attacker: owner, weapon: 'FRAG', explosive: true, fromPos: p });
       const dist = eye.distanceTo(p);
       Game.shake(clamp(1.1 - dist / 22, 0, 1));
       if (dist < 9) { AudioSys.muffle(clamp(1 - dist / 9, 0.3, 0.9), 2.5); AudioSys.play('ring', { vol: clamp(1 - dist / 9, 0.2, 0.7), send: 0 }); }
@@ -5235,7 +5375,7 @@ const Explosions = {
     AudioSys.play('flashbang', { pos: p, vol: 1.0, ref: 8, rolloff: 0.6, send: 0.45, important: true });
     const pl = Game.player, G = GRENADES.flash;
     const affects = (who) => !owner || who === owner || who.team !== owner.team;
-    if (pl && Game.state === 'playing' && !PlayerHealth.dead && affects(PlayerTarget)) {
+    if (pl && Game.inPlay() && !PlayerHealth.dead && affects(PlayerTarget)) {
       const eye = this._t.set(pl.pos.x, pl.pos.y + pl.eye, pl.pos.z), d = eye.distanceTo(p);
       if (d < G.radius && this.exposure(p, eye)) {
         camera.getWorldDirection(_v1); _v2.subVectors(p, eye).normalize();
@@ -5462,7 +5602,7 @@ class Bot {
   // ---- lifecycle
   spawn(sp, match) {
     this.alive = true; this.hp = 100; this.lastHit = -100; this.dmgBy.clear();
-    this.body.spawn(sp.x, 0.2, sp.z, sp.yaw); this.aimYaw = sp.yaw; this.aimPitch = 0;
+    this.body.spawn(sp.x, sp.y ?? 0.2, sp.z, sp.yaw); this.aimYaw = sp.yaw; this.aimPitch = 0;
     this.actor.alive = true; this.actor.anim.dead = 0; this.actor.root.visible = true;
     const W = CONFIG.BOTS.loadouts, tot = W.reduce((s, w) => s + w[1], 0); let r = Math.random() * tot, id = W[0][0];
     for (const [wid, wt] of W) { if ((r -= wt) <= 0) { id = wid; break; } }
@@ -5756,11 +5896,12 @@ class Bot {
     const R = d.recoil, pat = R.pattern[Math.min(this.shotIdx, R.pattern.length - 1)];
     this.recoilP += pat[0] * (1 - D.recoilComp) * 0.55 * DEG; this.errYaw += (Math.random() - 0.5) * pat[1] * 0.8 * DEG * (1 - D.recoilComp);
     this.shotIdx++;
-    const o = eye, sd = this._sd;
+    const o = eye, sd = this._sd, fxe = Net.isHost() ? [] : null;
     for (let i = 0; i < d.pellets; i++) {
       const rr = Math.sqrt(Math.random()) * Math.tan(spreadDeg * DEG), th = Math.random() * Math.PI * 2;
       sd.copy(dir).addScaledVector(ax, Math.cos(th) * rr).addScaledVector(ay, Math.sin(th) * rr).normalize();
       const h = Hitscan.trace(o, sd, d.range, this.actor.id);
+      if (fxe) fxe.push(shotEnd(h));
       if (h.actor) {
         const dmg = Math.round(damageAt(d, h.dist) * (d.mult[h.part] ?? 1));
         const hitPlayer = h.actor.isPlayer, pt = this._n.copy(h.point);
@@ -5779,6 +5920,7 @@ class Bot {
     if (mz.distanceToSquared(camera.position) < 1600) FXLights.flash(mz, 0xffb066, CONFIG.FX.muzzleLight * 0.6 * d.flash.light, CONFIG.FX.muzzleLightRange, 0.05);
     AudioSys.play((d.suppressed ? 'shotS_' : 'shot_') + d.id, { pos: mz, vol: d.suppressed ? 0.45 : 0.9, ref: 5, rolloff: 1.0, rateVar: 0.03, send: d.suppressed ? 0.1 : 0.35 });
     this.actor.kick = 1;
+    if (fxe) Net.shotFx(this, d, fxe);
     if (!d.suppressed) M.noise(this, mz, 'shot');
   }
   syncVisual(dt) {
@@ -5798,41 +5940,190 @@ class Bot {
 }
 
 /* =====================================================================
-   MATCH — Team Deathmatch rules: rosters, scores, clock, spawns,
-   respawns, kill credit and assists, noise for the minimap / bots.
+   MATCH — Team Deathmatch. One rule set for every mode:
+     TDMMatch    — authoritative (offline practice, or the online host):
+                   rosters, scores, clock, spawns, respawns, kill credit,
+                   assists, bots. Everything that happens is an event.
+     ClientMatch — online client mirror, fed by host snapshots + events.
+   Events (kill / spawn / hit / end …) are applied on every machine by
+   Game.applyMatchEvent, which handles the *local* player's side: killfeed,
+   XP, streak, death screen, respawn.
    ===================================================================== */
-class TDMMatch {
+class MatchBase {
   constructor(o = {}) {
     const C = CONFIG.TDM;
     this.mode = 'tdm'; this.label = 'TEAM DEATHMATCH';
+    this.online = !!o.online; this.roomName = o.roomName || '';
     this.difficulty = o.difficulty || 'normal';
     this.scoreLimit = o.scoreLimit || C.scoreLimit; this.timeLimit = o.timeLimit || C.timeLimit;
     this.scores = { A: 0, B: 0 }; this.timeLeft = this.timeLimit; this.state = 'pre'; this.stateT = 0; this.endReason = '';
     this.stats = { shots: 0, hits: 0, heads: 0 };
-    this.playerFocus = CONFIG.BOTS.difficulty[this.difficulty].playerFocus;
-    // XP earned this match (raw, before the difficulty multiplier) and where the bar started
-    this.xp = { kills: 0, headshots: 0, assists: 0, bonus: 0, time: 0 }; this.xpMult = PROGRESSION.difficultyMult[this.difficulty] || 1;
+    // XP earned this match (raw, before the multiplier) and where the bar started
+    this.xp = { kills: 0, headshots: 0, assists: 0, bonus: 0, time: 0 };
+    this.xpMult = this.online ? 1 : (PROGRESSION.difficultyMult[this.difficulty] || 1);
     this.xpStart = Progress.xp; this.levelStart = Progress.level; this.levelUps = [];
-    const names = BOT_NAMES.slice().sort(() => Math.random() - 0.5);
-    this.bots = [];
-    for (let i = 0; i < C.teamSize - 1; i++) this.bots.push(new Bot('A', names.pop(), this.difficulty));
-    for (let i = 0; i < C.teamSize; i++) this.bots.push(new Bot('B', names.pop(), this.difficulty));
-    PlayerTarget.team = 'A'; PlayerTarget.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; PlayerTarget.dmgBy = new Map();
-    this.combatants = [PlayerTarget, ...this.bots];
+    this.bots = [];        // AI bots (authority only)
+    this.others = [];      // every combatant with a body except the local player (bots, remote players, bot puppets)
+    this.combatants = [PlayerTarget];
+    this.playerFocus = 1;
+    PlayerTarget.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; PlayerTarget.dmgBy = new Map();
+  }
+  get subtitle() {
+    const lim = 'FIRST TO ' + this.scoreLimit;
+    return this.online ? `ONLINE · ${this.roomName || 'ROOM'} · ${lim}` : `${CONFIG.BOTS.difficulty[this.difficulty].label} BOTS · ${lim}`;
+  }
+  get endTag() { return this.online ? 'ONLINE · ' + (this.roomName || 'ROOM') : CONFIG.BOTS.difficulty[this.difficulty].label + ' BOTS'; }
+  find(id) { if (id == null) return null; if (id === PlayerTarget.netId) return PlayerTarget; for (const c of this.others) if (c.netId === id) return c; return null; }
+  /** Bullets that pass close to the player's head make a crack/whiz. */
+  nearMiss(o, d, len) {
+    const h = PlayerTarget.head;
+    const t = clamp((h.x - o.x) * d.x + (h.y - o.y) * d.y + (h.z - o.z) * d.z, 0, len);
+    const cx = o.x + d.x * t - h.x, cy = o.y + d.y * t - h.y, cz = o.z + d.z * t - h.z;
+    if (cx * cx + cy * cy + cz * cz < 1.4 * 1.4 && t > 3) AudioSys.play('whiz', { pos: _bv4.set(o.x + d.x * t, o.y + d.y * t, o.z + d.z * t), vol: 0.55, ref: 1, rateVar: 0.15, send: 0 });
+  }
+  /** Scoreboard rows, sorted by score within each team (player's team first). */
+  rows() {
+    const rows = this.combatants.map((c) => ({
+      name: c.isPlayer ? (this.online ? Net.myName() : 'YOU') : c.name, team: c.team === PlayerTarget.team ? 'a' : 'b', me: !!c.isPlayer,
+      score: c.stats.score, kills: c.stats.kills, deaths: c.stats.deaths, assists: c.stats.assists,
+      ping: c.isPlayer ? (!this.online ? 0 : this.authority ? 'HOST' : Net.hostPing()) : (c.isBot || c.isBotPuppet) ? 'BOT' : (c.ping || 0), alive: c.alive,
+    }));
+    rows.sort((p, q) => (p.team === q.team ? q.score - p.score || q.kills - p.kills : p.team === 'a' ? -1 : 1));
+    return rows;
+  }
+  /** The local player's side of a finished match: result, career stats, completion XP, results screen. */
+  finishLocal(reason, scores) {
+    if (this.finished) return;
+    this.finished = true;
+    this.state = 'ended'; this.stateT = 0; this.endReason = reason;
+    if (scores) this.scores = { A: scores.A, B: scores.B };
+    const mine = this.scores[PlayerTarget.team], theirs = this.scores[PlayerTarget.team === 'A' ? 'B' : 'A'];
+    this.result = mine > theirs ? 'VICTORY' : mine < theirs ? 'DEFEAT' : 'DRAW';
+    const st = Save.data.stats; if (this.result === 'VICTORY') st.wins++; else if (this.result === 'DEFEAT') st.losses++; else st.draws++;
+    st.shots += this.stats.shots; st.hits += this.stats.hits; st.matches++;
+    const played = Math.max(0, this.playedTime ?? (this.timeLimit - this.timeLeft - (this.joinedAt || 0))); st.timePlayed += played;
+    // completion bonus + time played, then the multiplier
+    const X = PROGRESSION.xp;
+    this.xp.bonus = this.result === 'VICTORY' ? X.win : this.result === 'DRAW' ? X.draw : X.loss;
+    this.xp.time = Math.round(X.perMinute * played / 60);
+    Progress.addXP((this.xp.bonus + this.xp.time) * this.xpMult);
+    this.xpTotal = Math.round((this.xp.kills + this.xp.headshots + this.xp.assists + this.xp.bonus + this.xp.time) * this.xpMult);
+    Save.save();
+    Game.onMatchEnd(this);
+  }
+  /** Kill bookkeeping shared by host and mirror: victim/killer/assist stats and the team score. */
+  tally(K, V, credit, head, assists) {
+    if (V) V.stats.deaths++;
+    if (credit && K) { K.stats.kills++; K.stats.score += 100 + (head ? 25 : 0); this.scores[K.team]++; }
+    for (const id of assists || []) { const a = this.find(id); if (a) { a.stats.assists++; a.stats.score += 25; } }
+  }
+  /** Everyone in the match, for the network: [{ id, name, team, bot, stats }]. */
+  roster() {
+    return this.combatants.map((c) => ({ id: c.netId, name: c.isPlayer ? Net.myName() : c.name, team: c.team, bot: !!(c.isBot || c.isBotPuppet), stats: { ...c.stats } }));
+  }
+  noise() {}
+  dispose() {}
+}
+
+/** Position history for lag compensation on the authority (≈1 s per combatant). */
+const LagComp = {
+  map: new Map(),
+  record(id, x, y, z, h, now) {
+    let a = this.map.get(id); if (!a) this.map.set(id, (a = []));
+    a.push(now, x, y, z, h);
+    while (a.length > 5 && now - a[0] > 1000) a.splice(0, 5);
+  },
+  clear() { this.map.clear(); },
+  /** Was the target (a body ~h m tall) in line of sight and about `dist` m from `o` at some point in the last `windowMs`? */
+  check(id, o, dist, windowMs, now) {
+    const a = this.map.get(id); if (!a) return false;
+    for (let i = a.length - 5; i >= 0; i -= 5) {
+      if (now - a[i] > windowMs) break;
+      const x = a[i + 1], y = a[i + 2], z = a[i + 3], h = a[i + 4];
+      for (const k of [0.62, 0.92, 0.3]) {
+        _bv3.set(x, y + h * k, z);
+        const d = _bv3.distanceTo(o);
+        if (Math.abs(d - dist) < 2.5 + dist * 0.08 && Collision.lineOfSight(o, _bv3)) return true;
+      }
+    }
+    return false;
+  },
+  /** Was the shooter within maxD (horizontally) of `o` recently? */
+  near(id, o, maxD, windowMs, now) {
+    const a = this.map.get(id); if (!a) return false;
+    for (let i = a.length - 5; i >= 0; i -= 5) { if (now - a[i] > windowMs) break; if (Math.hypot(a[i + 1] - o.x, a[i + 3] - o.z) < maxD && Math.abs(a[i + 2] + 1.5 - o.y) < maxD) return true; }
+    return false;
+  },
+};
+
+/** Authoritative Team Deathmatch (offline practice or online host). */
+class TDMMatch extends MatchBase {
+  constructor(o = {}) {
+    super(o);
+    const C = CONFIG.TDM;
+    this.authority = true;
+    this.playerFocus = this.online ? 1 : CONFIG.BOTS.difficulty[this.difficulty].playerFocus;
+    this.fill = o.fill !== false;
+    this.names = BOT_NAMES.slice().sort(() => Math.random() - 0.5);
+    this.botSeq = 0;
+    PlayerTarget.team = o.selfTeam || 'A';
+    this.humans = (o.humans || []).slice(); // remote players (Puppets)
     this.respawns = [];
-    for (const b of this.bots) Actors.add(b.actor);
     Actors.add(PlayerTarget);
+    if (this.fill) this.topUp();
+    this.rebuild();
+  }
+  teamCount(team) { return (PlayerTarget.team === team ? 1 : 0) + this.humans.filter((h) => h.team === team).length + this.bots.filter((b) => b.team === team).length; }
+  /** Fill both teams up to the team size with bots. */
+  topUp() { for (const team of ['A', 'B']) for (let n = this.teamCount(team); n < CONFIG.TDM.teamSize; n++) this.addBot(team); }
+  addBot(team, restore) {
+    const used = new Set(this.combatants.map((c) => c.name));
+    let name = restore ? restore.name : null;
+    while (!name && this.names.length) { const n = this.names.pop(); if (!used.has(n)) name = n; }
+    const b = new Bot(team, name || 'Bot ' + (this.botSeq + 1), this.difficulty);
+    b.netId = restore ? restore.id : 'b' + (this.botSeq++);
+    if (restore && restore.stats) Object.assign(b.stats, restore.stats);
+    this.bots.push(b); Actors.add(b.actor);
+    return b;
+  }
+  removeBot(b) {
+    const i = this.bots.indexOf(b); if (i < 0) return;
+    this.bots.splice(i, 1); scene.remove(b.actor.root); Actors.remove(b.actor);
+    this.respawns = this.respawns.filter((r) => r.who !== b);
+    this.names.unshift(b.name);
+  }
+  rebuild() { this.others = [...this.humans, ...this.bots]; this.combatants = [PlayerTarget, ...this.others]; HUD.friends = this.others.filter((x) => x.team === PlayerTarget.team); }
+  /** A remote player joins mid-match: they take a bot's place on their team. */
+  addHuman(p) {
+    if (this.fill && this.teamCount(p.team) >= CONFIG.TDM.teamSize) { const b = this.bots.find((x) => x.team === p.team && !x.alive) || this.bots.find((x) => x.team === p.team); if (b) this.removeBot(b); }
+    this.humans.push(p); this.rebuild();
+  }
+  /** A remote player leaves: a bot fills their slot. */
+  removeHuman(p) {
+    const i = this.humans.indexOf(p); if (i < 0) return;
+    this.humans.splice(i, 1); p.dispose();
+    this.respawns = this.respawns.filter((r) => r.who !== p);
+    let b = null;
+    if (this.fill && this.teamCount(p.team) < CONFIG.TDM.teamSize) b = this.addBot(p.team);
+    this.rebuild();
+    if (b && this.state !== 'ended') b.spawn(this.spawnPoint(b.team, b), this);
   }
   start() {
     for (const b of this.bots) b.spawn(this.spawnPoint(b.team, b), this);
+    for (const h of this.humans) this.spawnHuman(h);
     this.state = 'pre'; this.stateT = 0;
   }
+  /** Remote players spawn where the host says (the event reaches every machine). */
+  spawnHuman(h) { const sp = this.spawnPoint(h.team, h); this.emit({ k: 'spawn', id: h.netId, x: +sp.x.toFixed(2), z: +sp.z.toFixed(2), yaw: +sp.yaw.toFixed(3), l: h.life + 1 }); }
   dispose() {
     for (const b of this.bots) { scene.remove(b.actor.root); Actors.remove(b.actor); }
+    for (const h of this.humans) h.dispose();
     Actors.remove(PlayerTarget);
-    this.bots.length = 0;
+    this.bots.length = 0; this.humans.length = 0; this.others.length = 0;
+    LagComp.clear();
   }
-  teamOf(who) { return who.team; }
+  /** Apply locally, and on the online host broadcast to every client. */
+  emit(ev) { Game.applyMatchEvent(ev, this); if (this.online) Net.broadcastEvent(ev); }
   /** Pick a spawn in the team's zone: far from living enemies, out of their sight, not on top of a teammate. */
   spawnPoint(team, who) {
     const pts = MapInfo.spawns[team];
@@ -5861,49 +6152,24 @@ class TDMMatch {
     }
     if (kind === 'shot' && !src.isPlayer && src.team !== PlayerTarget.team) HUD.ping(src.pos, '#ff4d4d', 2.2);
   }
-  /** Bullets that pass close to the player's head make a crack/whiz. */
-  nearMiss(o, d, len) {
-    const h = PlayerTarget.head;
-    const t = clamp((h.x - o.x) * d.x + (h.y - o.y) * d.y + (h.z - o.z) * d.z, 0, len);
-    const cx = o.x + d.x * t - h.x, cy = o.y + d.y * t - h.y, cz = o.z + d.z * t - h.z;
-    if (cx * cx + cy * cy + cz * cz < 1.4 * 1.4 && t > 3) AudioSys.play('whiz', { pos: _bv4.set(o.x + d.x * t, o.y + d.y * t, o.z + d.z * t), vol: 0.55, ref: 1, rateVar: 0.15, send: 0 });
-  }
+  /** Authoritative kill: stats, team score, assists, respawn queue; then the event. */
   onKill(killer, victim, weapon, head) {
     if (this.state !== 'live') return;
-    victim.stats.deaths++;
-    const credit = killer && killer !== victim && killer.team !== victim.team;
-    if (credit) {
-      killer.stats.kills++; killer.stats.score += 100 + (head ? 25 : 0);
-      this.scores[killer.team]++;
-      if (killer.isPlayer) {
-        const st = Save.data.stats, X = PROGRESSION.xp;
-        Game.streak++; st.kills++; st.bestStreak = Math.max(st.bestStreak || 0, Game.streak);
-        if (head) st.headshots++; st.weaponKills[weapon] = (st.weaponKills[weapon] || 0) + 1;
-        this.xp.kills += X.kill; if (head) this.xp.headshots += X.headshot;
-        const gain = Math.round((X.kill + (head ? X.headshot : 0)) * this.xpMult);
-        HUD.scorePop(head ? `+${gain}\nHEADSHOT` : `+${gain}`);
-        Progress.addXP(gain);
-      }
-    } else if (killer === victim || !killer) { /* suicide / fall */ }
+    const credit = !!(killer && killer !== victim && killer.team !== victim.team);
     // assists: anyone else who did 25+ damage in the last 8 s
-    const log = victim.dmgBy;
+    const assists = [], log = victim.dmgBy;
     if (log) {
-      for (const [who, e] of log) if (who !== killer && who.team !== victim.team && e.dmg >= 25 && Game.time - e.t < 8) {
-        who.stats.assists++; who.stats.score += 25;
-        if (who.isPlayer) { const g = Math.round(PROGRESSION.xp.assist * this.xpMult); this.xp.assists += PROGRESSION.xp.assist; Save.data.stats.assists++; HUD.scorePop(`+${g}  ASSIST`); Progress.addXP(g); }
-      }
+      for (const [who, e] of log) if (who !== killer && who.team !== victim.team && e.dmg >= 25 && Game.time - e.t < 8 && this.combatants.includes(who)) assists.push(who.netId);
       log.clear();
     }
-    if (victim.isPlayer) { Save.data.stats.deaths++; }
-    const rel = (who) => (!who ? 'e' : who.isPlayer ? 'me' : who.team === PlayerTarget.team ? 'f' : 'e');
-    HUD.killfeed(credit || killer === victim ? (killer.isPlayer ? 'YOU' : killer.name) : (weapon === 'FALL' ? '' : 'WORLD'), weapon || '', victim.isPlayer ? 'YOU' : victim.name,
-      { head, mine: killer && killer.isPlayer, killerTeam: rel(killer), victimTeam: rel(victim), victimMine: victim.isPlayer });
+    this.tally(killer, victim, credit, head, assists);
+    this.emit({ k: 'kill', killer: killer ? killer.netId : null, victim: victim.netId, kn: killer ? killer.name : '', vn: victim.name, weapon: weapon || '', head: !!head, credit, assists });
     if (!victim.isPlayer) this.respawns.push({ who: victim, t: CONFIG.TDM.respawn });
     if (this.scores.A >= this.scoreLimit || this.scores.B >= this.scoreLimit) this.end('SCORE LIMIT REACHED');
   }
   update(dt) {
     this.stateT += dt;
-    if (this.state === 'ended') return;
+    if (this.state === 'ended') { for (const h of this.humans) h.update(dt); for (const b of this.bots) if (!b.alive) b.update(dt, this); return; }
     if (this.state === 'pre') {
       const left = CONFIG.TDM.preMatch - this.stateT;
       HUD.banner(left > 0 ? 'MATCH BEGINS IN ' + Math.ceil(left) : '');
@@ -5914,39 +6180,758 @@ class TDMMatch {
     }
     for (let i = this.respawns.length - 1; i >= 0; i--) {
       const r = this.respawns[i]; r.t -= dt;
-      if (r.t <= 0 && this.state !== 'ended') { this.respawns.splice(i, 1); r.who.spawn(this.spawnPoint(r.who.team, r.who), this); }
+      if (r.t <= 0 && this.state !== 'ended') {
+        this.respawns.splice(i, 1);
+        if (r.who.isRemote) this.spawnHuman(r.who); else r.who.spawn(this.spawnPoint(r.who.team, r.who), this);
+      }
     }
     for (const b of this.bots) b.update(dt, this);
+    for (const h of this.humans) h.update(dt);
+    if (this.online) {
+      const now = performance.now();
+      if (PlayerTarget.alive) LagComp.record(PlayerTarget.netId, PlayerTarget.pos.x, PlayerTarget.pos.y, PlayerTarget.pos.z, Game.player.height, now);
+      for (const b of this.bots) if (b.alive) LagComp.record(b.netId, b.pos.x, b.pos.y, b.pos.z, b.body.height, now);
+      for (const h of this.humans) if (h.alive) LagComp.record(h.netId, h.pos.x, h.pos.y, h.pos.z, h.height, now);
+    }
   }
   end(reason) {
-    if (this.state === 'ended') return;
-    this.state = 'ended'; this.stateT = 0; this.endReason = reason;
-    const A = this.scores.A, B = this.scores.B;
-    this.result = A > B ? 'VICTORY' : A < B ? 'DEFEAT' : 'DRAW';
-    const st = Save.data.stats; if (this.result === 'VICTORY') st.wins++; else if (this.result === 'DEFEAT') st.losses++; else st.draws++;
-    st.shots += this.stats.shots; st.hits += this.stats.hits; st.matches++;
-    const played = this.timeLimit - this.timeLeft; st.timePlayed += played;
-    // completion bonus + time played, then the difficulty multiplier
-    const X = PROGRESSION.xp;
-    this.xp.bonus = this.result === 'VICTORY' ? X.win : this.result === 'DRAW' ? X.draw : X.loss;
-    this.xp.time = Math.round(X.perMinute * played / 60);
-    Progress.addXP((this.xp.bonus + this.xp.time) * this.xpMult);
-    this.xpTotal = Math.round((this.xp.kills + this.xp.headshots + this.xp.assists + this.xp.bonus + this.xp.time) * this.xpMult);
-    Save.save();
-    Game.onMatchEnd(this);
+    if (this.state === 'ended' || this.finished) return;
+    this.playedTime = this.timeLimit - this.timeLeft - (this.joinedAt || 0);
+    this.emit({ k: 'end', reason, sc: { A: this.scores.A, B: this.scores.B } });
   }
-  /** Scoreboard rows, sorted by score within each team (player's team first). */
-  rows() {
-    const rows = this.combatants.map((c) => ({ name: c.isPlayer ? 'YOU' : c.name, team: c.team === PlayerTarget.team ? 'a' : 'b', me: !!c.isPlayer, score: c.stats.score, kills: c.stats.kills, deaths: c.stats.deaths, assists: c.stats.assists, ping: c.isPlayer ? 0 : 'BOT', alive: c.alive }));
-    rows.sort((p, q) => (p.team === q.team ? q.score - p.score || q.kills - p.kills : p.team === 'a' ? -1 : 1));
-    return rows;
+  /** Network snapshot of everything only the host simulates (bots) + match state + every human's health. */
+  snapshot(now) {
+    const b = this.bots.map((x) => [x.netId, +x.pos.x.toFixed(2), +x.pos.y.toFixed(2), +x.pos.z.toFixed(2), +x.aimYaw.toFixed(3), +x.aimPitch.toFixed(3),
+      x.body.stance === 'crouch' || x.body.stance === 'slide' ? 1 : 0, (x.body.sprinting ? 1 : 0) | (x.reloadT > 0 ? 2 : 0), x.def ? x.def.key : 'kestrel:', x.alive ? 1 : 0, Math.max(0, Math.round(x.hp))]);
+    const hp = [[PlayerTarget.netId, Math.max(0, Math.round(PlayerHealth.hp))], ...this.humans.map((h) => [h.netId, Math.max(0, Math.round(h.hp))])];
+    return { t: Math.round(now), s: this.state === 'pre' ? 0 : this.state === 'live' ? 1 : 2, st: +this.stateT.toFixed(2), tl: +this.timeLeft.toFixed(1), sc: [this.scores.A, this.scores.B], b, hp };
+  }
+  /** Scoreboard sync (sent about once a second): [id, score, kills, deaths, assists, ping]. */
+  board() { return this.combatants.map((c) => [c.netId, c.stats.score, c.stats.kills, c.stats.deaths, c.stats.assists, c.isPlayer ? -2 : c.isRemote ? (c.ping || 0) : -1]); }
+  /** Host migration: turn this client's mirror into the authoritative match (the old host's slot goes to a bot). */
+  static fromMirror(cm, o) {
+    const keep = { stats: { ...PlayerTarget.stats } };
+    const m = new TDMMatch({ ...o, online: true, fill: false, selfTeam: PlayerTarget.team, difficulty: o.difficulty, scoreLimit: cm.scoreLimit, timeLimit: cm.timeLimit, roomName: cm.roomName });
+    m.fill = o.fill !== false;
+    Object.assign(PlayerTarget.stats, keep.stats);
+    for (const k of ['xp', 'xpStart', 'levelStart', 'levelUps', 'stats', 'timeLeft', 'state', 'stateT', 'joinedAt']) m[k] = cm[k];
+    m.scores = { ...cm.scores };
+    for (const p of cm.puppets.values()) {
+      if (p.isBotPuppet) {
+        const b = m.addBot(p.team, { id: p.netId, name: p.name, stats: p.stats });
+        m.botSeq = Math.max(m.botSeq, (parseInt(String(p.netId).slice(1), 10) || 0) + 1);
+        if (p.alive) { b.spawn({ x: p.pos.x, y: p.pos.y + 0.05, z: p.pos.z, yaw: p.aimYaw }, m); b.spawnProtect = 0; b.hp = p.hp || 100; }
+        else m.respawns.push({ who: b, t: 1.5 });
+        p.dispose();
+      } else { p.lastHit = -100; m.humans.push(p); if (!p.alive) m.respawns.push({ who: p, t: 1.5 }); }
+    }
+    cm.puppets.clear(); cm.others.length = 0;
+    m.rebuild();
+    if (m.fill) { const before = m.bots.length; m.topUp(); m.rebuild(); for (const b of m.bots.slice(before)) if (m.state !== 'ended') b.spawn(m.spawnPoint(b.team, b), m); }
+    return m;
   }
 }
 
+/** Online client: a mirror of the host's match. Puppets for everyone else; the local player is simulated locally. */
+class ClientMatch extends MatchBase {
+  constructor(o) {
+    super({ ...o, online: true });
+    this.authority = false;
+    this.puppets = new Map();
+    const me = (o.roster || []).find((r) => r.id === PlayerTarget.netId);
+    PlayerTarget.team = me ? me.team : 'A';
+    for (const r of o.roster || []) if (r.id !== PlayerTarget.netId) this.addPuppet(r);
+    this.state = ['pre', 'live', 'ended'][o.s ?? 0]; this.stateT = o.st || 0; this.timeLeft = o.tl ?? this.timeLimit;
+    if (o.sc) this.scores = { A: o.sc[0], B: o.sc[1] };
+    this.joinedAt = this.timeLimit - this.timeLeft; // joined in progress: time played (XP) counts from here
+    Actors.add(PlayerTarget);
+    this.rebuild();
+  }
+  addPuppet(r) {
+    let p = this.puppets.get(r.id);
+    if (!p) { p = new Puppet(r.id, r.name, r.team, !!r.bot); this.puppets.set(r.id, p); }
+    if (r.stats) Object.assign(p.stats, r.stats);
+    return p;
+  }
+  removePuppet(id) { const p = this.puppets.get(id); if (!p) return; p.dispose(); this.puppets.delete(id); }
+  rebuild() { this.others = [...this.puppets.values()]; this.combatants = [PlayerTarget, ...this.others]; HUD.friends = this.others.filter((x) => x.team === PlayerTarget.team); }
+  /** Bring the roster in line with the host's list (joins, leaves, bot swaps, team changes). */
+  syncRoster(roster) {
+    const keep = new Set();
+    for (const r of roster) {
+      if (r.id === PlayerTarget.netId) { PlayerTarget.team = r.team; continue; }
+      keep.add(r.id);
+      const p = this.puppets.get(r.id);
+      if (p && (p.team !== r.team || p.isBotPuppet !== !!r.bot)) this.removePuppet(r.id);
+      this.addPuppet(r).name = r.name;
+    }
+    for (const id of [...this.puppets.keys()]) if (!keep.has(id)) this.removePuppet(id);
+    this.rebuild();
+  }
+  /** Host snapshot: match clock/scores, the host's bots, everyone's health. `offset` maps host time to local time. */
+  applySnapshot(s, offset) {
+    const prev = this.state;
+    if (!this.finished) {
+      this.state = ['pre', 'live', 'ended'][s.s] || this.state;
+      this.timeLeft = s.tl; this.scores.A = s.sc[0]; this.scores.B = s.sc[1];
+      if (this.state === 'pre') this.stateT = s.st;
+      if (prev === 'pre' && this.state === 'live') { this.stateT = 0; HUD.banner('FIGHT', 1.2); AudioSys.play('kill', { bus: 'ui', vol: 0.6, send: 0, rate: 0.7 }); }
+    }
+    const t = s.t + offset;
+    for (const e of s.b) {
+      const p = this.puppets.get(e[0]); if (!p) continue;
+      p.setWeapon(e[8]);
+      if (e[9] && !p.alive) p.spawnAt(e[1], e[2], e[3], e[4]);
+      else if (!e[9] && p.alive) p.die(null);
+      if (e[9]) { p.push(t, e[1], e[2], e[3], e[4], e[5], e[6], e[7]); p.hp = e[10] ?? 100; }
+    }
+    for (const [id, hp] of s.hp) {
+      if (id === PlayerTarget.netId) { if (!PlayerHealth.dead && hp > 0 && Math.abs(PlayerHealth.hp - hp) > 4) PlayerHealth.hp = hp; }
+      else { const p = this.puppets.get(id); if (p) p.hp = hp; }
+    }
+  }
+  applyBoard(rows) {
+    for (const [id, score, kills, deaths, assists, ping] of rows) {
+      const c = this.find(id); if (!c) continue;
+      c.stats.score = score; c.stats.kills = kills; c.stats.deaths = deaths; c.stats.assists = assists;
+      if (!c.isPlayer && ping !== -1) c.ping = ping === -2 ? 'HOST' : ping;
+    }
+  }
+  noise(src, pos, kind) { if (kind === 'shot' && src && !src.isPlayer && src.team !== PlayerTarget.team) HUD.ping(src.pos, '#ff4d4d', 2.2); }
+  onKill() {} // the host decides kills
+  spawnPoint(team) { const sp = pick(MapInfo.spawns[team]); return { x: sp.x + rand(-0.8, 0.8), z: sp.z + rand(-0.8, 0.8), yaw: sp.yaw }; }
+  update(dt) {
+    this.stateT += dt;
+    if (this.state === 'pre') { const left = CONFIG.TDM.preMatch - this.stateT; HUD.banner(left > 0 ? 'MATCH BEGINS IN ' + Math.ceil(left) : ''); }
+    else if (this.state === 'live' && !this.finished) this.timeLeft = Math.max(0, this.timeLeft - dt);
+    for (const p of this.puppets.values()) p.update(dt);
+  }
+  dispose() { for (const p of this.puppets.values()) p.dispose(); this.puppets.clear(); this.others.length = 0; Actors.remove(PlayerTarget); }
+}
+
+/** Another soldier driven over the network (a remote player, or on clients a host-run bot), shown 100 ms in the past. */
+class Puppet {
+  constructor(id, name, team, isBot = false) {
+    this.netId = id; this.name = name; this.team = team; this.isRemote = !isBot; this.isBotPuppet = isBot;
+    this.actor = new SoldierActor(team === 'A' ? 'A' : 'B', { team, name, owner: this });
+    this.actor.root.visible = false; this.actor.alive = false; scene.add(this.actor.root); Actors.add(this.actor);
+    this.pos = new THREE.Vector3(); this.aimYaw = 0; this.aimPitch = 0; this.alive = false; this.hp = 100; this.lastHit = -100;
+    this.life = 0; this.height = CONFIG.MOVE.standHeight;
+    this.stats = { kills: 0, deaths: 0, assists: 0, score: 0 }; this.dmgBy = new Map(); this.ping = 0;
+    this.buf = []; this.stance = 0; this.flags = 0; this.weaponKey = ''; this.setWeapon('kestrel:');
+    this.deathT = 0; this.stepAcc = 0; this.prev = new THREE.Vector3(); this.speed = 0; this.moveAngle = 0; this.claims = [];
+    this._mz = new THREE.Vector3(); this._d = new THREE.Vector3(); this._p = new THREE.Vector3(); this._n = new THREE.Vector3();
+  }
+  get weaponName() { return this.def ? this.def.name : ''; }
+  setWeapon(key) {
+    if (!key || key === this.weaponKey) return;
+    const [id, a] = String(key).split(':'); if (!WEAPONS[id]) return;
+    this.weaponKey = key; this.def = buildWeaponDef(id, a ? a.split(',').filter((x) => ATTACHMENTS[x]) : []);
+    this.actor.setGunScale({ smg: 0.78, shotgun: 1.05, sniper: 1.28, pistol: 0.5 }[this.def.type] || 1);
+  }
+  /** Network sample in local time (ms). */
+  push(t, x, y, z, yaw, pitch, stance, flags) {
+    const B = this.buf;
+    if (B.length && t <= B[B.length - 1].t) return; // out of order / duplicate
+    B.push({ t, x, y, z, yaw, pitch, stance, flags });
+    if (B.length > 30) B.shift();
+  }
+  /** A remote player's own state packet: [t, x, y, z, yaw, pitch, stance, flags, weaponKey, life]. */
+  onState(a, t) {
+    this.setWeapon(a[8]);
+    const life = a[9] | 0;
+    if (life > this.life) this.spawnAt(a[1], a[2], a[3], a[4], life); // a new life we haven't been told about yet
+    if (life === this.life && this.alive) this.push(t, a[1], a[2], a[3], a[4], a[5], a[6], a[7]);
+  }
+  spawnAt(x, y, z, yaw, life) {
+    if (life != null) { if (life < this.life || (life === this.life && this.alive)) return; this.life = life; }
+    this.alive = true; this.actor.alive = true; this.hp = 100; this.lastHit = -100; this.buf.length = 0; this.deathT = 0; this.dmgBy.clear();
+    this.pos.set(x, y, z); this.prev.copy(this.pos); this.aimYaw = yaw; this.actor.anim.dead = 0; this.actor.root.visible = true;
+    this.actor.root.position.copy(this.pos); this.actor.updateHitboxes();
+  }
+  die(killer) {
+    if (!this.alive) return;
+    this.alive = false; this.actor.alive = false; this.deathT = 0; this.hp = 0;
+    const fx = -Math.sin(this.aimYaw), fz = -Math.cos(this.aimYaw);
+    this.actor.anim.deathDir = killer && killer.pos && (killer.pos.x - this.pos.x) * fx + (killer.pos.z - this.pos.z) * fz > 0 ? -1 : 1;
+    AudioSys.play('thud', { pos: this.pos, vol: 0.5, delay: 0.55 });
+  }
+  /** Host only: damage to a remote player (they're told with a 'hit' event). Returns true if it killed them. */
+  onDamage(dmg, part, attacker, info) {
+    if (!this.alive) return false;
+    this.hp -= dmg; this.lastHit = Game.time; this.actor.flinch.v += part === 'head' ? 8 : 4;
+    if (attacker && attacker !== this) { const e = this.dmgBy.get(attacker) || { dmg: 0, t: 0 }; e.dmg += dmg; e.t = Game.time; this.dmgBy.set(attacker, e); }
+    const from = info.fromPos || (attacker && attacker.pos);
+    Net.sendHit(this, dmg, Math.max(0, Math.round(this.hp)), from);
+    if (this.hp <= 0) { this.die(attacker); if (Game.match) Game.match.onKill(attacker, this, info.weapon || '', part === 'head'); return true; }
+    return false;
+  }
+  flash() {}
+  /** Someone else's shot, replayed: muzzle flash, sound, tracers and impacts. fx: { w, s, e: [[x, y, z, surf, nx, ny, nz, flesh], …] } */
+  showShot(fx, M) {
+    if (!this.alive) return;
+    const W = WEAPONS[fx.w]; if (!W) return;
+    const sup = !!fx.s, mz = this.actor.muzzle.getWorldPosition(this._mz);
+    const dir = this._d.set(-Math.sin(this.aimYaw) * Math.cos(this.aimPitch), Math.sin(this.aimPitch), -Math.cos(this.aimYaw) * Math.cos(this.aimPitch));
+    if (!sup || Math.random() < 0.3) FX.muzzleFlashWorld(mz, dir);
+    if (mz.distanceToSquared(camera.position) < 1600) FXLights.flash(mz, 0xffb066, CONFIG.FX.muzzleLight * 0.6, CONFIG.FX.muzzleLightRange, 0.05);
+    AudioSys.play((sup ? 'shotS_' : 'shot_') + fx.w, { pos: mz, vol: sup ? 0.45 : 0.9, ref: 5, rolloff: 1.0, rateVar: 0.03, send: sup ? 0.1 : 0.35 });
+    this.actor.kick = 1;
+    const E = fx.e || [];
+    for (let i = 0; i < E.length; i++) {
+      const e = E[i]; if (!Array.isArray(e) || e.length < 8) continue;
+      const p = this._p.set(e[0], e[1], e[2]); if (!Number.isFinite(p.x + p.y + p.z)) continue;
+      if (e[3] >= 0 && !SURF_FX[e[3]]) e[3] = -1;
+      const sd = this._n.subVectors(p, mz); const len = sd.length(); sd.divideScalar(len || 1);
+      if (i < 2 && Math.random() < 0.6) FX.tracer(mz, p, sup ? 0.4 : 0.8);
+      if (e[7]) FX.impact(p, _bv1.copy(sd).negate(), SURF.FLESH, sd, E.length > 1 ? 0.6 : 1);
+      else if (e[3] >= 0) { FX.impact(p, _bv1.set(e[4], e[5], e[6]), e[3], sd, E.length > 1 ? 0.5 : 0.9); if (E.length === 1 || i === 0) FX.decal(p, _bv1, e[3], E.length > 1 ? 0.6 : 1); }
+      if (i === 0 && M && !PlayerHealth.dead) M.nearMiss(mz, sd, len);
+    }
+    if (!sup && M) M.noise(this, mz, 'shot');
+  }
+  update(dt) {
+    const a = this.actor, A = a.anim;
+    if (!this.alive) { this.deathT += dt; A.dead = Math.min(1, this.deathT / 0.9); if (this.deathT < 1.2) a.pose(dt); return; }
+    if (Game.match && Game.match.authority && Game.time - this.lastHit > CONFIG.HEALTH.regenDelay) this.hp = Math.min(100, this.hp + CONFIG.HEALTH.regenRate * dt);
+    // --- interpolate CONFIG.NET.interpDelay ms in the past
+    const B = this.buf, rt = performance.now() - CONFIG.NET.interpDelay;
+    if (B.length) {
+      let s0 = B[0], s1 = B[0];
+      if (rt >= B[B.length - 1].t) s0 = s1 = B[B.length - 1];
+      else for (let i = B.length - 1; i > 0; i--) if (B[i - 1].t <= rt) { s0 = B[i - 1]; s1 = B[i]; break; }
+      const k = s1.t > s0.t ? clamp((rt - s0.t) / (s1.t - s0.t), 0, 1) : 1;
+      if (s0 === s1 && B.length > 1) {
+        // past the newest sample: extrapolate a little so a late packet doesn't stall the body
+        const p = B[B.length - 2], ex = clamp(rt - s1.t, 0, CONFIG.NET.extrapolate) / Math.max(1, s1.t - p.t);
+        this.pos.set(s1.x + (s1.x - p.x) * ex, s1.y, s1.z + (s1.z - p.z) * ex);
+      } else this.pos.set(lerp(s0.x, s1.x, k), lerp(s0.y, s1.y, k), lerp(s0.z, s1.z, k));
+      let dy = s1.yaw - s0.yaw; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+      this.aimYaw = s0.yaw + dy * k; this.aimPitch = lerp(s0.pitch, s1.pitch, k);
+      this.stance = s1.stance; this.flags = s1.flags;
+    }
+    // --- body animation from the motion we actually show
+    const vx = (this.pos.x - this.prev.x) / Math.max(dt, 1e-3), vz = (this.pos.z - this.prev.z) / Math.max(dt, 1e-3);
+    const vy = (this.pos.y - this.prev.y) / Math.max(dt, 1e-3);
+    this.prev.copy(this.pos);
+    const sp = Math.hypot(vx, vz); this.speed = damp(this.speed, sp > 20 ? 0 : sp, 12, dt);
+    const fx = -Math.sin(this.aimYaw), fz = -Math.cos(this.aimYaw), rx = Math.cos(this.aimYaw), rz = -Math.sin(this.aimYaw);
+    if (sp > 0.3 && sp < 20) this.moveAngle = Math.atan2(-(vx * rx + vz * rz), vx * fx + vz * fz);
+    a.root.position.copy(this.pos); a.root.rotation.y = this.aimYaw + Math.PI;
+    A.speed = this.speed; A.moveAngle = this.moveAngle; A.air = Math.abs(vy) > 2.5;
+    A.crouch = damp(A.crouch, this.stance ? 1 : 0, 10, dt); A.sprint = damp(A.sprint, this.flags & 1 ? 1 : 0, 8, dt);
+    A.pitch = this.aimPitch; A.reload = damp(A.reload, this.flags & 2 ? 1 : 0, 6, dt);
+    this.height = lerp(CONFIG.MOVE.standHeight, CONFIG.MOVE.crouchHeight, A.crouch);
+    a.pose(dt); a.updateHitboxes();
+    // --- footsteps you can hear (not while crouched)
+    if (this.speed > 2 && !this.stance && !A.air) { this.stepAcc += this.speed * dt; if (this.stepAcc > (this.flags & 1 ? 2.3 : 1.95)) { this.stepAcc = 0; AudioSys.play('step_concrete', { pos: this.pos, vol: 0.6, ref: 2.5, rolloff: 1.5, rateVar: 0.08, send: 0.05 }); } }
+  }
+  dispose() { scene.remove(this.actor.root); Actors.remove(this.actor); }
+}
+
 /* =====================================================================
-   NET — arrives in Phase 6 (Trystero). Remote players will be driven by
-   snapshots through the same SoldierActor / Combat paths as the bots.
+   NET — online play, peer to peer over WebRTC (Trystero: signalling via
+   public Nostr relays, so no server of our own).
+     Lobby  — a shared "lobby" room where hosts announce their rooms every
+              2 s; browsers drop a room after 6 s of silence.
+     Net    — one game room. Host-authoritative: the host runs the match
+              (TDMMatch: rules, bots, kills, spawns) and sends 20 Hz
+              snapshots + events. Every human sends their own movement at
+              20 Hz to everyone; remote bodies are drawn 100 ms in the past.
+              Clients simulate their own movement and shots and send hit
+              *claims*; the host checks each against its position history
+              (LagComp) before applying damage (shooter-favoured).
+     If the host leaves, the remaining player with the lowest id takes
+     over (host migration); if that fails the match ends cleanly.
+   ?net=local swaps WebRTC for BroadcastChannel between tabs of one
+   browser (with simulated latency) for testing without the internet.
    ===================================================================== */
+const _nv1 = new THREE.Vector3(), _nv2 = new THREE.Vector3();
+const netName = (s, max = 16) => String(s || '').toUpperCase().replace(/[^A-Z0-9 _'\-]/g, '').replace(/\s+/g, ' ').trim().slice(0, max);
+const r2 = (v) => Math.round(v * 100) / 100;
+
+/** Test transport: tabs of one browser talk through a BroadcastChannel, with latency + jitter, per-sender ordering kept. */
+class LocalRoom {
+  constructor(roomId, selfId) {
+    this.selfId = selfId; this.onJoin = null; this.onLeave = null; this.left = false;
+    this.seen = new Map(); this.handlers = new Map(); this.pending = new Map(); this.lastAt = new Map(); this.seq = 0;
+    this.ch = new BroadcastChannel('sm-local-' + roomId);
+    this.ch.onmessage = (e) => this.recv(e.data);
+    this.post({ k: 'hello' });
+    this.hb = setInterval(() => {
+      this.post({ k: 'hb' });
+      const now = performance.now();
+      for (const [id, t] of this.seen) if (now - t > 8000) this.drop(id);
+    }, 400);
+  }
+  post(m, to) { if (this.left) return; m.from = this.selfId; if (to) m.to = to; try { this.ch.postMessage(m); } catch (e) { /* closed */ } }
+  recv(m) {
+    if (this.left || !m || m.from === this.selfId) return;
+    if (m.to && (Array.isArray(m.to) ? !m.to.includes(this.selfId) : m.to !== this.selfId)) return;
+    const L = CONFIG.NET.local, now = performance.now();
+    const at = Math.max((this.lastAt.get(m.from) || 0) + 0.01, now + L.lag + Math.random() * L.jitter);
+    this.lastAt.set(m.from, at);
+    setTimeout(() => this.deliver(m), at - now);
+  }
+  deliver(m) {
+    if (this.left) return;
+    if (m.k === 'bye') return this.drop(m.from);
+    const known = this.seen.has(m.from);
+    this.seen.set(m.from, performance.now());
+    if (!known) { this.post({ k: 'hb' }, m.from); if (this.onJoin) this.onJoin(m.from); }
+    if (m.k === 'a') { const h = this.handlers.get(m.n); if (h) { try { h(m.d, m.from); } catch (e) { console.error(e); } } }
+    else if (m.k === 'ping') this.post({ k: 'pong', i: m.i }, m.from);
+    else if (m.k === 'pong') { const r = this.pending.get(m.i); if (r) { this.pending.delete(m.i); r(); } }
+  }
+  drop(id) { if (!this.seen.delete(id)) return; if (this.onLeave) this.onLeave(id); }
+  action(name, handler) { this.handlers.set(name, handler); return (data, to) => this.post({ k: 'a', n: name, d: data }, to); }
+  ping(id) {
+    const i = ++this.seq, t0 = performance.now();
+    return new Promise((res) => { this.pending.set(i, () => res(performance.now() - t0)); this.post({ k: 'ping', i }, id); setTimeout(() => { if (this.pending.delete(i)) res(999); }, 3000); });
+  }
+  peers() { return [...this.seen.keys()]; }
+  leave() { if (this.left) return; this.post({ k: 'bye' }); this.left = true; clearInterval(this.hb); try { this.ch.close(); } catch (e) { /* ignore */ } }
+}
+
+/** Opens rooms on Trystero (WebRTC) or LocalRoom (?net=local) behind one small interface. */
+const NetTransport = {
+  kind: new URLSearchParams(location.search).get('net') === 'local' ? 'local' : 'trystero',
+  selfId: null, lib: null,
+  /** Load the networking library once (lazily, so offline play never touches it). */
+  async init() {
+    if (this.kind === 'local') { this.selfId = this.selfId || 'L' + Math.random().toString(36).slice(2, 10); return; }
+    if (this.lib) return;
+    let err = null;
+    for (const src of ['trystero', 'https://esm.sh/trystero@' + CONFIG.NET.trysteroVersion]) {
+      try { const lib = await import(src); if (lib && lib.joinRoom) { this.lib = lib; break; } } catch (e) { err = e; }
+    }
+    if (!this.lib) throw new Error('Could not load the networking library (Trystero) from the CDN. ' + (err && err.message ? err.message : ''));
+    this.selfId = this.lib.selfId;
+  },
+  /** → { selfId, action(name, handler(data, peerId)) → send(data, target?), ping(id), peers(), leave(), onJoin, onLeave } */
+  join(roomId) {
+    if (this.kind === 'local') return new LocalRoom(roomId, this.selfId);
+    const cfg = { appId: CONFIG.NET.appId }, relay = new URLSearchParams(location.search).get('relay'); // ?relay=wss://… pins the Nostr relays (testing)
+    if (relay) cfg.relayConfig = { urls: relay.split(','), redundancy: relay.split(',').length };
+    const room = this.lib.joinRoom(cfg, roomId, { onJoinError: (e) => console.info('[net] peer connection attempt failed (Trystero retries):', e && e.error) });
+    const w = {
+      selfId: this.selfId, onJoin: null, onLeave: null,
+      action(name, handler) {
+        const a = room.makeAction(name, { onMessage: (d, ctx) => { try { handler(d, ctx.peerId); } catch (e) { console.error(e); } } });
+        return (data, target) => { try { a.send(data, target ? { target } : undefined).catch(() => {}); } catch (e) { /* peer gone */ } };
+      },
+      ping: (id) => room.ping(id).catch(() => 999),
+      peers: () => Object.keys(room.getPeers()),
+      leave: () => { try { room.leave(); } catch (e) { /* ignore */ } },
+    };
+    room.onPeerJoin = (id) => w.onJoin && w.onJoin(id);
+    room.onPeerLeave = (id) => w.onLeave && w.onLeave(id);
+    return w;
+  },
+};
+
+/** The room browser: hosts announce, everyone listening keeps a list. */
+const Lobby = {
+  room: null, rooms: new Map(), sendAnn: null, onChange: null,
+  open() {
+    if (this.room) return;
+    const r = this.room = NetTransport.join(CONFIG.NET.lobbyRoom);
+    this.sendAnn = r.action('ann', (d, from) => {
+      if (!d || typeof d.id !== 'string' || typeof d.name !== 'string') return;
+      if (Net.active && d.id === Net.roomId) return;
+      this.rooms.set(d.id, { ...d, name: netName(d.name, 20) || 'ROOM', hn: netName(d.hn) || 'HOST', peer: from, seen: performance.now() });
+      this.changed();
+    });
+    r.onJoin = (id) => { if (Net.active && Net.role === 'host') Net.announce(id); };
+    r.onLeave = (id) => { for (const [k, v] of this.rooms) if (v.peer === id) this.rooms.delete(k); this.changed(); };
+  },
+  close() { if (this.room) { this.room.leave(); this.room = null; } this.rooms.clear(); this.sendAnn = null; },
+  /** Rooms heard from in the last few seconds, joinable first. */
+  list() {
+    const now = performance.now();
+    for (const [k, v] of this.rooms) if (now - v.seen > CONFIG.NET.roomTimeout) this.rooms.delete(k);
+    return [...this.rooms.values()].sort((a, b) => (a.v === CONFIG.NET.proto) - (b.v === CONFIG.NET.proto) || (a.n >= a.max) - (b.n >= b.max) || a.name.localeCompare(b.name));
+  },
+  changed() { if (this.onChange) this.onChange(); },
+};
+
+/** One online session (a room): lobby → match → results → lobby … */
+const Net = {
+  active: false, role: null, room: null, roomId: '', selfId: '', hostId: '', phase: 'lobby',
+  info: null, players: new Map(), welcomed: false, matchNo: 0, life: 0, status: '', error: '',
+  offsets: new Map(), heard: new Map(), pings: new Map(), tx: null, nameOverride: null,
+  t: { send: 0, snap: 0, board: 0, ann: 0, ping: 0, hi: 0, start: 0, migrate: 0 },
+  myName() {
+    if (this.nameOverride == null) {
+      const q = new URLSearchParams(location.search).get('name');
+      this.nameOverride = q ? netName(q) : NetTransport.kind === 'local' ? (netName(Save.data.profile.name) || 'SOLDIER') + '-' + Math.random().toString(36).slice(2, 4).toUpperCase() : '';
+    }
+    return this.nameOverride || netName(Save.data.profile.name) || 'SOLDIER';
+  },
+  hostPing() { return this.pings.get(this.hostId) || 0; },
+  isHost() { return this.active && this.role === 'host'; },
+  isClient() { return this.active && this.role === 'client'; },
+  me() { return this.players.get(this.selfId); },
+  reset() {
+    this.players.clear(); this.offsets.clear(); this.heard.clear(); this.pings.clear();
+    this.welcomed = false; this.phase = 'lobby'; this.status = ''; this.error = ''; this.matchNo = 0; this.life = 0; this.epoch = 0; this.seqN = 0;
+    for (const k of Object.keys(this.t)) this.t[k] = 0;
+  },
+  // ------------------------------------------------------------ session
+  async host(o) {
+    await NetTransport.init();
+    this.leave(true); this.reset();
+    this.role = 'host'; this.selfId = NetTransport.selfId; this.hostId = this.selfId;
+    this.roomId = Math.random().toString(36).slice(2, 8).toUpperCase();
+    this.info = { name: netName(o.name, 20) || this.myName() + "'S ROOM", scoreLimit: o.scoreLimit, timeLimit: o.timeLimit, fill: o.fill !== false, diff: o.diff || 'normal' };
+    this.players.set(this.selfId, { id: this.selfId, name: this.myName(), team: 'A', ready: true, lvl: Progress.level, host: true, seq: 0 });
+    this.openRoom();
+    Lobby.open();
+    this.active = true; this.welcomed = true; this.phase = 'lobby';
+    this.announce();
+    PlayerTarget.netId = this.selfId;
+  },
+  async join(r) {
+    await NetTransport.init();
+    this.leave(true); this.reset();
+    this.role = 'client'; this.selfId = NetTransport.selfId; this.hostId = r.host; this.roomId = r.id;
+    this.info = { name: r.name, scoreLimit: r.sl, timeLimit: r.tl, fill: r.bots !== false, diff: r.diff || 'normal' };
+    Lobby.close();
+    this.openRoom();
+    this.active = true; this.t.start = performance.now(); this.status = 'CONNECTING TO HOST…';
+    PlayerTarget.netId = this.selfId;
+  },
+  openRoom() {
+    const r = this.room = NetTransport.join('room-' + this.roomId);
+    const A = (name, fn) => r.action(name, (d, from) => { this.heard.set(from, performance.now()); fn.call(this, d, from); });
+    this.tx = {
+      hi: A('hi', this.onHi), lob: A('lob', this.onLobby), rdy: A('rdy', this.onReady), go: A('go', this.onGo), no: A('no', this.onReject),
+      st: A('st', this.onSt), sn: A('sn', this.onSnap), ev: A('ev', this.onEvents), sb: A('sb', this.onBoard),
+      clm: A('clm', this.onClaim), fx: A('fx', this.onFx), nd: A('nd', this.onNade),
+    };
+    r.onJoin = (id) => { this.heard.set(id, performance.now()); if (this.role === 'client' && id === this.hostId && !this.welcomed) this.sayHi(); };
+    r.onLeave = (id) => this.onPeerLeave(id);
+  },
+  /** Leave the room (and the lobby). quiet: no UI changes. */
+  leave(quiet = false) {
+    if (this.room) { this.room.leave(); this.room = null; }
+    const was = this.active;
+    this.active = false; this.role = null; this.tx = null; this.players.clear();
+    Lobby.close();
+    PlayerTarget.netId = 'me';
+    if (was && !quiet) OnlineUI.render();
+  },
+  sayHi() { this.t.hi = performance.now(); this.tx.hi({ v: CONFIG.NET.proto, name: this.myName(), lvl: Progress.level }, this.hostId); },
+  // ------------------------------------------------------------ lobby (host side)
+  announce(target) {
+    if (!Lobby.sendAnn || !this.isHost()) return;
+    const n = this.players.size;
+    Lobby.sendAnn({ v: CONFIG.NET.proto, id: this.roomId, name: this.info.name, host: this.selfId, hn: this.myName(), n, max: CONFIG.NET.maxPlayers, phase: this.phase,
+      sl: this.info.scoreLimit, tl: this.info.timeLimit, bots: this.info.fill, diff: this.info.diff, map: MapInfo.name }, target);
+  },
+  lobbyState() { return { v: CONFIG.NET.proto, host: this.hostId, ep: this.epoch, phase: this.phase, info: this.info, mn: this.matchNo, players: [...this.players.values()] }; },
+  /** Another peer claims to be host (a migration we missed, or one that happened while we were cut off): the newer host epoch wins. */
+  rivalHost(from, ep) { ep |= 0; return ep > this.epoch || (ep === this.epoch && from < this.selfId); },
+  broadcastLobby() { if (this.isHost()) { this.tx.lob(this.lobbyState()); OnlineUI.render(); } },
+  humans(team) { let n = 0; for (const p of this.players.values()) if (p.team === team) n++; return n; },
+  /** Team for a newcomer: fewer humans, then the team that is behind. */
+  balancedTeam() {
+    const a = this.humans('A'), b = this.humans('B');
+    if (a !== b) return a < b ? 'A' : 'B';
+    const m = Game.match; if (m && m.online && m.scores.A !== m.scores.B) return m.scores.A < m.scores.B ? 'A' : 'B';
+    return 'B';
+  },
+  onHi(d, from) {
+    if (!this.isHost() || !d) return;
+    if (d.v !== CONFIG.NET.proto) return this.tx.no({ reason: 'VERSION MISMATCH · RELOAD THE PAGE' }, from);
+    let p = this.players.get(from);
+    if (!p) {
+      if (this.players.size >= CONFIG.NET.maxPlayers) return this.tx.no({ reason: 'ROOM IS FULL' }, from);
+      p = { id: from, name: netName(d.name) || 'SOLDIER', team: this.balancedTeam(), ready: false, lvl: d.lvl | 0, host: false, seq: ++this.seqN };
+      this.players.set(from, p);
+      UI.toast(p.name + ' joined the room', 2200);
+    }
+    this.broadcastLobby(); this.announce();
+    if (this.phase === 'match' && Game.match && Game.match.authority && Game.match.online && !Game.match.finished) this.joinInProgress(p);
+  },
+  onReady(d, from) {
+    if (!this.isHost() || !d) return;
+    const p = this.players.get(from); if (!p) return;
+    if (typeof d.r === 'boolean') p.ready = d.r;
+    if ((d.team === 'A' || d.team === 'B') && this.phase === 'lobby') this.trySwitch(p, d.team);
+    this.broadcastLobby();
+  },
+  trySwitch(p, team) {
+    if (p.team === team) return false;
+    const to = this.humans(team), from = this.humans(p.team);
+    if (to >= CONFIG.TDM.teamSize || to + 1 - (from - 1) > 1) { if (p.id === this.selfId) UI.toast('Teams would be uneven.', 1800); return false; }
+    p.team = team; return true;
+  },
+  /** Even the teams out before a match (latest joiners move). */
+  autoBalance() {
+    for (let guard = 0; guard < 6; guard++) {
+      const a = this.humans('A'), b = this.humans('B');
+      if (Math.abs(a - b) <= 1) break;
+      const big = a > b ? 'A' : 'B', mv = [...this.players.values()].filter((p) => p.team === big && !p.host).sort((x, y) => y.seq - x.seq)[0] || [...this.players.values()].find((p) => p.team === big);
+      mv.team = big === 'A' ? 'B' : 'A';
+    }
+  },
+  allReady() { for (const p of this.players.values()) if (!p.ready && p.id !== this.selfId) return false; return true; },
+  setReady(r) { const me = this.me(); if (!me) return; me.ready = r; if (this.isHost()) this.broadcastLobby(); else this.tx.rdy({ r }, this.hostId); OnlineUI.render(); },
+  requestTeam() {
+    const me = this.me(); if (!me || this.phase !== 'lobby') return;
+    const team = me.team === 'A' ? 'B' : 'A';
+    if (this.isHost()) { this.trySwitch(me, team); this.broadcastLobby(); } else this.tx.rdy({ team }, this.hostId);
+  },
+  setInfo(k, v) { if (!this.isHost() || this.phase !== 'lobby') return; this.info[k] = v; Save.data.online[k] = v; Save.save(); this.broadcastLobby(); this.announce(); },
+  // ------------------------------------------------------------ lobby (client side)
+  onLobby(d, from) {
+    if (!d) return;
+    if (this.isHost()) { if (d.host === from && from !== this.selfId && this.rivalHost(from, d.ep)) this.supplanted(); return; }
+    if (this.role !== 'client') return;
+    if (from !== this.hostId) {
+      // a peer claiming to be host after a migration we didn't compute the same way (or missed)
+      if (d.host === from && ((d.ep | 0) > this.epoch || !this.room.peers().includes(this.hostId))) this.hostId = from; else return;
+    }
+    this.epoch = d.ep | 0;
+    if (!this.welcomed) { this.welcomed = true; this.status = ''; }
+    this.phase = d.phase; this.info = d.info; this.matchNo = d.mn;
+    this.players.clear(); for (const p of d.players) this.players.set(p.id, p);
+    if (!this.players.has(this.selfId) && this.welcomed) { this.sayHi(); }
+    OnlineUI.render();
+  },
+  onReject(d, from) {
+    if (from !== this.hostId) return;
+    const reason = (d && d.reason) || 'REJECTED';
+    this.leave(true);
+    OnlineUI.open(); OnlineUI.flash('Could not join: ' + reason);
+  },
+  // ------------------------------------------------------------ match start / join in progress
+  startMatch() {
+    if (!this.isHost() || this.phase !== 'lobby') return;
+    if (!this.allReady()) { UI.toast('Waiting for everyone to ready up.', 2000); return; }
+    this.autoBalance();
+    this.matchNo++; this.phase = 'match';
+    const me = this.me(), humans = [];
+    for (const p of this.players.values()) if (p.id !== this.selfId) humans.push(new Puppet(p.id, p.name, p.team, false));
+    const m = new TDMMatch({ online: true, roomName: this.info.name, difficulty: this.info.diff, scoreLimit: this.info.scoreLimit, timeLimit: this.info.timeLimit, fill: this.info.fill, selfTeam: me.team, humans });
+    this.tx.go(this.goPayload(m));
+    for (const p of this.players.values()) if (p.id !== this.selfId) p.ready = false;
+    this.broadcastLobby(); this.announce();
+    Game.startOnline(m);
+  },
+  goPayload(m) { return { mn: this.matchNo, ep: this.epoch, info: this.info, roster: m.roster(), s: m.state === 'pre' ? 0 : m.state === 'live' ? 1 : 2, st: +m.stateT.toFixed(2), tl: +m.timeLeft.toFixed(1), sc: [m.scores.A, m.scores.B] }; },
+  joinInProgress(p) {
+    const m = Game.match;
+    if (m.find(p.id)) return;
+    const pup = new Puppet(p.id, p.name, p.team, false);
+    m.addHuman(pup);
+    this.tx.go(this.goPayload(m), p.id);
+    this.broadcastEvent({ k: 'roster', r: m.roster() });
+    m.respawns.push({ who: pup, t: 0.25 });
+  },
+  onGo(d, from) {
+    if (this.role !== 'client' || from !== this.hostId || !d || !Array.isArray(d.roster)) return;
+    if (!d.roster.some((r) => r.id === this.selfId)) return; // started before the host saw our hello: a targeted 'go' follows
+    this.matchNo = d.mn; this.epoch = d.ep | 0; this.info = d.info; this.phase = 'match'; this.welcomed = true; this.status = '';
+    const m = new ClientMatch({ roster: d.roster, s: d.s, st: d.st, tl: d.tl, sc: d.sc, roomName: d.info.name, scoreLimit: d.info.scoreLimit, timeLimit: d.info.timeLimit, difficulty: d.info.diff });
+    Game.startOnline(m);
+  },
+  // ------------------------------------------------------------ in-match traffic
+  /** Host → everyone (and applied locally by the caller). */
+  broadcastEvent(ev) {
+    if (!this.isHost()) return;
+    this.tx.ev([ev]);
+    if (ev.k === 'end') { this.phase = 'lobby'; for (const p of this.players.values()) if (p.id !== this.selfId) p.ready = false; this.broadcastLobby(); this.announce(); }
+  },
+  /** Host: tell a remote player they were hit (authoritative health). */
+  sendHit(puppet, dmg, hp, from) { if (this.isHost()) this.tx.ev([{ k: 'hit', id: puppet.netId, d: Math.round(dmg), hp, f: from ? [r2(from.x), r2(from.y), r2(from.z)] : null }], puppet.netId); },
+  /** Host: hitmarker for a remote player's grenade. */
+  hitConfirm(attacker, killed) { if (this.isHost() && attacker.isRemote) this.tx.ev([{ k: 'hm', kill: !!killed }], attacker.netId); },
+  onEvents(list, from) {
+    if (this.role !== 'client' || from !== this.hostId || !Array.isArray(list)) return;
+    const m = Game.match;
+    for (const ev of list) {
+      if (!m || m.authority) continue;
+      Game.applyMatchEvent(ev, m);
+    }
+  },
+  onBoard(rows, from) { const m = Game.match; if (this.role === 'client' && from === this.hostId && m && !m.authority && Array.isArray(rows)) m.applyBoard(rows); },
+  /** Map a peer's clock to ours: the smallest (arrival − send) seen, drifting up slowly so a latency drop or clock skew re-converges. */
+  offset(id, t, now) {
+    const s = now - t; let o = this.offsets.get(id);
+    if (o === undefined || s < o) o = s; else o += (s - o) * 0.003;
+    this.offsets.set(id, o); return o;
+  },
+  sendState(now) {
+    const pl = Game.player, w = PlayerWeapon;
+    this.tx.st([Math.round(now), r2(pl.pos.x), r2(pl.pos.y), r2(pl.pos.z), +pl.yaw.toFixed(3), +pl.pitch.toFixed(3), pl.stance === 'crouch' || pl.stance === 'slide' ? 1 : 0,
+      (pl.sprinting ? 1 : 0) | (w.reload ? 2 : 0), w.def ? w.def.key : 'kestrel:', this.life, this.matchNo]);
+  },
+  onSt(a, from) {
+    const m = Game.match; if (!m || !m.online || !Array.isArray(a) || a[10] !== this.matchNo) return;
+    const p = m.find(from); if (!p || !p.isRemote) return;
+    p.onState(a, a[0] + this.offset(from, a[0], performance.now()));
+  },
+  onSnap(s, from) {
+    if (!s) return;
+    if (this.isHost()) { if (from !== this.selfId && this.rivalHost(from, s.ep)) this.supplanted(); return; }
+    if (from !== this.hostId && (s.ep | 0) > this.epoch) { this.hostId = from; this.epoch = s.ep | 0; }
+    const m = Game.match; if (this.role !== 'client' || from !== this.hostId || !m || m.authority) return;
+    m.applySnapshot(s, this.offset(from, s.t, performance.now()));
+  },
+  // ------------------------------------------------------------ hits
+  /** Client: our bullet hit someone the host owns. Ask the host; predict the result for instant feedback. */
+  claim(victim, dmg, part, info) {
+    const m = Game.match; if (!m || m.state !== 'live' || !victim.alive) return false;
+    const o = info.fromPos || PlayerTarget.head;
+    this.tx.clm({ v: victim.netId, p: part, w: info.wid || '', d: r2(info.dist || 0), o: [r2(o.x), r2(o.y), r2(o.z)], mn: this.matchNo }, this.hostId);
+    const hp = victim.hp ?? 100, killed = hp - dmg <= 0;
+    victim.hp = Math.max(1, hp - dmg); // never predict a death: the kill event does that
+    if (victim.actor) victim.actor.flinch.v += part === 'head' ? 8 : 4;
+    return killed;
+  },
+  /** Host: validate a client's hit claim against the position history, then apply it like a local hit. */
+  onClaim(c, from) {
+    const m = Game.match, C = CONFIG.NET;
+    if (!this.isHost() || !m || !m.authority || m.state !== 'live' || !c || c.mn !== this.matchNo) return;
+    const S = m.find(from); if (!S || !S.isRemote || !S.alive) return;
+    const V = m.find(c.v); if (!V || !V.alive || V === S || V.team === S.team) return;
+    if (!Array.isArray(c.o) || c.o.length !== 3 || !c.o.every(Number.isFinite) || !Number.isFinite(c.d)) return;
+    const now = performance.now(), win = Math.min(C.lagWindowMax, (S.ping || 120) + C.interpDelay + 250);
+    const o = _nv1.fromArray(c.o), part = c.p === 'head' || c.p === 'limb' ? c.p : 'torso';
+    let dmg, wname;
+    if (c.w === 'melee') {
+      if (c.d > MELEE.range + 1.2 || !this.rateOk(S, 2)) return this.reject(S, 'melee');
+      dmg = MELEE.damage; wname = 'MELEE';
+    } else {
+      const W = WEAPONS[c.w]; if (!W) return;
+      const def = S.def && S.def.id === c.w ? S.def : buildWeaponDef(c.w, []);
+      if (c.d > def.range + 1 || !this.rateOk(S, def.rpm / 60 * def.pellets * 1.6 + 3)) return this.reject(S, 'rate');
+      dmg = Math.round(damageAt(def, c.d) * (def.mult[part] ?? 1)); wname = def.name;
+    }
+    if (!LagComp.near(from, o, C.originTol, win + 300, now)) return this.reject(S, 'origin');
+    if (!LagComp.check(V.netId, o, c.d, win, now)) return this.reject(S, 'target');
+    Combat.hitActor(V.actor || V, dmg, part, { attacker: S, weapon: wname, fromPos: o.clone() });
+  },
+  rateOk(S, perSec) {
+    const now = performance.now(), a = S.claims;
+    while (a.length && now - a[0] > 1000) a.shift();
+    if (a.length >= perSec) return false;
+    a.push(now); return true;
+  },
+  reject(S, why) { this.rejects = (this.rejects || 0) + 1; if (CONFIG.NET.logRejects) console.warn('[net] claim rejected', S.name, why); },
+  // ------------------------------------------------------------ shots + grenades (cosmetic replication)
+  /** Replicate a shot so others see/hear it. e: [[x, y, z, surf, nx, ny, nz, flesh], …] */
+  shotFx(shooter, def, e) { const m = Game.match; if (!this.active || !m || !m.online || !this.tx) return; this.tx.fx({ i: shooter.netId, w: def.id, s: def.suppressed ? 1 : 0, e, mn: this.matchNo }); },
+  onFx(d, from) {
+    const m = Game.match; if (!m || !m.online || !d || d.mn !== this.matchNo) return;
+    if (d.i !== from && from !== this.hostId) return; // only the host speaks for its bots
+    const p = m.find(d.i); if (p && p.showShot) p.showShot(d, m);
+  },
+  sendNade(type, pos, vel, fuse, owner) {
+    const m = Game.match; if (!this.active || !m || !m.online || !owner || !owner.netId) return;
+    this.tx.nd({ t: type, p: [r2(pos.x), r2(pos.y), r2(pos.z)], v: [r2(vel.x), r2(vel.y), r2(vel.z)], f: r2(fuse), i: owner.netId, mn: this.matchNo });
+  },
+  onNade(d, from) {
+    const m = Game.match; if (!m || !m.online || !d || d.mn !== this.matchNo || !GRENADES[d.t]) return;
+    if (d.i !== from && from !== this.hostId) return;
+    const oneWay = (this.pings.get(from) || 80) / 2000;
+    Grenades.spawn(d.t, _nv1.fromArray(d.p), _nv2.fromArray(d.v), Math.max(0, d.f - oneWay), m.find(d.i), true);
+  },
+  // ------------------------------------------------------------ leaving + host migration
+  onPeerLeave(id) {
+    this.heard.delete(id); this.offsets.delete(id);
+    if (!this.active) return;
+    const p = this.players.get(id);
+    if (this.isHost()) {
+      if (!p) return;
+      this.players.delete(id);
+      UI.toast(p.name + ' left the room', 2200);
+      const m = Game.match;
+      if (m && m.authority && m.online) { const h = m.humans.find((x) => x.netId === id); if (h) { m.removeHuman(h); this.broadcastEvent({ k: 'roster', r: m.roster() }); } }
+      this.broadcastLobby(); this.announce();
+      return;
+    }
+    if (id === this.hostId) this.hostLost(); else if (p) { this.players.delete(id); OnlineUI.render(); }
+  },
+  /** The host is gone: the remaining player with the lowest id takes over. */
+  hostLost() {
+    const oldId = this.hostId, old = this.players.get(oldId), peers = new Set(this.room ? this.room.peers() : []);
+    this.players.delete(oldId);
+    const m = Game.match;
+    if (m && m.online && !m.authority && m.puppets.has(oldId)) { m.removePuppet(oldId); m.rebuild(); }
+    if (!this.welcomed) { this.leave(true); OnlineUI.open(); OnlineUI.flash('The host left before you joined.'); return; }
+    const cands = [...this.players.keys()].filter((id) => id === this.selfId || peers.has(id)).sort();
+    const next = cands[0];
+    if (!next) return this.cleanEnd('HOST LEFT');
+    this.hostId = next;
+    const who = old ? old.name : 'The host';
+    if (next === this.selfId) { this.becomeHost(who); return; }
+    this.t.migrate = performance.now();
+    UI.toast(who + ' left. ' + (this.players.get(next) ? this.players.get(next).name : 'Another player') + ' is taking over as host…', 3500);
+    OnlineUI.render();
+  },
+  becomeHost(oldName) {
+    this.role = 'host'; this.epoch++;
+    const me = this.me(); if (me) { me.host = true; me.ready = true; }
+    for (const p of this.players.values()) if (p.id !== this.selfId) p.host = false;
+    const m = Game.match;
+    if (m && !m.authority && !m.finished) {
+      try {
+        const nm = TDMMatch.fromMirror(m, { difficulty: this.info.diff, fill: this.info.fill });
+        Game.swapMatch(nm);
+        this.broadcastEvent({ k: 'roster', r: nm.roster() });
+      } catch (e) { console.error(e); return this.cleanEnd('HOST LEFT'); }
+    } else if (m && !m.authority) this.phase = 'lobby';
+    Lobby.open();
+    this.broadcastLobby(); this.announce();
+    UI.toast(oldName + ' left. You are now the host.', 3500);
+  },
+  /** We were cut off long enough for someone else to take over hosting: step out cleanly instead of running a second match. */
+  supplanted() {
+    const m = Game.match;
+    this.leave(true);
+    if (m && m.online && !m.finished) m.finishLocal('CONNECTION LOST', m.scores);
+    else OnlineUI.render();
+    UI.toast('You lost connection to the room and another player took over as host.', 5000);
+  },
+  /** No way to continue: finish the match for us and leave the room. */
+  cleanEnd(reason) {
+    const m = Game.match;
+    this.leave(true);
+    if (m && m.online && !m.finished) m.finishLocal(reason, m.scores);
+    UI.toast('The host left and the match could not continue.', 4000);
+  },
+  // ------------------------------------------------------------ per frame
+  update() {
+    if (!this.active || !this.room) return;
+    const now = performance.now(), T = this.t, C = CONFIG.NET, m = Game.match;
+    if (this.isHost() && now - T.ann > C.announceEvery) { T.ann = now; this.announce(); }
+    if (this.isClient() && !this.welcomed) {
+      if (now - T.hi > 2000 && this.room.peers().includes(this.hostId)) this.sayHi();
+      if (now - T.start > C.joinTimeout) { this.leave(true); OnlineUI.open(); OnlineUI.flash('Could not reach the host. The room may have closed, or a firewall is blocking peer-to-peer connections.'); return; }
+    }
+    // mid-match the host streams 20 Hz snapshots, so silence means it's gone (in the lobby we rely on the peer-leave signal)
+    if (this.isClient() && this.welcomed && m && m.online && !m.finished && now - (this.heard.get(this.hostId) ?? now) > C.hostTimeout) { this.hostLost(); if (!this.active) return; }
+    if (now - T.ping > C.pingEvery) {
+      T.ping = now;
+      for (const id of this.room.peers()) this.room.ping(id).then((ms) => {
+        ms = Math.round(ms); this.pings.set(id, ms);
+        const p = this.players.get(id); if (p) p.ping = ms;
+        const g = Game.match; if (g && g.authority) { const h = g.find(id); if (h && h.isRemote) h.ping = ms; }
+      });
+    }
+    if (!m || !m.online || m.finished) return;
+    if (now - T.send >= 1000 / C.sendHz) { T.send = Math.max(T.send + 1000 / C.sendHz, now - 1000 / C.sendHz); this.sendState(now); }
+    if (m.authority) {
+      if (now - T.snap >= 1000 / C.snapHz) { T.snap = Math.max(T.snap + 1000 / C.snapHz, now - 1000 / C.snapHz); const sn = m.snapshot(now); sn.ep = this.epoch; this.tx.sn(sn); }
+      if (now - T.board >= 1000) { T.board = now; this.tx.sb(m.board()); }
+    }
+  },
+};
+addEventListener('pagehide', () => { if (Net.active) Net.leave(true); });
+document.addEventListener('visibilitychange', () => Game.onVisibility());
 
 /* =====================================================================
    UI — HUD and menus
@@ -6357,10 +7342,15 @@ const UI = {
       else if (!$('loadout').classList.contains('hidden')) this.action('loadout-close');
       else if (!$('practice').classList.contains('hidden')) this.action('practice-back');
       else if (!$('barracks').classList.contains('hidden')) this.action('barracks-close');
+      else if (!$('createRoom').classList.contains('hidden')) this.action('online-create-back');
+      else if (!$('online').classList.contains('hidden')) this.action('online-back');
       else if (Game.state === 'paused') this.action('resume');
       else if (Game.state === 'playing' && !Input.locked) Game.pause();
     });
-    $('menuFoot').innerHTML = `v${CONFIG.VERSION} &middot; three.js r${THREE.REVISION}<br>Click a mode to start. Esc pauses.`;
+    $('menuFoot').innerHTML = `v${CONFIG.VERSION} &middot; three.js r${THREE.REVISION}<br>Click a mode to start. Esc opens the menu (offline it also pauses).`;
+    const on = $('onName');
+    on.addEventListener('change', () => OnlineUI.saveName());
+    for (const el of [on, $('crName')]) el.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') el.blur(); });
     const nm = $('loClassName');
     nm.addEventListener('input', () => LoadoutUI.rename(nm.value));
     nm.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape') nm.blur(); });
@@ -6390,6 +7380,18 @@ const UI = {
       case 'practice-loadout': $('practice').classList.add('hidden'); LoadoutUI.open('practice', 'classes'); break;
       case 'practice-back': $('practice').classList.add('hidden'); $('menu').classList.remove('hidden'); break;
       case 'again': $('matchEnd').classList.add('hidden'); Game.startPractice(Game.lastPractice || { ...Save.data.practice }); break;
+      case 'online': OnlineUI.open(); break;
+      case 'online-back': OnlineUI.close(); break;
+      case 'online-create': OnlineUI.openCreate(); break;
+      case 'online-create-back': OnlineUI.open(); break;
+      case 'online-host': OnlineUI.create(); break;
+      case 'online-join': OnlineUI.join(el.dataset.room); break;
+      case 'room-ready': { const me = Net.me(); Net.setReady(!(me && me.ready)); break; }
+      case 'room-start': Net.startMatch(); break;
+      case 'room-team': Net.requestTeam(); break;
+      case 'room-class': LoadoutUI.open('room', 'classes'); break;
+      case 'room-leave': OnlineUI.leaveRoom(); break;
+      case 'lobby-back': Game.toMenu('room'); break;
       case 'loadout-apply': LoadoutUI.close(true); break;
       case 'loadout-close': LoadoutUI.close(false); break;
       case 'settings': this.settingsFrom = Game.state === 'paused' ? 'pause' : 'menu'; this.openSettings(); break;
@@ -6509,7 +7511,7 @@ const BarracksUI = {
       const g = document.createElement('div'); g.className = 'bk-grid';
       for (const [k, v] of tiles) { const d = document.createElement('div'); const b = document.createElement('b'); b.textContent = v; const sp = document.createElement('span'); sp.textContent = k; d.append(b, sp); g.appendChild(d); }
       body.appendChild(g);
-      body.insertAdjacentHTML('beforeend', '<div class="note">Career stats count Practice (and later online) matches. The Firing Range is not counted.</div>');
+      body.insertAdjacentHTML('beforeend', '<div class="note">Career stats count Practice and online matches. The Firing Range is not counted.</div>');
     } else {
       const wk = st.weaponKills || {}, names = Object.values(WEAPONS).map((w) => w.name).concat(['FRAG', 'MELEE']);
       const rows = names.map((n) => [n, wk[n] || 0]).sort((a, b) => b[1] - a[1]), top = Math.max(1, rows[0][1]);
@@ -6525,6 +7527,151 @@ const BarracksUI = {
   },
 };
 
+/** Play Online: room browser, create-room settings and the room lobby (teams, ready-up, host settings). */
+const OnlineUI = {
+  view: null, timer: 0, ROWS: [
+    ['scoreLimit', 'Score Limit', [[20, '20'], [30, '30'], [50, '50']]],
+    ['timeLimit', 'Time Limit', [[300, '5 MIN'], [600, '10 MIN'], [900, '15 MIN']]],
+    ['fill', 'Bot Fill', [[true, 'ON'], [false, 'OFF']]],
+    ['diff', 'Bot Difficulty', null],
+  ],
+  /** Show one of the menu screens (null: none, e.g. a match is starting). */
+  show(id) {
+    for (const s of ['menu', 'online', 'createRoom', 'room']) $(s).classList.toggle('hidden', s !== id);
+    this.view = id;
+    clearInterval(this.timer); if (id && id !== 'menu') this.timer = setInterval(() => this.tick(), 500);
+  },
+  /** Room browser. */
+  async open() {
+    this.show('online');
+    $('onName').value = Net.myName();
+    this.status(NetTransport.kind === 'local' ? 'LOCAL TEST NETWORK · THIS BROWSER ONLY' : 'CONNECTING TO SIGNALLING RELAYS…');
+    this.renderRooms();
+    try {
+      await NetTransport.init();
+      Lobby.onChange = () => this.renderRooms();
+      Lobby.open();
+      this.status(NetTransport.kind === 'local' ? 'LOCAL TEST NETWORK · THIS BROWSER ONLY' : 'SEARCHING FOR ROOMS');
+    } catch (e) { console.error(e); this.status('OFFLINE'); this.flash(e.message || String(e)); }
+  },
+  close() {
+    clearInterval(this.timer); Lobby.onChange = null;
+    if (!Net.active) Lobby.close();
+    this.show('menu'); clearInterval(this.timer); this.view = null;
+  },
+  status(t) { $('onStatus').textContent = t; },
+  flash(msg) { UI.toast(msg, 6000); const n = $('onMsg'); if (n) { n.textContent = msg; n.classList.toggle('hidden', !msg); } },
+  tick() {
+    if (this.view === 'online') this.renderRooms();
+    else if (this.view === 'room') this.renderRoom();
+  },
+  /** Called by Net whenever the room state changes. */
+  render() {
+    if (this.view === 'room') { if (Net.active) this.renderRoom(); else this.open(); }
+    else if (this.view === 'online') this.renderRooms();
+  },
+  saveName() {
+    const v = netName($('onName').value);
+    Save.data.profile.name = v; Save.save(); Net.nameOverride = null;
+  },
+  renderRooms() {
+    const list = Lobby.list(), body = $('onRooms');
+    const sig = JSON.stringify(list.map((r) => [r.id, r.name, r.hn, r.n, r.max, r.phase, r.v, r.sl]));
+    if (sig === this.roomsSig && body.children.length === list.length) return;
+    this.roomsSig = sig;
+    body.innerHTML = '';
+    for (const r of list) {
+      const tr = document.createElement('tr'), ok = r.v === CONFIG.NET.proto, full = r.n >= r.max;
+      const cells = [r.name, r.hn, `${r.n} / ${r.max}`, `TDM · ${r.sl || '-'} · ${r.map || ''}`, !ok ? 'NEWER VERSION' : r.phase === 'match' ? 'IN MATCH' : 'IN LOBBY'];
+      for (const c of cells) { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); }
+      const td = document.createElement('td'), b = document.createElement('button');
+      b.className = 'btn small'; b.textContent = full ? 'FULL' : 'JOIN'; b.disabled = full || !ok;
+      b.dataset.action = 'online-join'; b.dataset.room = r.id;
+      td.appendChild(b); tr.appendChild(td); body.appendChild(tr);
+    }
+    $('onEmpty').classList.toggle('hidden', list.length > 0);
+  },
+  openCreate() {
+    this.saveName();
+    this.show('createRoom');
+    const O = Save.data.online;
+    $('crName').value = O.roomName || '';
+    $('crName').placeholder = Net.myName() + "'S ROOM";
+    this.renderSettings($('crBody'), O, (k, v) => { O[k] = v; Save.save(); this.openCreate(); });
+  },
+  /** Seg-button rows for room settings. */
+  renderSettings(box, vals, set, readOnly = false) {
+    box.innerHTML = '';
+    for (const [key, label, opts0] of this.ROWS) {
+      const opts = opts0 || Object.entries(CONFIG.BOTS.difficulty).map(([k, v]) => [k, v.label]);
+      if (key === 'diff' && !vals.fill) continue;
+      const r = document.createElement('div'); r.className = 'set-row';
+      const l = document.createElement('label'); l.textContent = label; r.appendChild(l);
+      const ctl = document.createElement('div'); ctl.className = 'ctl'; r.appendChild(ctl); r.appendChild(document.createElement('div'));
+      if (readOnly) { const s = document.createElement('span'); s.className = 'ro'; s.textContent = (opts.find((o) => o[0] === vals[key]) || [0, '-'])[1]; ctl.appendChild(s); }
+      else {
+        const seg = document.createElement('div'); seg.className = 'seg';
+        for (const [v, t] of opts) { const b = document.createElement('button'); b.textContent = t; if (vals[key] === v) b.classList.add('on'); b.onclick = () => set(key, v); seg.appendChild(b); }
+        ctl.appendChild(seg);
+      }
+      box.appendChild(r);
+    }
+  },
+  async create() {
+    const O = Save.data.online;
+    O.roomName = netName($('crName').value, 20); Save.save();
+    try { await Net.host({ name: O.roomName, scoreLimit: O.scoreLimit, timeLimit: O.timeLimit, fill: O.fill, diff: O.diff }); this.showRoom(); }
+    catch (e) { console.error(e); this.flash(e.message || String(e)); }
+  },
+  async join(id) {
+    const r = Lobby.rooms.get(id); if (!r) return;
+    this.saveName();
+    try { await Net.join(r); this.showRoom(); }
+    catch (e) { console.error(e); this.flash(e.message || String(e)); }
+  },
+  showRoom() { this.show('room'); this.renderRoom(true); },
+  leaveRoom() { Net.leave(true); this.open(); },
+  renderRoom(force = false) {
+    if (!Net.active) return;
+    const I = Net.info, me = Net.me(), host = Net.isHost(), lobby = Net.phase === 'lobby';
+    const sig = JSON.stringify([I, Net.phase, Net.welcomed, Net.status, Net.role, Net.selfId, Save.data.selectedClass, [...Net.players.values()], [...Net.pings]]);
+    if (!force && sig === this.roomSig) return;
+    this.roomSig = sig;
+    $('rmTitle').textContent = I.name || 'ROOM';
+    const diff = CONFIG.BOTS.difficulty[I.diff] || CONFIG.BOTS.difficulty.normal;
+    $('rmSub').textContent = `TEAM DEATHMATCH · ${MapInfo.name} · FIRST TO ${I.scoreLimit} · ${Math.round(I.timeLimit / 60)} MIN · ${I.fill ? diff.label + ' BOTS FILL EMPTY SLOTS' : 'NO BOTS'}`;
+    for (const team of ['A', 'B']) {
+      const box = $(team === 'A' ? 'rmA' : 'rmB'); box.innerHTML = '';
+      const ps = [...Net.players.values()].filter((p) => p.team === team).sort((a, b) => (b.host - a.host) || (a.seq || 0) - (b.seq || 0));
+      for (const p of ps) {
+        const row = document.createElement('div'); row.className = 'rm-p' + (p.id === Net.selfId ? ' me' : '');
+        const n = document.createElement('b'); n.textContent = p.name + (p.id === Net.selfId ? '  (YOU)' : '');
+        const lv = document.createElement('em'); lv.textContent = 'LV ' + (p.lvl || 1);
+        const st = document.createElement('span'); st.className = p.host ? 'host' : p.ready ? 'ok' : 'wait'; st.textContent = p.host ? 'HOST' : p.ready ? 'READY' : 'NOT READY';
+        const pg = document.createElement('i'); pg.textContent = p.id === Net.selfId ? '' : (Net.pings.get(p.id) ?? p.ping ?? '') + (Net.pings.has(p.id) || p.ping ? ' MS' : '');
+        row.append(n, lv, st, pg); box.appendChild(row);
+      }
+      for (let k = ps.length; k < CONFIG.TDM.teamSize; k++) { const row = document.createElement('div'); row.className = 'rm-p empty'; row.textContent = I.fill ? 'BOT' : 'OPEN SLOT'; box.appendChild(row); }
+      box.parentElement.classList.toggle('mine', !!me && me.team === team);
+    }
+    this.renderSettings($('rmSettings'), I, (k, v) => Net.setInfo(k, v), !(host && lobby));
+    const L = Classes.loadout(Classes.selected());
+    $('rmClass').textContent = L.name + '  ·  ' + WEAPONS[L.primary].name + '  +  ' + WEAPONS[L.secondary].name;
+    const others = [...Net.players.values()].filter((p) => p.id !== Net.selfId), ready = others.filter((p) => p.ready).length;
+    let status;
+    if (!Net.welcomed) status = Net.status || 'CONNECTING…';
+    else if (!lobby) status = 'MATCH IN PROGRESS…';
+    else if (host) status = others.length ? (ready === others.length ? 'EVERYONE IS READY · START WHEN YOU LIKE' : `${ready} / ${others.length} READY`) : 'WAITING FOR PLAYERS · YOU CAN ALSO START NOW WITH BOTS';
+    else status = me && me.ready ? 'READY · WAITING FOR THE HOST TO START' : 'PRESS READY WHEN YOU ARE SET';
+    $('rmStatus').textContent = status;
+    const rb = $('rmReady'), sb = $('rmStart');
+    rb.classList.toggle('hidden', host || !Net.welcomed); rb.textContent = me && me.ready ? 'Not Ready' : 'Ready';
+    sb.classList.toggle('hidden', !host); sb.disabled = !lobby || !Net.allReady();
+    $('rmTeam').disabled = !lobby || !Net.welcomed;
+    $('rmCode').textContent = 'ROOM ' + Net.roomId + (NetTransport.kind === 'local' ? ' · LOCAL TEST NETWORK' : '');
+  },
+};
+
 /** Gunsmith screen, two modes:
     'range'   — free sandbox loadout for the firing range (everything unlocked);
     'classes' — Create-a-Class: 3 default classes (read-only) + 5 custom (editable once Create-a-Class unlocks),
@@ -6535,7 +7682,7 @@ const LoadoutUI = {
     this.mode = mode; this.from = from; this.slot = 'primary'; this.note = '';
     if (mode === 'range') this.draft = JSON.parse(JSON.stringify(Game.rangeLoadout()));
     else this.classId = Classes.selected().id;
-    for (const id of ['pause', 'menu', 'practice']) $(id).classList.add('hidden');
+    for (const id of ['pause', 'menu', 'practice', 'room']) $(id).classList.add('hidden');
     $('loadout').classList.remove('hidden');
     $('loadoutPanel').classList.toggle('classes', mode === 'classes');
     $('loTitle').textContent = mode === 'classes' ? 'CREATE-A-CLASS' : 'LOADOUT';
@@ -6563,6 +7710,7 @@ const LoadoutUI = {
     }
     $('loadout').classList.add('hidden');
     if (this.from === 'practice') UI.openPractice();
+    else if (this.from === 'room') { if (Net.active) OnlineUI.showRoom(); else OnlineUI.open(); }
     else if (this.from === 'menu') $('menu').classList.remove('hidden');
     else if (Game.state === 'paused') $('pause').classList.remove('hidden');
   },
@@ -6769,11 +7917,13 @@ const Game = {
     if (this.state === 'playing') HUD.banner('LEVEL UP  ·  ' + level, 2.6);
     if (unlocks.length) UI.toast('UNLOCKED: ' + unlocks.map((u) => Progress.label(u)).join(', '), 4000);
   },
-  toMenu() {
+  /** Back to the menus: the main menu, or (online) the room lobby. */
+  toMenu(screen = 'menu') {
     this.state = 'menu';
     this.endMatch();
-    for (const id of ['pause', 'loadout', 'practice', 'matchEnd', 'barracks']) $(id).classList.add('hidden');
-    $('menu').classList.remove('hidden'); HUD.hide(); UI.refreshMenu();
+    for (const id of ['pause', 'loadout', 'practice', 'matchEnd', 'barracks', 'settings', 'online', 'createRoom', 'room']) $(id).classList.add('hidden');
+    HUD.hide(); UI.refreshMenu(); Input.unlock(); AudioSys.stopAmbience();
+    if (screen === 'room' && Net.active) OnlineUI.showRoom(); else $('menu').classList.remove('hidden');
     Viewmodel.root.visible = false;
     Range.setActive(true); Range.reset(); Grenades.clear();
     if (Post.grade) { Post.grade.uniforms.uDamage.value = 0; Post.grade.uniforms.uFlash.value = 0; }
@@ -6783,8 +7933,8 @@ const Game = {
   beginSession(mode) {
     AudioSys.unlock();
     this.mode = mode;
-    for (const id of ['menu', 'pause', 'practice', 'matchEnd', 'loadout']) $(id).classList.add('hidden');
-    PlayerHealth.reset(); HUD.reset(); HUD.setMode(mode); HUD.setXP();
+    for (const id of ['menu', 'pause', 'practice', 'matchEnd', 'loadout', 'settings', 'barracks', 'online', 'createRoom', 'room']) $(id).classList.add('hidden');
+    PlayerHealth.reset(); HUD.reset(); HUD.setMode(mode); HUD.setXP(); this.awaitSpawn = false;
     PlayerWeapon.setLoadout(this.loadout()); PlayerWeapon.locked = false;
     Viewmodel.root.visible = true;
     FX.clear(); Grenades.clear(); AudioSys.resetMuffle();
@@ -6814,11 +7964,71 @@ const Game = {
     m.start();
     const sp = m.spawnPoint('A', PlayerTarget);
     this.player.spawn(sp.x, 0.2, sp.z, sp.yaw); PlayerTarget.sync(this.player);
-    HUD.friends = m.bots.filter((b) => b.team === PlayerTarget.team);
+    HUD.friends = m.others.filter((b) => b.team === PlayerTarget.team);
     this.aimedEnemy = null;
     this.state = 'playing';
     AudioSys.startAmbience();
     if (!this.debugNoLock) Input.lock();
+  },
+  /** Online match (host: authoritative TDMMatch; client: ClientMatch mirror). A client waits for the host's spawn event. */
+  startOnline(m) {
+    this.endMatch();
+    Range.setActive(false);
+    this.beginSession('tdm');
+    this.match = m; Net.life = 0; this.aimedEnemy = null;
+    OnlineUI.show(null);
+    if (m.authority) { m.start(); this.respawn(); }
+    else {
+      const sp = m.spawnPoint(PlayerTarget.team);
+      this.player.spawn(sp.x, 0.2, sp.z, sp.yaw); PlayerTarget.sync(this.player);
+      this.awaitSpawn = true;
+    }
+    HUD.friends = m.others.filter((b) => b.team === PlayerTarget.team);
+    this.state = 'playing';
+    AudioSys.startAmbience();
+    if (!this.debugNoLock) Input.lock();
+  },
+  /** Host migration: carry on in the rebuilt authoritative match. */
+  swapMatch(m) { this.match = m; HUD.friends = m.others.filter((b) => b.team === PlayerTarget.team); },
+  /** Is the world simulating with the player in it? (An online match keeps running behind the Esc menu.) */
+  inPlay() { return this.state === 'playing' || (this.state === 'paused' && !!(this.match && this.match.online)); },
+  /** A match event, applied on every machine (offline: straight from the match). Handles the local player's side. */
+  applyMatchEvent(ev, m) {
+    if (!m || m !== this.match || !ev) return;
+    switch (ev.k) {
+      case 'kill': this.onKillEvent(ev, m); break;
+      case 'spawn':
+        if (ev.id === PlayerTarget.netId) { Net.life = ev.l || Net.life + 1; if (!m.authority) this.respawn({ x: ev.x, z: ev.z, yaw: ev.yaw }); }
+        else { const p = m.find(ev.id); if (p && p.spawnAt) p.spawnAt(ev.x, 0, ev.z, ev.yaw, ev.l); }
+        break;
+      case 'hit': if (ev.id === PlayerTarget.netId) PlayerHealth.netHit(ev.hp, ev.f, ev.d); break;
+      case 'hm': HUD.hitmarker(!!ev.kill, false); AudioSys.play(ev.kill ? 'kill' : 'hit', { bus: 'ui', vol: 0.7, send: 0 }); break;
+      case 'roster': if (!m.authority) m.syncRoster(ev.r); break;
+      case 'end': m.finishLocal(ev.reason, ev.sc); break;
+    }
+  },
+  /** Kill event: mirror stats (clients), bodies, the local player's death / XP / streak, and the killfeed. */
+  onKillEvent(ev, m) {
+    const K = m.find(ev.killer), V = m.find(ev.victim), X = PROGRESSION.xp, st = Save.data.stats, me = PlayerTarget;
+    if (!m.authority) m.tally(K, V, ev.credit, ev.head, ev.assists);
+    if (V && (V.isRemote || V.isBotPuppet)) V.die(K);
+    if (V === me && !PlayerHealth.dead) PlayerHealth.netDeath({ killer: K ? (K === me ? 'YOURSELF' : K.name) : ev.kn || 'WORLD', weapon: ev.weapon, attacker: K, head: ev.head });
+    if (ev.credit && K === me) {
+      this.streak++; st.kills++; st.bestStreak = Math.max(st.bestStreak || 0, this.streak);
+      if (ev.head) st.headshots++; st.weaponKills[ev.weapon] = (st.weaponKills[ev.weapon] || 0) + 1;
+      m.xp.kills += X.kill; if (ev.head) m.xp.headshots += X.headshot;
+      const gain = Math.round((X.kill + (ev.head ? X.headshot : 0)) * m.xpMult);
+      HUD.scorePop(ev.head ? `+${gain}\nHEADSHOT` : `+${gain}`);
+      Progress.addXP(gain);
+    }
+    if (ev.assists && ev.assists.includes(me.netId)) {
+      const g = Math.round(X.assist * m.xpMult); m.xp.assists += X.assist; st.assists++; HUD.scorePop(`+${g}  ASSIST`); Progress.addXP(g);
+    }
+    if (V === me) st.deaths++;
+    const rel = (who) => (!who ? 'e' : who === me ? 'me' : who.team === me.team ? 'f' : 'e');
+    const kName = K ? (K === me ? 'YOU' : K.name) : ev.kn || 'ENEMY', vName = V ? (V === me ? 'YOU' : V.name) : ev.vn || 'ENEMY';
+    HUD.killfeed(ev.credit || (K && K === V) ? kName : ev.weapon === 'FALL' ? '' : 'WORLD', ev.weapon || '', vName,
+      { head: ev.head, mine: K === me, killerTeam: rel(K), victimTeam: rel(V), victimMine: V === me });
   },
   endMatch() {
     if (!this.match) return;
@@ -6827,10 +8037,12 @@ const Game = {
   /** Score/time limit hit: freeze play and show the results. */
   onMatchEnd(m) {
     this.state = 'ended';
+    for (const id of ['pause', 'settings', 'loadout']) $(id).classList.add('hidden');
+    $('endAgainBtn').classList.toggle('hidden', m.online); $('endLobbyBtn').classList.toggle('hidden', !(m.online && Net.active));
     Input.unlock(); HUD.scoreboard(false); HUD.scope(null); HUD.banner('');
     PlayerWeapon.locked = true;
     const res = $('endResult'); res.textContent = m.result; res.className = 'end-result ' + (m.result === 'VICTORY' ? 'win' : m.result === 'DEFEAT' ? 'loss' : 'draw');
-    $('endA').textContent = m.scores.A; $('endB').textContent = m.scores.B; $('endReason').textContent = m.endReason + ' · ' + CONFIG.BOTS.difficulty[m.difficulty].label + ' BOTS';
+    $('endA').textContent = m.scores.A; $('endB').textContent = m.scores.B; $('endReason').textContent = m.endReason + ' · ' + m.endTag;
     const me = PlayerTarget.stats, acc = m.stats.shots ? Math.round(m.stats.hits / m.stats.shots * 100) + '%' : '-';
     const kd = me.deaths ? (me.kills / me.deaths).toFixed(2) : me.kills.toFixed(2);
     $('endMe').innerHTML = '';
@@ -6849,7 +8061,7 @@ const Game = {
     const X = m.xp, mult = m.xpMult, lines = [['KILLS', X.kills], ['HEADSHOTS', X.headshots], ['ASSISTS', X.assists], [m.result === 'VICTORY' ? 'WIN BONUS' : m.result === 'DRAW' ? 'DRAW BONUS' : 'MATCH BONUS', X.bonus], ['TIME PLAYED', X.time]];
     const xl = $('endXpLines'); xl.innerHTML = '';
     for (const [k, v] of lines) if (v > 0) { const sp = document.createElement('span'); sp.textContent = k + ' '; const b = document.createElement('b'); b.textContent = '+' + fmtNum(v); sp.appendChild(b); xl.appendChild(sp); }
-    if (mult !== 1) { const sp = document.createElement('span'); sp.textContent = CONFIG.BOTS.difficulty[m.difficulty].label + ' BOTS '; const b = document.createElement('b'); b.textContent = '×' + mult; sp.appendChild(b); xl.appendChild(sp); }
+    if (mult !== 1 && !m.online) { const sp = document.createElement('span'); sp.textContent = CONFIG.BOTS.difficulty[m.difficulty].label + ' BOTS '; const b = document.createElement('b'); b.textContent = '×' + mult; sp.appendChild(b); xl.appendChild(sp); }
     { const sp = document.createElement('span'); sp.textContent = 'TOTAL '; const b = document.createElement('b'); b.textContent = '+' + fmtNum(m.xpTotal) + ' XP'; sp.appendChild(b); xl.appendChild(sp); }
     const ups = []; for (let L = m.levelStart + 1; L <= I1.level; L++) ups.push(...Progress.unlocksAt(L));
     $('endLevelUp').textContent = up ? `LEVEL UP → ${I1.level}` + (ups.length ? '  ·  UNLOCKED: ' + ups.map((u) => Progress.label(u)).join(', ') : '') : '';
@@ -6863,7 +8075,11 @@ const Game = {
   pause() {
     if (this.state !== 'playing') return;
     this.state = 'paused';
+    const online = !!(this.match && this.match.online);
     $('pauseLoadoutBtn').textContent = this.match ? 'Change Class' : 'Loadout';
+    $('pauseTitle').textContent = online ? 'MENU' : 'PAUSED';
+    $('pauseQuitBtn').textContent = online ? 'Leave Match' : 'Quit to Menu';
+    $('pauseNote').textContent = online ? 'Online matches keep running while this menu is open.' : '';
     $('pause').classList.remove('hidden');
     Input.down.clear(); Input.mouseDown.fill(false);
     HUD.scoreboard(false);
@@ -6876,6 +8092,7 @@ const Game = {
   },
   quitToMenu() {
     Save.save();
+    if (Net.active) Net.leave(true);
     $('settings').classList.add('hidden');
     AudioSys.stopAmbience();
     Input.unlock();
@@ -6895,13 +8112,26 @@ const Game = {
     else HUD.killfeed(cause.killer === 'YOURSELF' ? 'YOU' : cause.killer || 'ENEMY', cause.weapon || '', 'YOU', { victimMine: true, killerTeam: cause.killer === 'YOURSELF' ? 'me' : 'e', mine: cause.killer === 'YOURSELF' });
     AudioSys.muffle(0.8, CONFIG.HEALTH.respawnTime);
   },
-  respawn() {
-    const sp = this.match ? this.match.spawnPoint(PlayerTarget.team, PlayerTarget) : MapInfo.playerStart;
+  /** at: a spawn the host chose for us (online client); otherwise the match (or the range) picks one. */
+  respawn(at) {
+    const m = this.match;
+    const sp = at || (m ? m.spawnPoint(PlayerTarget.team, PlayerTarget) : MapInfo.playerStart);
     this.player.spawn(sp.x, 0.2, sp.z, sp.yaw); PlayerTarget.sync(this.player);
     if (PlayerTarget.dmgBy) PlayerTarget.dmgBy.clear();
-    PlayerHealth.reset(); HUD.hideDeath();
+    PlayerHealth.reset(); HUD.hideDeath(); this.awaitSpawn = false;
     PlayerWeapon.setLoadout(this.loadout());
     AudioSys.resetMuffle();
+    if (m && m.online && m.authority) m.emit({ k: 'spawn', id: PlayerTarget.netId, x: r2(sp.x), z: r2(sp.z), yaw: +sp.yaw.toFixed(3), l: Net.life + 1 });
+  },
+  /** Hidden tab during an online session: rAF stops, so keep simulating (no rendering) on a timer. */
+  onVisibility() {
+    clearInterval(this.bgTimer); this.bgTimer = 0;
+    if (!document.hidden) return;
+    this.bgTimer = setInterval(() => {
+      if (!document.hidden || !Net.active || this.state === 'loading') return;
+      const now = performance.now(), dt = clamp((now - this.last) / 1000, 0.001, 0.1); this.last = now;
+      this.update(dt); Input.endFrame();
+    }, 50);
   },
   loop(now) {
     requestAnimationFrame((t) => this.loop(t));
@@ -6916,7 +8146,7 @@ const Game = {
   },
   update(dt) {
     this.frameNo++;
-    if (this.state === 'playing') {
+    if (this.inPlay()) {
       this.time += dt;
       this.updatePlaying(dt);
     } else if (this.state === 'menu') {
@@ -6926,9 +8156,10 @@ const Game = {
     } else if (this.state === 'ended') {
       // results screen: the world keeps breathing behind it
       this.time += dt;
-      if (this.match) for (const b of this.match.bots) if (!b.alive) b.update(dt, this.match);
+      if (this.match) this.match.update(dt);
       FX.update(dt); FXLights.update(dt); Grenades.update(dt); HUD.update(dt, this.player);
     }
+    Net.update();
     const showClick = this.state === 'playing' && !Input.locked && !this.debugNoLock;
     HUD.el.clickToPlay.classList.toggle('hidden', !showClick);
   },
@@ -6939,7 +8170,7 @@ const Game = {
     PlayerTarget.sync(pl);
     // --- world
     if (m) m.update(dt);
-    if (this.state !== 'playing') return; // the match just ended
+    if (!this.inPlay()) return; // the match just ended
     Grenades.update(dt); if (!m) Range.update(dt); FX.update(dt); FXLights.update(dt);
     H.update(dt);
     AudioSys.updateListener(camera);
@@ -6960,10 +8191,10 @@ const Game = {
       HUD.setScore(m.scores.A, m.scores.B, m.timeLeft, m.label);
       if ((this.frameNo & 15) === 0) HUD.setXP();
       // enemy name under the crosshair (checked a few times a second)
-      if ((this.frameNo & 3) === 0) { camera.getWorldDirection(_v4); const h = Hitscan.trace(camera.position, _v4, 80, PlayerTarget.id); this.aimedEnemy = h.actor && h.actor.owner && h.actor.owner.isBot && h.actor.owner.team !== PlayerTarget.team ? h.actor.owner : null; }
-      HUD.updateTags(m.bots, this.aimedEnemy);
-      if (Input.is('scoreboard')) {
-        if (!HUD.cache.sb || (this.frameNo & 15) === 0) HUD.scoreboard(true, m.label, `${CONFIG.BOTS.difficulty[m.difficulty].label} BOTS · FIRST TO ${m.scoreLimit}`, m.rows(), HUD.TDM_COLS);
+      if ((this.frameNo & 3) === 0) { camera.getWorldDirection(_v4); const h = Hitscan.trace(camera.position, _v4, 80, PlayerTarget.id), o = h.actor && h.actor.owner; this.aimedEnemy = o && o !== PlayerTarget && o.team !== PlayerTarget.team && m.others.includes(o) ? o : null; }
+      HUD.updateTags(m.others, this.aimedEnemy);
+      if (Input.is('scoreboard') && this.state === 'playing') {
+        if (!HUD.cache.sb || (this.frameNo & 15) === 0) HUD.scoreboard(true, m.label, m.subtitle, m.rows(), HUD.TDM_COLS);
       } else HUD.scoreboard(false);
       return;
     }
@@ -6984,7 +8215,8 @@ const Game = {
   updateAlive(dt) {
     const pl = this.player, w = PlayerWeapon, def = w.def, S = Save.settings;
     // --- look (raw mouse, scaled for ADS / scope zoom so aim feels consistent)
-    const [dx, dy] = Input.consumeLook();
+    let [dx, dy] = Input.consumeLook();
+    if (this.state !== 'playing') dx = dy = 0;
     // sensitivity follows the zoom actually on screen (so a 6x scope turns 6x slower), times the ADS multiplier
     const hipV = hFovToV(S.fov), ads = smoother(w.adsT);
     const zoomSens = Math.min(1, Math.tan(camera.fov * DEG / 2) / Math.tan(hipV * DEG / 2));
@@ -6996,8 +8228,8 @@ const Game = {
     if (w.recoverableH > 0 && yawGain > 0) w.recoverableH = Math.max(0, w.recoverableH - yawGain);
     else if (w.recoverableH < 0 && yawGain < 0) w.recoverableH = Math.min(0, w.recoverableH - yawGain);
     this.lookDX = damp(this.lookDX, dx, 30, dt); this.lookDY = damp(this.lookDY, dy, 30, dt);
-    // --- movement (frozen during the pre-match countdown)
-    const frozen = !!(this.match && this.match.state !== 'live');
+    // --- movement (frozen during the pre-match countdown, behind the online Esc menu, and until the host spawns us)
+    const frozen = !!(this.match && this.match.state !== 'live') || this.state !== 'playing' || !!this.awaitSpawn;
     w.locked = frozen;
     const intent = w.intents();
     const cmd = frozen ? this.moveCmd.clear() : this.moveCmd.fromInput();
@@ -7039,7 +8271,7 @@ const Game = {
     camera.updateMatrixWorld();
     const left = CONFIG.HEALTH.respawnTime - this.deathT;
     HUD.deathTimer(left);
-    if (left <= 0) this.respawn();
+    if (left <= 0 && (!this.match || this.match.authority)) this.respawn(); // online clients respawn when the host says so
   },
   updateCamera(dt) {
     const pl = this.player, w = PlayerWeapon, S = Save.settings, B = CONFIG.BOB, C = CONFIG.CAMERA;
@@ -7106,8 +8338,10 @@ const Game = {
 
 // Debug / test hooks (used by the headless test harness).
 window.__SM = {
-  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
+  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, ClientMatch, Puppet, LagComp, Net, Lobby, NetTransport, OnlineUI, UI, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
   start() { Game.debugNoLock = true; Game.startRange(); },
+  /** Render one frame on demand (tests that drive the simulation themselves). */
+  renderFrame() { renderer.info.reset(); Post.render(0.016); },
   hold(action, v = true) { Input.debug[action] = v; },
   press(action) { Input.debugPressed.add(action); },
   look(dx, dy) { Input.dx += dx; Input.dy += dy; },
