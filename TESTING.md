@@ -191,11 +191,16 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 - **No internet / quick check**: add `?net=local` to both windows' addresses (for example `…/index.html?net=local&name=TWO`). They then talk through a test network inside the browser with about 40 ms of simulated lag, without WebRTC or any relays.
 
 ### V. Room browser
-113. Main menu → **Play Online**. After a moment the status reads "SEARCHING FOR ROOMS". If the networking library can't load, you get an error message instead.
+113. Main menu → **Play Online**. After a moment the status line (top right of the panel) reads something like "RELAYS 9/12 · 0 OTHER PLAYERS ONLINE". If the networking library can't load, you get an error message instead.
 114. Type a callsign. It's remembered next time.
 115. **Create Room**: set a name (optional), score limit, time limit, bot fill on/off and bot difficulty. **Create** puts you in the room lobby as HOST on Team A.
-116. In the other window, Play Online lists the room within a few seconds: name, host, players 1 / 6, "TDM · 30 · SALT MARKET", IN LOBBY. Close the host window and the room drops off the list within about 6 s.
+116. In the other window, Play Online lists the room within a few seconds: name, host, players 1 / 6, "TDM · 30 · SALT MARKET", IN LOBBY. Close the host window and the room drops off the list within about 15 s. If the room doesn't show up, type the **room code** from the bottom of the host's room panel into ROOM CODE and press JOIN BY CODE.
 117. **Join**: you land on Team B (auto-balance) as NOT READY, and the host gets a "… joined the room" toast.
+
+**If a room doesn't show up or you can't join**, send me the status line from **both** screens (Play Online panel, top right; and the line under the buttons in the room). That tells us where it's failing:
+- **RELAYS 0/12** (or stuck on "CONNECTING TO RELAYS"): that network blocks the signalling servers.
+- **Relays connected, but 0 OTHER PLAYERS ONLINE** while the other person is also on Play Online: the two browsers can't open a direct connection to each other (strict NAT or firewall). The room should still show up, but joining will fail.
+- **N CONNECTIONS FAILED**: the same problem. Trying a different network (for example a phone hotspot) or adding a TURN server (see README) fixes it.
 
 ### W. Room lobby
 118. The joiner presses **Ready** and the host sees READY. **Start Match** stays greyed out until everyone is ready. A host on their own can start straight away with bots.

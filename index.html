@@ -358,6 +358,11 @@ button { font-family: inherit; }
 .on-table td:last-child { text-align: right; }
 .on-empty { padding: 40px 20px; text-align: center; color: var(--text-dim); font-size: 16px; letter-spacing: 1px; }
 .on-msg { margin-top: 10px; color: #ff9b8b; font-family: var(--mono); font-size: 13px; }
+.on-code { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.on-code label { font-size: 13px; letter-spacing: 3px; color: var(--text-dim); font-weight: 600; }
+#onCode { background: var(--panel-2); border: 1px solid var(--line-2); color: var(--text); font: 600 17px var(--mono); letter-spacing: 3px; padding: 5px 8px; width: 110px; text-transform: uppercase; user-select: text; -webkit-user-select: text; }
+#onCode:focus { outline: none; border-color: var(--accent); }
+.on-code span { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
 .btn.small { padding: 4px 14px; font-size: 14px; }
 .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
 #createPanel { width: 720px; }
@@ -452,6 +457,7 @@ button { font-family: inherit; }
       <table class="on-table"><thead><tr><th>ROOM</th><th>HOST</th><th>PLAYERS</th><th>MODE</th><th>STATUS</th><th></th></tr></thead><tbody id="onRooms"></tbody></table>
       <div class="on-empty" id="onEmpty">No rooms found yet. Rooms show up a few seconds after their host creates them, or create your own.</div>
     </div>
+    <div class="on-code"><label for="onCode">ROOM CODE</label><input id="onCode" maxlength="6" spellcheck="false" autocomplete="off" placeholder="ABC123"><button class="btn small" data-action="online-code">JOIN BY CODE</button><span>Ask the host for the code shown at the bottom of their room.</span></div>
     <div class="on-msg hidden" id="onMsg"></div>
     <div class="note">Peer to peer: the player who creates a room hosts the match (bots, rules, hit checks). Signalling goes through public Nostr relays; game traffic goes straight between players over WebRTC. Strict firewalls or symmetric NATs can block connections.</div>
     <div class="row-btns">
@@ -762,6 +768,13 @@ const CONFIG = {
   /** Online play. Rates in Hz, times in ms. */
   NET: {
     appId: 'steel-meridian-v1', lobbyRoom: 'lobby-v1', proto: 1, trysteroVersion: '0.26.0',
+    // Nostr signalling relays: these first, then Trystero's own list, `relayCount` in total. Everyone must use the same list.
+    relays: ['wss://nos.lol', 'wss://relay.damus.io', 'wss://relay.primal.net', 'wss://nostr.mom', 'wss://relay.nostr.band', 'wss://offchain.pub'],
+    relayCount: 12,
+    // Optional TURN servers for players whose networks block direct connections, e.g.
+    // [{ urls: 'turn:turn.example.com:3478', username: 'user', credential: 'secret' }]
+    turn: [],
+    nostrAnnounceEvery: 5000, nostrRoomTimeout: 16000, // room listing straight over the relays (works without a peer connection)
     sendHz: 20, snapHz: 20, interpDelay: 100, extrapolate: 120,
     announceEvery: 2000, roomTimeout: 6000, maxPlayers: 6, pingEvery: 2000,
     joinTimeout: 20000, hostTimeout: 8000,
@@ -7099,7 +7112,7 @@ class LocalRoom {
 /** Opens rooms on Trystero (WebRTC) or LocalRoom (?net=local) behind one small interface. */
 const NetTransport = {
   kind: new URLSearchParams(location.search).get('net') === 'local' ? 'local' : 'trystero',
-  selfId: null, lib: null,
+  selfId: null, lib: null, failures: 0, lastError: '',
   /** Load the networking library once (lazily, so offline play never touches it). */
   async init() {
     if (this.kind === 'local') { this.selfId = this.selfId || 'L' + Math.random().toString(36).slice(2, 10); return; }
@@ -7111,12 +7124,39 @@ const NetTransport = {
     if (!this.lib) throw new Error('Could not load the networking library (Trystero) from the CDN. ' + (err && err.message ? err.message : ''));
     this.selfId = this.lib.selfId;
   },
+  /** The signalling relays: ?relay=wss://a,wss://b pins them (testing); otherwise CONFIG.NET.relays then Trystero's defaults. */
+  relayUrls() {
+    const q = new URLSearchParams(location.search).get('relay');
+    if (q) return q.split(',');
+    const out = [];
+    for (const u of [...CONFIG.NET.relays, ...((this.lib && this.lib.defaultRelayUrls) || [])]) if (!out.includes(u)) out.push(u);
+    return out.slice(0, CONFIG.NET.relayCount);
+  },
+  /** [open relay sockets, relays configured], or null on the local test network. */
+  relayStatus() {
+    if (this.kind === 'local' || !this.lib || !this.lib.getRelaySockets) return null;
+    const socks = Object.values(this.lib.getRelaySockets() || {});
+    return [socks.filter((ws) => ws && ws.readyState === 1).length, this.relayUrls().length];
+  },
+  /** One status line for the online screens: relays, players connected, failed connections. */
+  statusText() {
+    const r = this.relayStatus(), peers = Lobby.room ? Lobby.room.peers().length : 0, parts = [];
+    if (this.kind === 'local') parts.push('LOCAL TEST NETWORK');
+    else if (!this.lib) parts.push('NOT CONNECTED');
+    else parts.push(r[0] ? `RELAYS ${r[0]}/${r[1]}` : 'CONNECTING TO RELAYS…');
+    if (Lobby.room) parts.push(peers === 1 ? '1 OTHER PLAYER ONLINE' : peers + ' OTHER PLAYERS ONLINE');
+    if (this.failures) parts.push(this.failures + ' CONNECTION' + (this.failures > 1 ? 'S' : '') + ' FAILED');
+    return parts.join(' · ');
+  },
   /** → { selfId, action(name, handler(data, peerId)) → send(data, target?), ping(id), peers(), leave(), onJoin, onLeave } */
   join(roomId) {
     if (this.kind === 'local') return new LocalRoom(roomId, this.selfId);
-    const cfg = { appId: CONFIG.NET.appId }, relay = new URLSearchParams(location.search).get('relay'); // ?relay=wss://… pins the Nostr relays (testing)
-    if (relay) cfg.relayConfig = { urls: relay.split(','), redundancy: relay.split(',').length };
-    const room = this.lib.joinRoom(cfg, roomId, { onJoinError: (e) => console.info('[net] peer connection attempt failed (Trystero retries):', e && e.error) });
+    const urls = this.relayUrls(), cfg = { appId: CONFIG.NET.appId, relayConfig: { urls, redundancy: urls.length } };
+    if (CONFIG.NET.turn.length) cfg.turnConfig = CONFIG.NET.turn;
+    const room = this.lib.joinRoom(cfg, roomId, { onJoinError: (e) => {
+      this.failures++; this.lastError = String((e && e.error) || '');
+      console.info('[net] peer connection attempt failed (Trystero retries):', this.lastError);
+    } });
     const w = {
       selfId: this.selfId, onJoin: null, onLeave: null,
       action(name, handler) {
@@ -7136,24 +7176,55 @@ const NetTransport = {
 /** The room browser: hosts announce, everyone listening keeps a list. */
 const Lobby = {
   room: null, rooms: new Map(), sendAnn: null, onChange: null,
+  subId: 'sm' + Math.random().toString(36).slice(2, 10), nostrSocks: new WeakSet(), nostrT: 0,
   open() {
     if (this.room) return;
     const r = this.room = NetTransport.join(CONFIG.NET.lobbyRoom);
-    this.sendAnn = r.action('ann', (d, from) => {
-      if (!d || typeof d.id !== 'string' || typeof d.name !== 'string') return;
-      if (Net.active && d.id === Net.roomId) return;
-      this.rooms.set(d.id, { ...d, name: netName(d.name, 20) || 'ROOM', hn: netName(d.hn) || 'HOST', peer: from, seen: performance.now() });
-      this.changed();
-    });
+    this.sendAnn = r.action('ann', (d, from) => this.addRoom(d, from, CONFIG.NET.roomTimeout));
+    this.nostrT = 0;
     r.onJoin = (id) => { if (Net.active && Net.role === 'host') Net.announce(id); };
     r.onLeave = (id) => { for (const [k, v] of this.rooms) if (v.peer === id) this.rooms.delete(k); this.changed(); };
   },
   close() { if (this.room) { this.room.leave(); this.room = null; } this.rooms.clear(); this.sendAnn = null; },
-  /** Rooms heard from in the last few seconds, joinable first. */
+  /** A room announcement (over a peer connection, or straight from a relay). ttl: how long it stays listed without another. */
+  addRoom(d, from, ttl) {
+    if (!d || typeof d.id !== 'string' || typeof d.name !== 'string' || typeof d.host !== 'string' || d.id.length > 12) return;
+    if (Net.active && d.id === Net.roomId) return;
+    const old = this.rooms.get(d.id), now = performance.now();
+    this.rooms.set(d.id, { ...d, n: d.n | 0, max: d.max | 0, name: netName(d.name, 20) || 'ROOM', hn: netName(d.hn) || 'HOST', peer: from || d.host, seen: now, ttl: Math.max(ttl, old && now - old.seen < old.ttl ? old.ttl : 0) });
+    this.changed();
+  },
+  // --- room listings straight over the Nostr relays Trystero already has open: a room shows up in the browser even
+  //     when the two players' browsers can't connect to each other in the lobby (strict NAT, blocked WebRTC)
+  topic() { return CONFIG.NET.appId + '/rooms/' + CONFIG.NET.proto; },
+  relaySockets() { const L = NetTransport.lib; return L && L.getRelaySockets && L.subscribe && L.createEvent ? Object.values(L.getRelaySockets() || {}).filter((ws) => ws && ws.readyState === 1) : []; },
+  /** Subscribe on every open relay (new sockets as they appear). */
+  pollRelays() {
+    if (!this.room || NetTransport.kind === 'local') return;
+    for (const ws of this.relaySockets()) {
+      if (this.nostrSocks.has(ws)) continue;
+      this.nostrSocks.add(ws);
+      ws.addEventListener('message', (e) => this.onRelay(e.data));
+      try { ws.send(NetTransport.lib.subscribe(this.subId, this.topic())); } catch (e) { /* socket closing */ }
+    }
+  },
+  onRelay(data) {
+    if (!this.room || typeof data !== 'string' || data.indexOf(this.subId) < 0) return;
+    let m, d; try { m = JSON.parse(data); } catch (e) { return; }
+    if (!Array.isArray(m) || m[0] !== 'EVENT' || m[1] !== this.subId || !m[2] || typeof m[2].content !== 'string') return;
+    try { d = JSON.parse(m[2].content); } catch (e) { return; }
+    this.addRoom(d, d && d.host, CONFIG.NET.nostrRoomTimeout);
+  },
+  async publishRelays(info) {
+    const socks = this.relaySockets(); if (!socks.length) return;
+    let msg; try { msg = await NetTransport.lib.createEvent(this.topic(), JSON.stringify(info)); } catch (e) { return; }
+    for (const ws of socks) try { ws.send(msg); } catch (e) { /* closing */ }
+  },
+  /** Rooms heard from recently, joinable first. */
   list() {
     const now = performance.now();
-    for (const [k, v] of this.rooms) if (now - v.seen > CONFIG.NET.roomTimeout) this.rooms.delete(k);
-    return [...this.rooms.values()].sort((a, b) => (a.v === CONFIG.NET.proto) - (b.v === CONFIG.NET.proto) || (a.n >= a.max) - (b.n >= b.max) || a.name.localeCompare(b.name));
+    for (const [k, v] of this.rooms) if (now - v.seen > (v.ttl || CONFIG.NET.roomTimeout)) this.rooms.delete(k);
+    return [...this.rooms.values()].sort((a, b) => (b.v === CONFIG.NET.proto) - (a.v === CONFIG.NET.proto) || (a.n >= a.max) - (b.n >= b.max) || a.name.localeCompare(b.name));
   },
   changed() { if (this.onChange) this.onChange(); },
 };
@@ -7197,8 +7268,8 @@ const Net = {
   async join(r) {
     await NetTransport.init();
     this.leave(true); this.reset();
-    this.role = 'client'; this.selfId = NetTransport.selfId; this.hostId = r.host; this.roomId = r.id;
-    this.info = { name: r.name, scoreLimit: r.sl, timeLimit: r.tl, fill: r.bots !== false, diff: r.diff || 'normal' };
+    this.role = 'client'; this.selfId = NetTransport.selfId; this.hostId = r.host || null; this.roomId = r.id;
+    this.info = { name: r.name || 'ROOM ' + r.id, scoreLimit: r.sl || 30, timeLimit: r.tl || 600, fill: r.bots !== false, diff: r.diff || 'normal' };
     Lobby.close();
     this.openRoom();
     this.active = true; this.t.start = performance.now(); this.status = 'CONNECTING TO HOST…';
@@ -7212,7 +7283,7 @@ const Net = {
       st: A('st', this.onSt), sn: A('sn', this.onSnap), ev: A('ev', this.onEvents), sb: A('sb', this.onBoard),
       clm: A('clm', this.onClaim), fx: A('fx', this.onFx), nd: A('nd', this.onNade), ksr: A('ksr', this.onStreakRequest),
     };
-    r.onJoin = (id) => { this.heard.set(id, performance.now()); if (this.role === 'client' && id === this.hostId && !this.welcomed) this.sayHi(); };
+    r.onJoin = (id) => { this.heard.set(id, performance.now()); if (this.role === 'client' && !this.welcomed && (!this.hostId || id === this.hostId)) this.sayHi(); };
     r.onLeave = (id) => this.onPeerLeave(id);
   },
   /** Leave the room (and the lobby). quiet: no UI changes. */
@@ -7224,14 +7295,14 @@ const Net = {
     PlayerTarget.netId = 'me';
     if (was && !quiet) OnlineUI.render();
   },
-  sayHi() { this.t.hi = performance.now(); this.tx.hi({ v: CONFIG.NET.proto, name: this.myName(), lvl: Progress.level }, this.hostId); },
+  /** Hello to the host (joined by room code: to everyone in the room; only the host answers). */
+  sayHi() { this.t.hi = performance.now(); this.tx.hi({ v: CONFIG.NET.proto, name: this.myName(), lvl: Progress.level }, this.hostId || undefined); },
   // ------------------------------------------------------------ lobby (host side)
-  announce(target) {
-    if (!Lobby.sendAnn || !this.isHost()) return;
-    const n = this.players.size;
-    Lobby.sendAnn({ v: CONFIG.NET.proto, id: this.roomId, name: this.info.name, host: this.selfId, hn: this.myName(), n, max: CONFIG.NET.maxPlayers, phase: this.phase,
-      sl: this.info.scoreLimit, tl: this.info.timeLimit, bots: this.info.fill, diff: this.info.diff, map: MapInfo.name }, target);
+  announceInfo() {
+    return { v: CONFIG.NET.proto, id: this.roomId, name: this.info.name, host: this.selfId, hn: this.myName(), n: this.players.size, max: CONFIG.NET.maxPlayers, phase: this.phase,
+      sl: this.info.scoreLimit, tl: this.info.timeLimit, bots: this.info.fill, diff: this.info.diff, map: MapInfo.name };
   },
+  announce(target) { if (Lobby.sendAnn && this.isHost()) Lobby.sendAnn(this.announceInfo(), target); },
   lobbyState() { return { v: CONFIG.NET.proto, host: this.hostId, ep: this.epoch, phase: this.phase, info: this.info, mn: this.matchNo, players: [...this.players.values()] }; },
   /** Another peer claims to be host (a migration we missed, or one that happened while we were cut off): the newer host epoch wins. */
   rivalHost(from, ep) { ep |= 0; return ep > this.epoch || (ep === this.epoch && from < this.selfId); },
@@ -7294,7 +7365,7 @@ const Net = {
     if (this.role !== 'client') return;
     if (from !== this.hostId) {
       // a peer claiming to be host after a migration we didn't compute the same way (or missed)
-      if (d.host === from && ((d.ep | 0) > this.epoch || !this.room.peers().includes(this.hostId))) this.hostId = from; else return;
+      if (d.host === from && (!this.hostId || (d.ep | 0) > this.epoch || !this.room.peers().includes(this.hostId))) this.hostId = from; else return;
     }
     this.epoch = d.ep | 0;
     if (!this.welcomed) { this.welcomed = true; this.status = ''; }
@@ -7304,7 +7375,7 @@ const Net = {
     OnlineUI.render();
   },
   onReject(d, from) {
-    if (from !== this.hostId) return;
+    if (this.hostId ? from !== this.hostId : this.welcomed) return;
     const reason = (d && d.reason) || 'REJECTED';
     this.leave(true);
     OnlineUI.open(); OnlineUI.flash('Could not join: ' + reason);
@@ -7522,9 +7593,18 @@ const Net = {
     if (!this.active || !this.room) return;
     const now = performance.now(), T = this.t, C = CONFIG.NET, m = Game.match;
     if (this.isHost() && now - T.ann > C.announceEvery) { T.ann = now; this.announce(); }
+    if (this.isHost() && now - (T.nostr || 0) > C.nostrAnnounceEvery) { T.nostr = now; Lobby.publishRelays(this.announceInfo()); }
     if (this.isClient() && !this.welcomed) {
-      if (now - T.hi > 2000 && this.room.peers().includes(this.hostId)) this.sayHi();
-      if (now - T.start > C.joinTimeout) { this.leave(true); OnlineUI.open(); OnlineUI.flash('Could not reach the host. The room may have closed, or a firewall is blocking peer-to-peer connections.'); return; }
+      const peers = this.room.peers();
+      if (now - T.hi > 2000 && (this.hostId ? peers.includes(this.hostId) : peers.length)) this.sayHi();
+      if (now - T.start > C.joinTimeout) {
+        const failed = NetTransport.failures > 0, code = !this.hostId;
+        this.leave(true); OnlineUI.open();
+        OnlineUI.flash(code && !failed ? 'No room with that code answered. Check the code, and that the host is still in the room.'
+          : failed ? 'Could not connect to the host: one of your networks is blocking peer-to-peer connections (strict NAT or firewall). Try another network (e.g. a phone hotspot), or add a TURN server (README).'
+          : 'Could not reach the host. The room may have closed, or a firewall is blocking peer-to-peer connections.');
+        return;
+      }
     }
     // mid-match the host streams 20 Hz snapshots, so silence means it's gone (in the lobby we rely on the peer-leave signal)
     if (this.isClient() && this.welcomed && m && m.online && !m.finished && now - (this.heard.get(this.hostId) ?? now) > C.hostTimeout) { this.hostLost(); if (!this.active) return; }
@@ -7989,6 +8069,7 @@ const UI = {
     const on = $('onName');
     on.addEventListener('change', () => OnlineUI.saveName());
     for (const el of [on, $('crName')]) el.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') el.blur(); });
+    $('onCode').addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') OnlineUI.joinCode(); });
     const nm = $('loClassName');
     nm.addEventListener('input', () => LoadoutUI.rename(nm.value));
     nm.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter' || e.key === 'Escape') nm.blur(); });
@@ -8024,6 +8105,7 @@ const UI = {
       case 'online-create-back': OnlineUI.open(); break;
       case 'online-host': OnlineUI.create(); break;
       case 'online-join': OnlineUI.join(el.dataset.room); break;
+      case 'online-code': OnlineUI.joinCode(); break;
       case 'room-ready': { const me = Net.me(); Net.setReady(!(me && me.ready)); break; }
       case 'room-start': Net.startMatch(); break;
       case 'room-team': Net.requestTeam(); break;
@@ -8200,8 +8282,9 @@ const OnlineUI = {
   status(t) { $('onStatus').textContent = t; },
   flash(msg) { UI.toast(msg, 6000); const n = $('onMsg'); if (n) { n.textContent = msg; n.classList.toggle('hidden', !msg); } },
   tick() {
-    if (this.view === 'online') this.renderRooms();
-    else if (this.view === 'room') this.renderRoom();
+    Lobby.pollRelays();
+    if (this.view === 'online') { this.renderRooms(); if (NetTransport.lib || NetTransport.kind === 'local') this.status(NetTransport.statusText()); }
+    else if (this.view === 'room') { this.renderRoom(); $('rmCode').textContent = 'ROOM CODE ' + Net.roomId + '  ·  ' + NetTransport.statusText(); }
   },
   /** Called by Net whenever the room state changes. */
   render() {
@@ -8268,6 +8351,13 @@ const OnlineUI = {
     catch (e) { console.error(e); this.flash(e.message || String(e)); }
   },
   showRoom() { this.show('room'); this.renderRoom(true); },
+  async joinCode() {
+    const code = String($('onCode').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    if (code.length < 4) { this.flash('Enter the room code the host sees at the bottom of their room.'); return; }
+    this.saveName();
+    try { await NetTransport.init(); await Net.join({ id: code }); this.showRoom(); }
+    catch (e) { console.error(e); this.flash(e.message || String(e)); }
+  },
   leaveRoom() { Net.leave(true); this.open(); },
   renderRoom(force = false) {
     if (!Net.active) return;
@@ -8297,7 +8387,7 @@ const OnlineUI = {
     $('rmClass').textContent = L.name + '  ·  ' + WEAPONS[L.primary].name + '  +  ' + WEAPONS[L.secondary].name;
     const others = [...Net.players.values()].filter((p) => p.id !== Net.selfId), ready = others.filter((p) => p.ready).length;
     let status;
-    if (!Net.welcomed) status = Net.status || 'CONNECTING…';
+    if (!Net.welcomed) status = (Net.status || 'CONNECTING…') + (NetTransport.failures ? '  (' + NetTransport.failures + ' FAILED ATTEMPTS)' : '');
     else if (!lobby) status = 'MATCH IN PROGRESS…';
     else if (host) status = others.length ? (ready === others.length ? 'EVERYONE IS READY · START WHEN YOU LIKE' : `${ready} / ${others.length} READY`) : 'WAITING FOR PLAYERS · YOU CAN ALSO START NOW WITH BOTS';
     else status = me && me.ready ? 'READY · WAITING FOR THE HOST TO START' : 'PRESS READY WHEN YOU ARE SET';
@@ -8306,7 +8396,7 @@ const OnlineUI = {
     rb.classList.toggle('hidden', host || !Net.welcomed); rb.textContent = me && me.ready ? 'Not Ready' : 'Ready';
     sb.classList.toggle('hidden', !host); sb.disabled = !lobby || !Net.allReady();
     $('rmTeam').disabled = !lobby || !Net.welcomed;
-    $('rmCode').textContent = 'ROOM ' + Net.roomId + (NetTransport.kind === 'local' ? ' · LOCAL TEST NETWORK' : '');
+    $('rmCode').textContent = 'ROOM CODE ' + Net.roomId + '  ·  ' + NetTransport.statusText();
   },
 };
 
