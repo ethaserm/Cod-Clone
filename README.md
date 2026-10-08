@@ -84,10 +84,10 @@ Peer to peer over WebRTC with [Trystero](https://github.com/dmotz/trystero) (loa
 | Action | Key |
 |---|---|
 | Move / look | WASD / mouse (pointer lock) |
-| Fire / aim down sights | Left / right mouse |
+| Fire / aim down sights | Left / right mouse, or F / E (for laptop touchpads) |
 | Sprint | Shift (hold; toggle in settings) |
 | Hold breath (scoped) | Shift |
-| Crouch (slide while sprinting) | C or Ctrl |
+| Crouch (slide while sprinting) | C (Ctrl too in Fullscreen mode, where the browser can't steal it) |
 | Jump | Space |
 | Reload | R |
 | Melee | V |
@@ -96,6 +96,14 @@ Peer to peer over WebRTC with [Trystero](https://github.com/dmotz/trystero) (loa
 | UAV / airstrike / helicopter | 3 / 4 / 5 (airstrike: click to call it in, right click to cancel) |
 | Scoreboard | Tab |
 | Pause, loadout, settings (online: menu, no pause) | Esc |
+
+**Laptop touchpad:** a touchpad can't hold left and right click at once, so hold **E** to aim and click (or hold **F**) to fire. Or set Settings → Controls → Aim Down Sights to TOGGLE and two-finger tap to aim. On Windows, set Touchpad → Taps → *Touchpad sensitivity* to **Most sensitive**, or the pad switches off while you hold W A S D.
+
+**Browser shortcuts:** Ctrl+W closes a browser tab and a web page can't block that, so Ctrl is not a game key by default. Settings → Controls → **Fullscreen** (Chrome / Edge) locks the keyboard to the game, so Ctrl works there. Closing the tab mid-match asks *Leave site?* first.
+
+**Cursor:** the game always hands the mouse back when you alt-tab or switch tabs. If the cursor ever stays hidden, press Esc, or Ctrl+Alt+Delete and then Cancel on Windows. You never need to restart. **Raw Mouse Input** (off by default) skips OS mouse acceleration; leave it off if the cursor misbehaves.
+
+**Recoil:** aimed in, the gun climbs in a fixed, learnable pattern (mostly up with a gentle sway). Pull the mouse down as you spray and the bullets stay on target, like Valorant or Siege. The red dot or iron sight always shows where the next round goes. Hip-fire is wider and meant for close range.
 
 ## Code layout
 

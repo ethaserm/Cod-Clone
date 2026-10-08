@@ -4,7 +4,7 @@ Tick these off in a real browser (Chrome or Edge; Firefox works too) with a mous
 
 Tip: Settings → Video → **Show FPS** puts a frame counter in the top-left corner. Keep it on while testing.
 
-> **Still to test (reminder):** Phase 4 (sections Q–U, items 91–112), Online (V–Z, 113–140) and Phase 5 killstreaks (AA–EE, 141–159). Phases 2–3 were reported working, apart from the flashbang fix (U, 110–112).
+> **Still to test (reminder):** Phase 4 (sections Q–U, items 91–112), Online (V–Z, 113–140), Phase 5 killstreaks (AA–EE, 141–159) and the controls & recoil fixes (FF–GG, 164–176). Phases 2–3 were reported working, apart from the flashbang fix (U, 110–112).
 
 ---
 
@@ -271,11 +271,32 @@ Tip: Settings → Gameplay → **Unlock All (testing)** makes everything availab
 
 ---
 
+## Fixes from your report: controls, cursor, touchpad, recoil
+
+### FF. Browser safety and the cursor
+164. Sprint and press **C**: you slide. **Ctrl** does nothing outside fullscreen. That's deliberate: Ctrl+W is the browser's close-tab shortcut and a web page can't block it.
+165. In a match (or the range), press Ctrl+W on purpose. The browser asks *Leave site?* Click Cancel and you're still in the game. (On the main menu it closes without asking.)
+166. Settings → Controls → **Fullscreen: ON** (Chrome / Edge). Click into a match: the game goes fullscreen. Now Ctrl crouches / slides, and **Ctrl+W does not close the tab**. Esc still leaves fullscreen and opens the menu.
+167. Mid-match, alt-tab to another app and move the mouse around: the cursor is visible there. Come back, click the game, and you're playing again. Do it 5–10 times, including Windows key and switching browser tabs. The cursor should never stay hidden.
+168. If it ever does: press Esc, or Ctrl+Alt+Delete then Cancel. Note what you were doing and tell me. **Raw Mouse Input** stays OFF unless you want to try it.
+
+### GG. Touchpad and recoil
+169. On the touchpad, hold **E**: you aim down sights. Keep holding E and click (or hold **F**) to fire. Aiming and shooting work together.
+170. Settings → Aim Down Sights: TOGGLE. Tap E (or two-finger tap) to aim, tap again to stop.
+171. Windows: Settings → Bluetooth & devices → Touchpad → Taps → Touchpad sensitivity → **Most sensitive**. Now the pad keeps working while you hold W.
+172. Firing Range, KESTREL with the red dot. Aim at a target about 20 m away and hold fire **without** touching the mouse: the view climbs steadily up, swaying only slightly side to side.
+173. Same again, but **pull the mouse down** while spraying to keep the dot on the target. Most of the magazine should land on the target's chest (watch the hitmarkers / damage numbers). It takes a few tries to learn the pull.
+174. While spraying, the red dot (or the iron-sight post) stays in the middle of the sight and the bullets go where it is. The gun kicks straight back instead of jumping around.
+175. Hip-fire (no aim) spray at about 5–8 m still lands most shots; at 20 m it scatters. That's intended: aim for range.
+176. Try BRUTE (stronger climb), WASP (light, fast) and the pistol (aim + tap). Each has its own feel but all can be controlled.
+
+---
+
 ## Coming next: Phase 7 tests (polish)
 
 Likely topics. The final list depends on your feedback from the tests above:
 
-160. Settings → Keys lets you rebind every action.
+160. Settings → Keys lets you rebind every action (including the new F / E touchpad keys).
 161. Steadier frame rate in big fights (target: 60 FPS on Medium on a mid-range laptop).
 162. A balance pass on weapons, bots and killstreaks, based on what you report.
 163. Menu polish: transitions, hover sounds, results-screen detail.

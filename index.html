@@ -690,7 +690,7 @@ clearTimeout(window.__SM_BOOT_TIMER);
    CONFIG — every tuning value lives here
    ===================================================================== */
 const CONFIG = {
-  VERSION: '0.6.0-phase5',
+  VERSION: '0.6.1',
   SAVE_KEY: 'steelmeridian.save.v1',
   SAVE_VERSION: 1,
 
@@ -844,9 +844,9 @@ const SURF_FX = Object.fromEntries(Object.entries(SURF_FX_SRGB).map(([k, v]) => 
     mult: hitbox multipliers · recoil.pattern: per-shot [vertical°, horizontal°] while ADS (hip × hipMult)
     spread: hipfire cone (deg, half-angle) and modifiers · cycle: pump/bolt time after each shot
     hands/anim: which viewmodel model and reload choreography to use                                   */
-const RECOIL_BASE = { loopFrom: 6, hRand: 0.14, vRand: 0.06, hipMult: 1.25, crouchMult: 0.86, kickSpeed: 26, recoverDelay: 0.06, recoverSpeed: 7.5, recoverFrac: 0.9, recoverFracH: 0.65,
+const RECOIL_BASE = { loopFrom: 6, hRand: 0.07, vRand: 0.035, hipMult: 1.25, crouchMult: 0.86, kickSpeed: 26, recoverDelay: 0.06, recoverSpeed: 7.5, recoverFrac: 0.9, recoverFracH: 0.65,
   vmBack: 0.024, vmUp: 0.006, vmPitch: 0.055, vmYaw: 0.018, vmRoll: 0.03, adsVmMult: 0.42, camPunch: 0.35 };
-const SPREAD_BASE = { hip: 2.9, ads: 0.0, move: 2.0, air: 5.5, crouch: 0.8, slide: 1.25, perShot: 0.28, max: 6.0, recover: 8 };
+const SPREAD_BASE = { hip: 2.3, botHip: 2.9, ads: 0.0, move: 2.0, air: 5.5, crouch: 0.8, slide: 1.25, perShot: 0.28, max: 6.0, recover: 8 };
 const WEAPONS = {
   kestrel: {
     id: 'kestrel', name: 'KESTREL-556', type: 'ar', typeLabel: 'ASSAULT RIFLE', slot: 'primary', unlock: 1,
@@ -865,7 +865,7 @@ const WEAPONS = {
     damage: [[0, 36], [26, 31], [48, 26]], mult: { head: 1.35, torso: 1.0, limb: 0.9 },
     mag: 25, reserve: 100, reloadTac: 2.3, reloadEmpty: 2.95, reloadAddTac: 0.66, reloadAddEmpty: 0.86, anim: 'rifle',
     adsTime: 0.28, sprintToFire: 0.24, raiseTime: 0.62, dropTime: 0.26, adsZoom: 1.22, vmAdsFov: 42,
-    move: { speed: 0.93, ads: 0.55 }, spread: { ...SPREAD_BASE, hip: 3.4, move: 2.3, perShot: 0.36, max: 6.5 },
+    move: { speed: 0.93, ads: 0.55 }, spread: { ...SPREAD_BASE, hip: 2.8, botHip: 3.4, move: 2.3, perShot: 0.36, max: 6.5 },
     recoil: { ...RECOIL_BASE, hipMult: 1.3, recoverFrac: 0.85, vmBack: 0.03, vmPitch: 0.07, camPunch: 0.45,
       pattern: [[0.95, 0.12], [1.02, 0.2], [1.08, -0.1], [1.1, 0.32], [1.06, 0.28], [1.0, -0.22], [1.0, 0.34], [0.96, 0.3], [0.95, -0.2], [0.92, 0.32], [0.9, 0.26], [0.9, -0.18]] },
     sound: { bodyHz: 76, body: 1.05, crack: 0.9, blast: 1.0, blastHz: 4600, decay: 0.19, tail: 0.7, tailHz: 1100, mech: 0.36, mechHz: 2100, drive: 3.8, gain: 1.05 },
@@ -877,8 +877,8 @@ const WEAPONS = {
     damage: [[0, 26], [12, 21], [24, 17]], mult: { head: 1.3, torso: 1.0, limb: 0.9 },
     mag: 32, reserve: 160, reloadTac: 1.75, reloadEmpty: 2.2, reloadAddTac: 0.66, reloadAddEmpty: 0.86, anim: 'rifle',
     adsTime: 0.18, sprintToFire: 0.14, raiseTime: 0.45, dropTime: 0.2, adsZoom: 1.15, vmAdsFov: 46,
-    move: { speed: 1.0, ads: 0.72 }, spread: { ...SPREAD_BASE, hip: 2.1, move: 1.3, air: 4, perShot: 0.2, max: 5 },
-    recoil: { ...RECOIL_BASE, hipMult: 1.15, hRand: 0.2, vmBack: 0.018, vmPitch: 0.04, camPunch: 0.25,
+    move: { speed: 1.0, ads: 0.72 }, spread: { ...SPREAD_BASE, hip: 1.6, botHip: 2.1, move: 1.3, air: 4, perShot: 0.2, max: 5 },
+    recoil: { ...RECOIL_BASE, hipMult: 1.15, hRand: 0.1, vmBack: 0.018, vmPitch: 0.04, camPunch: 0.25,
       pattern: [[0.44, 0.18], [0.46, -0.2], [0.48, 0.22], [0.46, -0.24], [0.45, 0.2], [0.44, -0.18], [0.43, 0.24], [0.42, -0.22], [0.42, 0.2], [0.41, -0.2]] },
     sound: { bodyHz: 118, body: 0.8, crack: 0.75, blast: 0.75, blastHz: 6000, decay: 0.11, tail: 0.45, tailHz: 1500, mech: 0.45, mechHz: 3000, drive: 2.8, gain: 0.9 },
     flash: { size: 0.85, light: 0.8 }, model: 'wasp', attach: ['reddot', 'suppressor', 'extmag', 'foregrip'],
@@ -890,7 +890,7 @@ const WEAPONS = {
     mag: 6, reserve: 30, anim: 'shotgun', shell: { start: 0.42, per: 0.5, end: 0.4, add: 0.72 },
     cycle: { time: 0.62, sound: 'pump' },
     adsTime: 0.25, sprintToFire: 0.2, raiseTime: 0.55, dropTime: 0.24, adsZoom: 1.12, vmAdsFov: 46,
-    move: { speed: 0.95, ads: 0.62 }, spread: { ...SPREAD_BASE, hip: 0, move: 0.8, air: 2, perShot: 0, max: 2 },
+    move: { speed: 0.95, ads: 0.62 }, spread: { ...SPREAD_BASE, hip: 0, botHip: 0, move: 0.8, air: 2, perShot: 0, max: 2 },
     recoil: { ...RECOIL_BASE, hipMult: 1.1, kickSpeed: 22, recoverSpeed: 6, recoverFrac: 0.92, vmBack: 0.07, vmUp: 0.02, vmPitch: 0.2, vmRoll: 0.06, adsVmMult: 0.6, camPunch: 1.4,
       pattern: [[3.0, 0.4]], loopFrom: 0, hRand: 0.6, vRand: 0.3 },
     sound: { bodyHz: 66, body: 1.15, crack: 0.55, blast: 1.15, blastHz: 3600, decay: 0.24, tail: 0.85, tailHz: 1000, mech: 0.2, mechHz: 1800, drive: 4.2, gain: 1.12 },
@@ -904,7 +904,7 @@ const WEAPONS = {
     cycle: { time: 1.05, sound: 'bolt' },
     scope: { zoom: 6.0, sway: 1.15, reticle: 'sniper' },
     adsTime: 0.42, sprintToFire: 0.32, raiseTime: 0.7, dropTime: 0.28, adsZoom: 6.0, vmAdsFov: 32,
-    move: { speed: 0.88, ads: 0.45 }, spread: { ...SPREAD_BASE, hip: 9, move: 3, air: 6, perShot: 0, max: 9 },
+    move: { speed: 0.88, ads: 0.45 }, spread: { ...SPREAD_BASE, hip: 9, botHip: 9, move: 3, air: 6, perShot: 0, max: 9 },
     recoil: { ...RECOIL_BASE, kickSpeed: 20, recoverSpeed: 5, recoverFrac: 0.95, vmBack: 0.08, vmUp: 0.02, vmPitch: 0.22, adsVmMult: 0.5, camPunch: 1.8,
       pattern: [[3.2, 0.5]], loopFrom: 0, hRand: 0.5, vRand: 0.3 },
     sound: { bodyHz: 58, body: 1.2, crack: 1.0, blast: 1.2, blastHz: 5600, decay: 0.24, tail: 1.0, tailHz: 900, mech: 0.2, mechHz: 1600, drive: 4.4, gain: 1.2 },
@@ -916,9 +916,9 @@ const WEAPONS = {
     damage: [[0, 28], [14, 22], [26, 18]], mult: { head: 1.4, torso: 1.0, limb: 0.9 },
     mag: 15, reserve: 60, reloadTac: 1.45, reloadEmpty: 1.85, reloadAddTac: 0.62, reloadAddEmpty: 0.78, anim: 'pistol',
     adsTime: 0.15, sprintToFire: 0.1, raiseTime: 0.35, dropTime: 0.18, adsZoom: 1.12, vmAdsFov: 48,
-    move: { speed: 1.05, ads: 0.78 }, spread: { ...SPREAD_BASE, hip: 2.4, move: 1.2, perShot: 0.45, max: 5, recover: 10 },
+    move: { speed: 1.05, ads: 0.78 }, spread: { ...SPREAD_BASE, hip: 1.9, botHip: 2.4, move: 1.2, perShot: 0.45, max: 5, recover: 10 },
     recoil: { ...RECOIL_BASE, kickSpeed: 30, recoverSpeed: 10, recoverFrac: 0.95, vmBack: 0.03, vmUp: 0.014, vmPitch: 0.14, adsVmMult: 0.55, camPunch: 0.6,
-      pattern: [[1.1, 0.12], [1.15, -0.18], [1.1, 0.2], [1.12, -0.16]], loopFrom: 0, hRand: 0.22 },
+      pattern: [[1.1, 0.12], [1.15, -0.18], [1.1, 0.2], [1.12, -0.16]], loopFrom: 0, hRand: 0.14 },
     sound: { bodyHz: 108, body: 0.85, crack: 0.9, blast: 0.8, blastHz: 5800, decay: 0.1, tail: 0.45, tailHz: 1500, mech: 0.42, mechHz: 3200, drive: 2.6, gain: 0.85 },
     flash: { size: 0.7, light: 0.7 }, model: 'viper', attach: ['suppressor', 'extmag'],
   },
@@ -961,7 +961,7 @@ function buildWeaponDef(weaponId, attachIds = []) {
     if (m.adsMove) d.move.ads += m.adsMove;
     if (m.rangeMult) d.damage = d.damage.map(([r, v]) => [r * m.rangeMult, v]);
     if (m.recoilMult) { d.recoil.pattern = d.recoil.pattern.map(([v, h]) => [v * m.recoilMult, h * m.recoilMult]); d.recoil.hRand *= m.recoilMult; d.recoil.camPunch *= m.recoilMult; }
-    if (m.hipMult) d.spread.hip *= m.hipMult;
+    if (m.hipMult) { d.spread.hip *= m.hipMult; d.spread.botHip *= m.hipMult; }
     if (m.magMult) { d.mag = Math.round(d.mag * m.magMult); d.reserve = Math.round(d.reserve * m.magMult); }
     if (m.reloadMult) { if (d.shell) { d.shell.per *= m.reloadMult; } else { d.reloadTac *= m.reloadMult; d.reloadEmpty *= m.reloadMult; } }
     if (a.suppressed) { d.suppressed = true; d.flash.size *= 0.25; d.flash.light *= 0.2; }
@@ -1036,19 +1036,26 @@ const KILLSTREAKS = [
 const DEFAULT_SETTINGS = {
   sens: 3.0, adsMult: 1.0, fov: 90, preset: 'medium', volume: 0.8, brightness: 1.0,
   invertY: false, adsHold: true, crouchToggle: true, sprintToggle: false,
-  showFps: false, dmgNumbers: true, headBob: 1.0, unlockAll: false,
+  showFps: false, dmgNumbers: true, headBob: 1.0, unlockAll: false, rawInput: false, fullscreen: false,
 };
 
 const KEYBINDS = {
   forward: ['KeyW'], back: ['KeyS'], left: ['KeyA'], right: ['KeyD'],
-  jump: ['Space'], sprint: ['ShiftLeft', 'ShiftRight'], crouch: ['KeyC', 'ControlLeft'],
+  jump: ['Space'], sprint: ['ShiftLeft', 'ShiftRight'], crouch: ['KeyC'],
   reload: ['KeyR'], melee: ['KeyV'], lethal: ['KeyG'], tactical: ['KeyQ'],
-  slot1: ['Digit1'], slot2: ['Digit2'], scoreboard: ['Tab'], interact: ['KeyF'], swap: [],
+  slot1: ['Digit1'], slot2: ['Digit2'], scoreboard: ['Tab'], swap: [],
   ks1: ['Digit3', 'Numpad3'], ks2: ['Digit4', 'Numpad4'], ks3: ['Digit5', 'Numpad5'],
+  // keyboard alternatives to the mouse buttons (laptop touchpads can't hold both buttons at once)
+  fire: ['KeyF'], ads: ['KeyE'],
 };
+// Ctrl is a browser shortcut key (Ctrl+W closes the tab), so it only crouches while fullscreen has the keyboard locked.
+const KEYBINDS_LOCKED = { crouch: ['ControlLeft'] };
+// keys routed to the game (with any modifier) while fullscreen keyboard lock is active (Chrome / Edge)
+const KEYBOARD_LOCK_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyQ', 'KeyE', 'KeyR', 'KeyF', 'KeyC', 'KeyG', 'KeyV', 'KeyT', 'KeyN', 'KeyH', 'KeyJ',
+  'ControlLeft', 'Tab', 'Space', 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5'];
 const KEY_HELP = [
-  ['Move', 'W A S D'], ['Look', 'Mouse'], ['Fire', 'Left Mouse'], ['Aim down sights', 'Right Mouse'],
-  ['Sprint', 'Shift'], ['Hold breath (scoped)', 'Shift'], ['Jump', 'Space'], ['Crouch / Slide', 'C / Ctrl'],
+  ['Move', 'W A S D'], ['Look', 'Mouse'], ['Fire', 'Left Mouse / F'], ['Aim down sights', 'Right Mouse / E'],
+  ['Sprint', 'Shift'], ['Hold breath (scoped)', 'Shift'], ['Jump', 'Space'], ['Crouch / Slide', 'C (+ Ctrl in fullscreen)'],
   ['Reload', 'R'], ['Melee', 'V'], ['Swap weapon', '1 / 2 / Wheel'], ['Lethal', 'G'],
   ['Tactical', 'Q'], ['UAV (3 kills)', '3'], ['Airstrike (5 kills)', '4'], ['Attack helicopter (7 kills)', '5'],
   ['Scoreboard', 'Tab'], ['Pause / menu', 'Esc'],
@@ -3548,7 +3555,7 @@ const FX = {
    ===================================================================== */
 const Input = {
   down: new Set(), pressedSet: new Set(), mouseDown: [false, false, false], mousePressed: [false, false, false],
-  dx: 0, dy: 0, wheel: 0, locked: false, debug: {}, debugPressed: new Set(),
+  dx: 0, dy: 0, wheel: 0, locked: false, kbLocked: false, debug: {}, debugPressed: new Set(),
   init() {
     addEventListener('keydown', (e) => {
       if (this.captureKey) { e.preventDefault(); return; }
@@ -3557,7 +3564,13 @@ const Input = {
       this.down.add(e.code);
     });
     addEventListener('keyup', (e) => { this.down.delete(e.code); });
-    addEventListener('blur', () => { this.down.clear(); this.mouseDown.fill(false); });
+    // leaving the window always hands the cursor back (some Windows / Chrome setups otherwise keep it hidden)
+    addEventListener('blur', () => { this.down.clear(); this.mouseDown.fill(false); this.unlock(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { this.down.clear(); this.mouseDown.fill(false); this.unlock(); } });
+    addEventListener('pagehide', () => this.unlock());
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement) this.kbLocked = false; });
+    // an accidental Ctrl+W / Ctrl+Q mid-match asks before leaving
+    addEventListener('beforeunload', (e) => { if (Game.state === 'playing' || Game.state === 'paused' || (Net.active && Net.room)) { e.preventDefault(); e.returnValue = ''; } });
     addEventListener('mousedown', (e) => {
       if (e.button > 2) return;
       if (Game.state === 'playing' && !this.locked && e.target === canvas) { this.lock(); return; }
@@ -3582,26 +3595,41 @@ const Input = {
   },
   lock() {
     if (this.locked || !canvas.requestPointerLock) return;
+    if (Save.settings.fullscreen && !document.fullscreenElement) this.setFullscreen(true);
     try {
-      const p = canvas.requestPointerLock({ unadjustedMovement: true });
+      // raw (unadjusted) input is opt-in: on some Windows / Chrome setups it can leave the cursor hidden after alt-tab
+      const p = Save.settings.rawInput ? canvas.requestPointerLock({ unadjustedMovement: true }) : canvas.requestPointerLock();
       if (p && p.catch) p.catch(() => { try { const q = canvas.requestPointerLock(); if (q && q.catch) q.catch(() => {}); } catch (e) { /* unsupported */ } });
     } catch (e) { /* not allowed right now */ }
   },
   unlock() { if (document.pointerLockElement) document.exitPointerLock(); },
+  /** Fullscreen + keyboard lock (Chrome / Edge): browser shortcuts like Ctrl+W reach the game instead of closing the tab. */
+  setFullscreen(on) {
+    try {
+      if (on && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+        const p = document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+        const kl = () => { if (navigator.keyboard && navigator.keyboard.lock) navigator.keyboard.lock(KEYBOARD_LOCK_KEYS).then(() => { this.kbLocked = true; }, () => { this.kbLocked = false; }); };
+        if (p && p.then) p.then(kl, () => {}); else kl();
+      } else if (!on && document.fullscreenElement) { if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock(); this.kbLocked = false; document.exitFullscreen().catch(() => {}); }
+    } catch (e) { /* fullscreen not allowed here */ }
+  },
   is(action) {
     if (this.debug[action]) return true;
-    if (action === 'fire') return this.mouseDown[0];
-    if (action === 'ads') return this.mouseDown[2];
-    const keys = KEYBINDS[action]; if (!keys) return false;
-    for (const k of keys) if (this.down.has(k)) return true;
-    return false;
+    if (action === 'fire' && this.mouseDown[0]) return true;
+    if (action === 'ads' && this.mouseDown[2]) return true;
+    return this.anyKey(action, this.down);
   },
   pressed(action) {
     if (this.debugPressed.has(action)) return true;
-    if (action === 'fire') return this.mousePressed[0];
-    if (action === 'ads') return this.mousePressed[2];
-    const keys = KEYBINDS[action]; if (!keys) return false;
-    for (const k of keys) if (this.pressedSet.has(k)) return true;
+    if (action === 'fire' && this.mousePressed[0]) return true;
+    if (action === 'ads' && this.mousePressed[2]) return true;
+    return this.anyKey(action, this.pressedSet);
+  },
+  anyKey(action, set) {
+    const keys = KEYBINDS[action];
+    if (keys) for (const k of keys) if (set.has(k)) return true;
+    const extra = this.kbLocked && KEYBINDS_LOCKED[action];
+    if (extra) for (const k of extra) if (set.has(k)) return true;
     return false;
   },
   consumeLook() { const r = [this.dx, this.dy]; this.dx = 0; this.dy = 0; return r; },
@@ -4584,9 +4612,11 @@ const Viewmodel = {
     r.z += -s.strafe * C.strafeRoll * (1 - ads * 0.8);
     const land = this.land.update(dt, 0);
     p.y += land * lerp(1, 0.3, ads);
-    const kp = this.kickPos, kr = this.kickRot;
-    p.x += kp[0].update(dt); p.y += kp[1].update(dt); p.z += kp[2].update(dt);
-    r.x += kr[0].update(dt); r.y += kr[1].update(dt); r.z += kr[2].update(dt);
+    // aimed in, the gun recoils straight back: rotation / lift would swing the dot or iron sights off the line the bullets
+    // actually travel (screen centre), so the sight picture always shows where the next round goes
+    const kp = this.kickPos, kr = this.kickRot, steady = 1 - 0.94 * ads;
+    p.x += kp[0].update(dt) * steady; p.y += kp[1].update(dt) * steady; p.z += kp[2].update(dt);
+    r.x += kr[0].update(dt) * steady; r.y += kr[1].update(dt) * steady; r.z += kr[2].update(dt) * steady;
     this.pivot.position.copy(p);
     this.pivot.rotation.set(r.x, r.y, r.z, 'YXZ');
     const fov = lerp(CONFIG.CAMERA.vmFov, s.vmAdsFov, ads);
@@ -6026,7 +6056,7 @@ class Bot {
     this.mag--;
     const dir = this.aimDir(this._dir);
     const moving = this.body.speedH > 1.2;
-    let spreadDeg = d.pellets > 1 ? lerp(d.pelletSpread, d.pelletSpreadAds, this.wctx.adsT) : lerp(d.spread.hip * 0.55, 0.12, this.wctx.adsT) + (moving ? d.spread.move * 0.35 : 0);
+    let spreadDeg = d.pellets > 1 ? lerp(d.pelletSpread, d.pelletSpreadAds, this.wctx.adsT) : lerp(d.spread.botHip * 0.55, 0.12, this.wctx.adsT) + (moving ? d.spread.move * 0.35 : 0);
     if (this.blindT > 0) spreadDeg += 8;
     const ax = this._ax.crossVectors(dir, UP).normalize(), ay = this._ay.crossVectors(ax, dir).normalize();
     const mz = this.actor.muzzle.getWorldPosition(this._mz);
@@ -8213,6 +8243,8 @@ const SETTINGS_UI = {
     { key: 'adsHold', label: 'Aim Down Sights', type: 'seg', options: [[true, 'HOLD'], [false, 'TOGGLE']] },
     { key: 'crouchToggle', label: 'Crouch', type: 'seg', options: [[true, 'TOGGLE'], [false, 'HOLD']] },
     { key: 'sprintToggle', label: 'Sprint', type: 'seg', options: [[false, 'HOLD'], [true, 'TOGGLE']] },
+    { key: 'fullscreen', label: 'Fullscreen (Ctrl can crouch)', type: 'seg', options: [[false, 'OFF'], [true, 'ON']] },
+    { key: 'rawInput', label: 'Raw Mouse Input', type: 'seg', options: [[false, 'OFF'], [true, 'ON']] },
   ],
   VIDEO: [
     { key: 'preset', label: 'Graphics Quality', type: 'seg', options: [['low', 'LOW'], ['medium', 'MEDIUM'], ['high', 'HIGH']] },
@@ -8360,20 +8392,22 @@ const UI = {
         const seg = document.createElement('div'); seg.className = 'seg';
         for (const [v, l] of row.options) {
           const b = document.createElement('button'); b.textContent = l; if (S[row.key] === v) b.classList.add('on');
-          b.onclick = () => { S[row.key] = v; Save.save(); applySetting(row.key); this.renderSettings(); };
+          b.onclick = () => { S[row.key] = v; Save.save(); applySetting(row.key, true); this.renderSettings(); };
           seg.appendChild(b);
         }
         ctl.appendChild(seg);
       }
       body.appendChild(r);
     }
+    if (this.tab === 'CONTROLS') body.insertAdjacentHTML('beforeend', '<div class="note"><b>Laptop touchpad?</b> Hold <kbd>E</kbd> to aim and click (or hold <kbd>F</kbd>) to fire, or set Aim Down Sights to TOGGLE and two-finger tap to aim. In Windows touchpad settings, set sensitivity to "Most sensitive" so the pad keeps working while you hold W A S D.<br><b>Fullscreen</b> (Chrome / Edge) captures browser shortcuts, so Ctrl can crouch / slide without closing the tab. Outside fullscreen, slide with <kbd>C</kbd>.<br><b>Raw Mouse Input</b> bypasses OS mouse acceleration. Leave it OFF if your cursor ever stays hidden after leaving the game.</div>');
     if (this.tab === 'GAMEPLAY') body.insertAdjacentHTML('beforeend', '<div class="note">Unlock All makes every weapon, attachment, camo and Create-a-Class available without levelling, and starts each Practice match with all three killstreaks, for testing. XP and levels still count normally. The Firing Range always lets you try killstreaks (keys 3 / 4 / 5).</div>');
     if (this.tab === 'VIDEO') body.insertAdjacentHTML('beforeend', `<div class="note">LOW: 75% resolution, 1K shadows, FXAA · MEDIUM: native, 2K shadows, SMAA · HIGH: up to 1.5x DPR, 4K shadows, SSAO, SMAA.<br>FOV is horizontal at 16:9.</div>`);
   },
 };
 
-function applySetting(key) {
+function applySetting(key, fromUser = false) {
   const S = Save.settings;
+  if (key === 'fullscreen' && fromUser) Input.setFullscreen(S.fullscreen);
   if (key === 'volume') AudioSys.setVolume(S.volume);
   if (key === 'brightness') renderer.toneMappingExposure = CONFIG.WORLD.exposure * S.brightness;
   if (key === 'preset') applyGraphicsPreset();
@@ -9286,7 +9320,7 @@ const Game = {
 
 // Debug / test hooks (used by the headless test harness).
 window.__SM = {
-  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, ClientMatch, Puppet, LagComp, Net, Lobby, NetTransport, RelayBus, OnlineUI, UI, Streaks, Helicopter, Airstrike, KILLSTREAKS, Combat, Hitscan, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, THREE, AudioBuffers: AudioSys.buffers,
+  Game, Input, Save, CONFIG, Nav, Progress, Classes, PlayerWeapon, PlayerHealth, PlayerTarget, SoldierActor, Bot, TDMMatch, ClientMatch, Puppet, LagComp, Net, Lobby, NetTransport, RelayBus, OnlineUI, UI, Streaks, Helicopter, Airstrike, KILLSTREAKS, Combat, Hitscan, Actors, Viewmodel, Collision, Range, FX, HUD, Grenades, Explosions, WEAPONS, ATTACHMENTS, renderer, scene, camera, vmCamera, THREE, AudioBuffers: AudioSys.buffers,
   start() { Game.debugNoLock = true; Game.startRange(); },
   /** Render one frame on demand (tests that drive the simulation themselves). */
   renderFrame() { renderer.info.reset(); Post.render(0.016); },
